@@ -1,0 +1,7 @@
+/* SwayNC Style CSS */
+@import 'colors.css';
+
+* {
+    font-family: sans-serif;
+    font-size: 14px;
+}

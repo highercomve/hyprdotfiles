@@ -1,0 +1,12 @@
+layout {
+    // 1. Tab Bar (Compact Bar) at the top
+    pane size=1 borderless=true { 
+        plugin location="zellij:compact-bar" 
+    }
+    
+    // 2. Main terminal area (takes up the rest of the space)
+    pane { 
+        children;
+    }
+}
+

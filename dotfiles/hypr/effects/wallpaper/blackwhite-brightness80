@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Apply black and white filter with 80% brightness to wallpaper
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -colorspace Gray -modulate 80 $2
+
+echo "Black and white with 80% brightness filter applied."

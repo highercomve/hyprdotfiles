@@ -1,0 +1,70 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+	// "show_completions_on_input": false,
+	"agent": {
+		"always_allow_tool_actions": true,
+		"inline_assistant_model": {
+			"provider": "google",
+			"model": "gemini-2.5-flash"
+		},
+		"default_model": {
+			"provider": "google",
+			"model": "gemini-2.5-flash"
+		}
+	},
+	"ui_font_size": 18,
+	"buffer_font_size": 18,
+	"hard_tabs": true,
+	"tab_size": 4,
+	"outline_panel": {
+		"indent_size": 10
+	},
+	"theme": {
+		"mode": "system",
+		"light": "CodeSandbox",
+		"dark": "VSCode Dark Modern"
+	},
+	"languages": {
+		"HTML": {
+			"prettier": {
+				"allowed": true,
+				"parser": "go-template",
+				"plugins": ["prettier-plugin-go-template"]
+			}
+		},
+		"YAML": {
+			"tab_size": 4,
+			"hard_tabs": true
+		},
+		"Shell Script": {
+			"tab_size": 4,
+			"hard_tabs": true,
+			"format_on_save": "on",
+			"formatter": {
+				"external": {
+					"command": "shfmt",
+					// Change `--indent 2` to match your preferred tab_size
+					"arguments": [
+						"--filename",
+						"{buffer_path}",
+						"--indent",
+						"4"
+					]
+				}
+			}
+		}
+	},
+	"language_overrides": {
+		"YAML": {
+			"tab_size": 4,
+			"hard_tabs": true
+		}
+	}
+}

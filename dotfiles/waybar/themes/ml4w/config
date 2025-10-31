@@ -1,0 +1,42 @@
+{
+    // General Settings
+    "layer": "top",
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "spacing": 0,
+    // Load Modules
+    "include": [
+        "~/.config/hypr/user_settings/waybar-quicklinks.json",
+        "~/.config/waybar/modules.json"
+    ],
+    // Modules Left
+    "modules-left": [
+        "custom/appmenu",
+        "group/links",
+        "wlr/taskbar",
+        //"group/quicklinks",
+        "hyprland/window",
+        "custom/empty"
+    ],
+    // Modules Center
+    "modules-center": [
+        "hyprland/workspaces"
+    ],
+    // Modules Right
+    "modules-right": [
+        "custom/updates",
+        "pulseaudio",
+        //"backlight",
+        "bluetooth",
+        "network",
+        "battery",
+        "group/hardware",
+        "group/tools",
+        "tray",
+        "custom/notification",
+        "clock",
+        "custom/exit"
+    ]
+}

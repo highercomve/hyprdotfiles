@@ -1,0 +1,11 @@
+/* Wofi Main configuration */
+configuration {
+    modi: "drun,run";
+    width: 50%;
+    height: 50%;
+    location: center;
+    hide-scroll: true;
+    show-icons: true;
+    terminal: "alacritty";
+}
+@theme "~/.config/wofi/style.css"

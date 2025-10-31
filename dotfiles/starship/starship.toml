@@ -1,0 +1,30 @@
+# Starship configuration
+# This is a placeholder for your Starship prompt configuration.
+# See https://starship.rs/config/ for more details.
+
+# format = "$all"
+
+# add_newline = false
+
+# [character]
+# success_symbol = "[➜](bold green)"
+# error_symbol = "[✗](bold red)"
+
+# [git_branch]
+# symbol = "🌱 "
+
+# [git_status]
+# conflicted = "🏳"
+# ahead = "🏎💨"
+# behind = "🐢"
+# diverged = "🤯"
+# untracked = "🤷‍♀️"
+# staged = "📝"
+# skipped = "⏩"
+# stashed = "📦"
+# modified = "✏️"
+# read_only = "🔒"
+# 
+# [hostname]
+# ssh_only = false
+# format = "[$hostname](bold yellow)@"

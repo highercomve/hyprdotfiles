@@ -1,0 +1,40 @@
+# Lazygit Configuration
+
+# This is a placeholder for your Lazygit configuration.
+# See https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md for more details.
+
+# gui:
+#   theme:
+#     activeBorderColor:
+#       - blue
+#       - bold
+#     inactiveBorderColor:
+#       - white
+#     optionsTextColor:
+#       - blue
+#     selectedLineBgColor:
+#       - blue
+#     selectedRangeBgColor:
+#       - blue
+#     cherryPickedCommitBgColor:
+#       - cyan
+#     unstagedChangesColor:
+#       - red
+#     stagedChangesColor:
+#       - green
+#     trackedFilesColor:
+#       - green
+#     untrackedFilesColor:
+#       - red
+#     diffTerminalColor:
+#       - blue
+#     commitMessageColor:
+#       - green
+#     spinnerColor:
+#       - blue
+#     mainPanelBgColor:
+#       - black
+#     secondaryPanelBgColor:
+#       - black
+#     tertiaryPanelBgColor:
+#       - black

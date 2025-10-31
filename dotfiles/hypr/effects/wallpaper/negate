@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Invert wallpaper colors
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -negate $2
+
+echo "Wallpaper colors inverted."

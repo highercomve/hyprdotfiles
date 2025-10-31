@@ -1,0 +1,25 @@
+// SwayNC configuration
+// See https://github.com/ErikReider/SwayNotificationCenter/wiki/Configuration for more details.
+{
+    "position": "top-right",
+    "control-center-width": 500,
+    "control-center-height": 600,
+    "notification-icon-size": 32,
+    "notification-body-truncate": false,
+    "notification-body-max-lines": 5,
+    "notification-actions-horizontal": true,
+    "notification-inline-actions": false,
+    "notification-icon-theme": "Adwaita",
+    "notification-background-color": "#242F41",
+    "notification-text-color": "#D9E0EE",
+    "notification-border-color": "#96CDFB",
+    "notification-progress-bar-color": "#96CDFB",
+    "notification-close-button-text": "Close",
+    "notification-clear-all-button-text": "Clear All",
+    "notification-dnd-button-text": "Do Not Disturb",
+    "notification-display-time": 5000,
+    "notification-gap": 10,
+    "notification-corner-radius": 10,
+    "notification-padding": 10,
+    "notification-margin": 10
+}

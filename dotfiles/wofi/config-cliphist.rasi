@@ -1,0 +1,8 @@
+/* Wofi Cliphist configuration */
+configuration {
+    modi: "cliphist:cliphist list";
+    run-command: "cliphist decode {selected} | wl-copy";
+    show-icons: false;
+    terminal: "alacritty";
+}
+@theme "~/.config/wofi/style.css"

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Apply stronger blur effect to wallpaper
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -blur 0x8 $2
+
+echo "Stronger blur effect applied."

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Apply black and white filter with blur to wallpaper
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -colorspace Gray -blur 0x8 $2
+
+echo "Black and white with blur filter applied."

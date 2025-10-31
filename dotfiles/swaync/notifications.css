@@ -1,0 +1,28 @@
+/* SwayNC Notifications CSS */
+@import 'colors.css';
+
+#notification {
+    background-color: @bg_color;
+    border: 2px solid @border_color;
+    border-radius: 10px;
+}
+
+#notification-icon {
+    background-color: transparent;
+}
+
+#notification-title {
+    color: @fg_color;
+    font-weight: bold;
+}
+
+#notification-body {
+    color: @fg_color;
+}
+
+#notification-actions button {
+    background-color: @selected_bg_color;
+    color: @selected_fg_color;
+    border-radius: 5px;
+    padding: 5px 10px;
+}

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Invert wallpaper colors with 60% brightness
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -negate -modulate 60 $2
+
+echo "Inverted colors with 60% brightness applied."

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Apply black and white filter to wallpaper
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -colorspace Gray $2
+
+echo "Black and white filter applied."

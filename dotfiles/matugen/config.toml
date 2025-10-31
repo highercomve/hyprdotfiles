@@ -1,0 +1,11 @@
+# Matugen configuration file
+
+[colors]
+# Define your base colors here, or let matugen generate them
+# primary = "#FF0000"
+# secondary = "#00FF00"
+
+[templates]
+# Define paths to your templates
+# hyprland = "~/.config/hypr/colors.conf"
+# waybar = "~/.config/waybar/colors.css"

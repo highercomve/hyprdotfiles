@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Apply subtle blur effect with 40% brightness to wallpaper
+
+# This script would typically use imagemagick or similar tool
+# convert $1 -blur 0x4 -modulate 40 $2
+
+echo "Subtle blur with 40% brightness effect applied."

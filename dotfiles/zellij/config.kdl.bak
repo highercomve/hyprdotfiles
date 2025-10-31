@@ -1,0 +1,27 @@
+// Zellij configuration
+// This is a placeholder for your Zellij configuration.
+// See https://zellij.dev/documentation/ for more details.
+
+// default_layout "compact"
+
+// themes {
+//     catppuccin {
+//         fg "#D9E0EE"
+//         bg "#242F41"
+//         black "#494D64"
+//         red "#F28FAD"
+//         green "#ABE9B3"
+//         yellow "#FAE3B0"
+//         blue "#96CDFB"
+//         magenta "#F5C2E7"
+//         cyan "#89DCEB"
+//         white "#CBA6F7"
+//     }
+// }
+
+// keybindings {
+//     normal {
+//         bind "Alt l" { Pane, MoveFocus, "right" }
+//         bind "Alt h" { Pane, MoveFocus, "left" }
+//     }
+// }
