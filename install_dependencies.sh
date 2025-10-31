@@ -22,14 +22,15 @@ if [ -f /etc/arch-release ]; then
     # Install core dependencies
     yay -S --noconfirm \
         ttf-jetbrains-mono-nerd \
+        ttf-nerd-fonts-symbols \
         stow \
         hyprland \
-        gnome-gnome-calendar \
+        gnome-calendar \
         hypridle \
         hyprlock \
         hyprpaper \
         xdg-desktop-portal-hyprland \
-        hyprpolkitagent \
+        polkit-gnome \
         alacritty \
         wofi \
         waybar \
@@ -37,10 +38,10 @@ if [ -f /etc/arch-release ]; then
         brightnessctl \
         playerctl \
         swaync \
-        grim slurp \
+        grim \
+        slurp \
         cliphist \
         nwg-look \
-        qt5ct qt6ct \
         neovim \
         lazygit \
         zed \
@@ -51,7 +52,30 @@ if [ -f /etc/arch-release ]; then
         jq \
         eza \
         matugen \
-        wlogout
+        wlogout \
+        wl-clipboard \
+        network-manager-applet \
+        procps-ng \
+        wireplumber \
+        pipewire \
+        pipewire-pulse \
+        gnome-themes-extra \
+        qogir-icon-theme \
+        libnotify \
+        imagemagick \
+        nwg-dock-hyprland \
+        figlet \
+        pavucontrol \
+        fastfetch \
+        gnome-calculator \
+        nautilus \
+        evolution \
+        pinta \
+        htop \
+        bluez \
+        networkmanager \
+        bluez-utils \
+        gnome-bluetooth-3.0
 
     echo "Please ensure you have a Nerd Font installed for proper icon display (e.g., 'ttf-nerd-fonts-symbols' or 'ttf-jetbrains-mono-nerd')."
     echo "You can install one using: yay -S ttf-jetbrains-mono-nerd"
@@ -61,34 +85,30 @@ else
     echo "  - ttf-jetbrains-mono-nerd"
     echo "  - stow"
     echo "  - hyprland"
-    echo "  - gnome-gnome-calendar"
-    echo "  - hypridle"
-    echo "  - hyprlock"
-    echo "  - hyprpaper"
-    echo "  - xdg-desktop-portal-hyprland"
-    echo "  - hyprpolkitagent"
-    echo "  - alacritty"
-    echo "  - wofi"
-    echo "  - waybar"
-    echo "  - pamixer"
-    echo "  - brightnessctl"
-    echo "  - playerctl"
-    echo "  - swaync"
-    echo "  - grim, slurp"
-    echo "  - cliphist"
-    echo "  - nwg-look"
-    echo "  - qt5ct, qt6ct"
-    echo "  - neovim"
-    echo "  - lazygit"
-    echo "  - zed"
-    echo "  - zellij"
-    echo "  - starship"
-    echo "  - gum"
-    echo "  - hyprpicker"
-    echo "  - jq"
-    echo "  - eza"
-    echo "  - matugen"
-    echo "  - wlogout"
+    echo "  - wl-clipboard"
+    echo "  - polkit-gnome"
+    echo "  - network-manager-applet"
+    echo "  - procps-ng"
+    echo "  - wireplumber"
+    echo "  - pipewire"
+    echo "  - pipewire-pulse"
+    echo "  - gnome-themes-extra"
+    echo "  - qogir-icon-theme"
+    echo "  - libnotify"
+    echo "  - imagemagick"
+    echo "  - nwg-dock-hyprland"
+    echo "  - figlet"
+    echo "  - pavucontrol"
+    echo "  - fastfetch"
+    echo "  - gnome-calculator"
+    echo "  - nautilus"
+    echo "  - evolution"
+    echo "  - pinta"
+    echo "  - htop"
+    echo "  - nmtui"
+    echo "  - bluez"
+    echo "  - bluez-utils"
+    echo "  - gnome-bluetooth-3.0"
 fi
 
 git clone https://github.com/LazyVim/starter dotfiles/nvim
