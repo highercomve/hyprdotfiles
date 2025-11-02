@@ -23,6 +23,7 @@ if [ -f /etc/arch-release ]; then
   yay -S --noconfirm \
     automake \
     fakeroot \
+    rofi \
     ttf-jetbrains-mono-nerd \
     ttf-nerd-fonts-symbols \
     stow \
