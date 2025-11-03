@@ -29,8 +29,8 @@ if [ -f /etc/arch-release ]; then
         ttf-jetbrains-mono-nerd \
         ttf-nerd-fonts-symbols \
         stow \
-        hyprland \
         gnome-calendar \
+        hyprland \
         hypridle \
         hyprlock \
         hyprpaper \
@@ -81,68 +81,7 @@ if [ -f /etc/arch-release ]; then
         networkmanager \
         bluez-utils \
         gnome-bluetooth-3.0
-
-    echo "Please ensure you have a Nerd Font installed for proper icon display (e.g., 'ttf-nerd-fonts-symbols' or 'ttf-jetbrains-mono-nerd')."
-    echo "You can install one using: yay -S ttf-jetbrains-mono-nerd"
-
-	# Install core dependencies
-	yay -S --noconfirm \
-		rofi \
-		ttf-jetbrains-mono-nerd \
-		ttf-nerd-fonts-symbols \
-		stow \
-		hyprland \
-		hypridle \
-		hyprlock \
-		hyprpaper \
-		xdg-desktop-portal-hyprland \
-		polkit-gnome \
-		alacritty \
-		wofi \
-		waybar \
-		pamixer \
-		brightnessctl \
-		playerctl \
-		swaync \
-		grim \
-		slurp \
-		cliphist \
-		nwg-look \
-		neovim \
-		lazygit \
-		zed \
-		zellij \
-		starship \
-		gum \
-		hyprpicker \
-		jq \
-		eza \
-		matugen \
-		wlogout \
-		wl-clipboard \
-		network-manager-applet \
-		procps-ng \
-		wireplumber \
-		pipewire \
-		pipewire-pulse \
-		gnome-themes-extra \
-		qogir-icon-theme \
-		libnotify \
-		imagemagick \
-		nwg-dock-hyprland \
-		figlet \
-		pavucontrol \
-		fastfetch \
-		gnome-calculator \
-		nautilus \
-		evolution \
-		pinta \
-		htop \
-		bluez \
-		networkmanager \
-		bluez-utils \
-		gnome-bluetooth-3.0 \
-    gnome-calendar 
+        
 else
     echo "Unsupported distribution. Please install the following packages manually:"
     echo "  - ttf-jetbrains-mono-nerd"
