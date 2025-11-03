@@ -1,4 +1,0 @@
-# GTK4 server settings
-# This file is typically used for Wayland backend specific settings.
-# Example: [org/gnome/desktop/interface]
-# gtk-theme='Adwaita-dark'
