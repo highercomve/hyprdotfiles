@@ -81,7 +81,7 @@ if [ -f /etc/arch-release ]; then
         networkmanager \
         bluez-utils \
         gnome-bluetooth-3.0
-        
+
 else
     echo "Unsupported distribution. Please install the following packages manually:"
     echo "  - ttf-jetbrains-mono-nerd"
@@ -118,4 +118,5 @@ rm -rf dotfiles/nvim/.git
 
 echo "Dependency installation script finished."
 
-cp ~/.config/gtk-3.0/bookmarks dotfiles/gtk-3.0/bookmarks	
+cp ~/.config/gtk-3.0/bookmarks dotfiles/gtk-3.0/bookmarks
+cp ~/.config/gtk-4.0/servers dotfiles/gtk-4.0/servers
