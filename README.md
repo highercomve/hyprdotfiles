@@ -10,6 +10,11 @@ This repository contains a comprehensive set of personal dotfiles for the Hyprla
 - **Complete Desktop Environment**: Includes configurations for a status bar (Waybar), application launcher (rofi), notification daemon (SwayNC), and more.
 - **Developer-Focused**: Comes with pre-configured settings for Neovim (LazyVim), Zed, Zellij, and other development tools.
 
+## Screenshots
+
+![Screenshot 1](assets/screen1.jpg)
+![Screenshot 2](assets/screen2.jpg)
+
 ## Dotfile Structure
 
 The dotfiles are organized into the following structure within the `dotfiles/` directory:
