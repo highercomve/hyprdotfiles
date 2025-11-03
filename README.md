@@ -110,3 +110,8 @@ Theming is managed through a combination of tools:
 - **`nwg-look`**: A GUI tool for setting GTK themes and icons.
 - **`qt6ct`**: For applying themes to Qt-based applications.
 - **Custom Scripts**: Scripts are used to apply themes to Waybar, rofi, and other components.
+
+## TODO
+
+- add support to themes
+- add theme switcher rofi interface
