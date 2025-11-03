@@ -1,8 +1,0 @@
-/* Wofi Themes configuration */
-configuration {
-    modi: "themes:find ~/.config/hypr/themes -maxdepth 1 -type d -printf '%f\n' | grep -v '^\.$' | grep -v '^\.\.$";
-    run-command: "~/.config/hypr/scripts/set-theme.sh {selected}";
-    show-icons: false;
-    terminal: "alacritty";
-}
-@theme "~/.config/wofi/style.css"

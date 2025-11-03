@@ -1,8 +1,0 @@
-/* Wofi Hyprshade configuration */
-configuration {
-    modi: "hyprshade:hyprshade list";
-    run-command: "hyprshade apply {selected}";
-    show-icons: false;
-    terminal: "alacritty";
-}
-@theme "~/.config/wofi/style.css"

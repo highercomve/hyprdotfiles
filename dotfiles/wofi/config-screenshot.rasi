@@ -1,8 +1,0 @@
-/* Wofi Screenshot configuration */
-configuration {
-    modi: "screenshot:echo full\nselect";
-    run-command: "~/.config/hypr/scripts/screenshot.sh {selected}";
-    show-icons: false;
-    terminal: "alacritty";
-}
-@theme "~/.config/wofi/style.css"
