@@ -1,13 +1,14 @@
 * {
   font: "Roboto 10";
 
-  bg0    : #1f1f1f80;
+  bg0    : #1f1f1f;
   bg1    : #202020bf;
   bg2    : #2c2c2c;
   bg3    : #393939bf;
   fg0    : #ffffff;
   fg1    : #cecece;
   accent : #60cdff;
+  accenttransparent : #60cdffbf;
   urgent : @accent;
 
   background-color : transparent;
@@ -29,11 +30,13 @@ window {
   y-offset : -4px;
 
   background-color : @bg1;
+  border           : 2px solid;
+  border-color     : @accenttransparent;
   border-radius    : 8px;
 }
 
 mainbox {
-  padding : 24px;
+  padding : 22px;
   spacing : 24px;
 }
 
