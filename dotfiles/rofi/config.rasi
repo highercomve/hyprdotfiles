@@ -33,7 +33,7 @@ configuration {
 @theme "~/.config/rofi/colors.rasi"
 
 /* ---- Load wallpaper ---- */
-@import "~/.config/.cache/hypr/hyprland-dotfiles/current_wallpaper.rasi"
+@import "~/.config/.cache/hyprland-dotfiles/current_wallpaper.rasi"
 
 /* ---- Load border width ---- */
 @import "~/.config/hypr/user_settings/rofi-border.rasi"
@@ -72,7 +72,8 @@ imagebox {
     padding:                     0px;
     background-color:            transparent;
     orientation:                 vertical;
-    children:                    [ "inputbar", "mode-switcher" ];
+    /*  children:                    [ "inputbar", "mode-switcher" ]; */
+    children:                    [ "inputbar" ];
 }
 
 dummy {
