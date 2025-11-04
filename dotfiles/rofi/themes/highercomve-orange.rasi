@@ -1,0 +1,165 @@
+/* ---- Load font ---- */
+@import "~/.config/hypr/user_settings/rofi-font.rasi"
+
+/* ---- Load border width ---- */
+@import "~/.config/hypr/user_settings/rofi-border.rasi"
+
+/* ---- Load border radius ---- */
+@import "~/.config/hypr/user_settings/rofi-border-radius.rasi"
+
+/* ---- Colors ---- */
+* {
+    background:                 #242424;
+    surface:                    #3d3d3d;
+    primary:                    #ff9900; /* Orange Accent */
+    on-background:              #DEDEDE;
+    on-surface:                 #FFFFFF;
+    separator:                  #7E7E7E80;
+
+    background-color:           transparent;
+    text-color:                 @on-background;
+    margin:                     0;
+    padding:                    0;
+    spacing:                    0;
+}
+
+// Main //
+window {
+    location:                    center;
+    height:                      480px;
+    width:                       640px;
+    fullscreen:                  false;
+    enabled:                     true;
+    cursor:                      "default";
+    border:                      @border-width;
+    border-color:                @primary;
+    border-radius:               @border-radius;
+    background-color:            @background;
+}
+
+mainbox {
+    orientation:                 vertical;
+    children:                    [ "inputbar", "listview" ];
+}
+
+// Modes //
+mode-switcher {
+    orientation:                 horizontal;
+    width:                       6.6em;
+    enabled:                     true;
+    padding:                     12px;
+    background-color:            transparent;
+}
+
+button {
+    padding:                     15px;
+    border-radius:               0.5em;
+    border:                      0;
+    cursor:                      pointer; 
+    background-color:            @surface;
+    text-color:                  @on-surface;
+}
+
+button selected {
+    padding:                     15px;
+    border-radius:               0.5em;
+    background-color:            @surface;
+    text-color:                  @on-surface;
+}
+
+// Inputs //
+inputbar {
+    enabled:                     true;
+    font:                        "Montserrat 20";
+    padding:                     12px;
+    spacing:                     12px;
+    children:                    [ "icon-search", "entry" ];
+    background-color:            transparent;
+    border:                      0 0 1px 0;
+    border-color:                @separator;
+}
+
+icon-search {
+    expand:                      false;
+    filename:                    "search";
+    size:                        28px;
+    vertical-align:              0.5;
+}
+
+entry {
+    enabled:                     true;
+    font:                        inherit;
+    text-color:                  @on-surface;
+    cursor:                      text;
+    placeholder:                 "Search";
+    background-color:            transparent;
+    placeholder-color:           @separator;
+}
+
+// Lists //
+listbox {
+    expand:                      true;
+    children:                    [ "listview" ]; 
+    background-color:            transparent;
+}
+
+listview {
+    padding:                     1em;
+    enabled:                     true;
+    columns:                     1;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    cursor:                      "default";
+    background-color:            transparent;
+}
+
+// Elements //
+element {
+    enabled:                     true;
+    spacing:                     16px;
+    padding:                     8px 16px;
+    cursor:                      pointer;
+    background-color:            transparent;
+}
+
+element selected {
+    background-color:            @primary;
+    text-color:                  @on-surface;
+    border-radius:               @border-radius;
+}
+
+element-icon {
+    size:                        3em;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+    border-radius:               0em;
+}
+
+element-text {
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+    text-color:                  inherit;
+    cursor:                      inherit;
+    background-color:            transparent;
+}
+
+// Error message //
+error-message {
+    text-color:                  @on-surface;
+    background-color:            @background;
+    text-transform:              capitalize;
+    children:                    [ "textbox" ];
+}
+
+textbox {
+    text-color:                  inherit;
+    background-color:            inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+}
