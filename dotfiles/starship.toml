@@ -2,6 +2,15 @@
 # This is a placeholder for your Starship prompt configuration.
 # See https://starship.rs/config/ for more details.
 
+"$schema" = 'https://starship.rs/config-schema.json'
+add_newline = false
+
+[aws]
+disabled = true
+
+[directory]
+truncate_to_repo = true
+
 # format = "$all"
 
 # add_newline = false
@@ -24,7 +33,7 @@
 # stashed = "📦"
 # modified = "✏️"
 # read_only = "🔒"
-# 
+#
 # [hostname]
 # ssh_only = false
 # format = "[$hostname](bold yellow)@"
