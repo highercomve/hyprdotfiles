@@ -1,25 +1,71 @@
-// SwayNC configuration
-// See https://github.com/ErikReider/SwayNotificationCenter/wiki/Configuration for more details.
 {
-    "position": "top-right",
-    "control-center-width": 500,
-    "control-center-height": 600,
-    "notification-icon-size": 32,
-    "notification-body-truncate": false,
-    "notification-body-max-lines": 5,
-    "notification-actions-horizontal": true,
-    "notification-inline-actions": false,
-    "notification-icon-theme": "Adwaita",
-    "notification-background-color": "#242F41",
-    "notification-text-color": "#D9E0EE",
-    "notification-border-color": "#96CDFB",
-    "notification-progress-bar-color": "#96CDFB",
-    "notification-close-button-text": "Close",
-    "notification-clear-all-button-text": "Clear All",
-    "notification-dnd-button-text": "Do Not Disturb",
-    "notification-display-time": 5000,
-    "notification-gap": 10,
-    "notification-corner-radius": 10,
-    "notification-padding": 10,
-    "notification-margin": 10
+	"positionX": "right",
+	"positionY": "top",
+	"cssPriority": "user",
+
+	"control-center-width": 358,
+	"control-center-height": 820,
+
+	"notification-window-width": 400,
+	"notification-icon-size": 48,
+	"notification-body-image-height": 160,
+	"notification-body-image-width": 200,
+
+	"timeout": 4,
+	"timeout-low": 2,
+	"timeout-critical": 6,
+
+	"fit-to-screen": false,
+	"keyboard-shortcuts": true,
+	"image-visibility": "when-available",
+	"transition-time": 100,
+	"hide-on-clear": false,
+	"hide-on-action": false,
+	"script-fail-notify": true,
+
+	"layer-shell": true,
+	"layer-shell-cover-screen": true,
+
+	"notification-visibility": {
+		"example-name": {
+			"state": "muted",
+			"urgency": "Low",
+			"app-name": "Youtube Music"
+		}
+	},
+	"widgets": [
+		"label",
+		"buttons-grid",
+		"mpris",
+		"backlight",
+		"volume",
+		"dnd",
+		"notifications"
+	],
+	"widget-config": {
+		"dnd": {
+			"text": "Do not disturb"
+		},
+		"label": {
+			"max-lines": 1,
+			"text": " "
+		},
+		"mpris": {
+			"image-size": 96,
+			"blacklist": ["playerctld"]
+		},
+		"backlight": {
+			"label": " 󰃞   ",
+			"step": 5
+		},
+		"volume": {
+			"label": "   ",
+			"show-per-app": true,
+			"show-per-app-label": false,
+			"show-per-app-icon": true,
+			"expand-button-label": "  ",
+			"collapse-button-label": "  ",
+			"empty-list-label": "No players"
+		}
+	}
 }

@@ -1,7 +1,23 @@
-/* SwayNC Style CSS */
-@import 'colors.css';
+@define-color foreground #f3ded2;
+@define-color background #0d0d2d;
+@define-color cursor #f3ded2;
 
-* {
-    font-family: sans-serif;
-    font-size: 14px;
-}
+@define-color color0 #0d0d2d;
+@define-color color1 #B06AA5;
+@define-color color2 #E1779C;
+@define-color color3 #CE72A2;
+@define-color color4 #5091CB;
+@define-color color5 #F390A4;
+@define-color color6 #F6A1A8;
+@define-color color7 #f3ded2;
+@define-color color8 #aa9b93;
+@define-color color9 #B06AA5;
+@define-color color10 #E1779C;
+@define-color color11 #CE72A2;
+@define-color color12 #5091CB;
+@define-color color13 #F390A4;
+@define-color color14 #F6A1A8;
+@define-color color15 #f3ded2;
+
+@import 'notifications.css';
+@import 'central_control.css';
