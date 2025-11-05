@@ -331,7 +331,7 @@
 			"car": " ",
 			"default": ["", "", ""]
 		},
-		"on-click": "pavucontrol"
+		"on-click": "~/.config/hypr/user_scripts/audio.sh"
 	},
 	// Bluetooth
 	"bluetooth": {
