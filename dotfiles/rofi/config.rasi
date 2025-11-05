@@ -26,4 +26,4 @@ configuration {
     window-format:              "{w} · {c} · {t}";
 }
 
-@theme "~/.config/rofi/themes/spotlight-dark.rasi"
+@theme "~/.config/rofi/themes/highercomve-black.rasi"
