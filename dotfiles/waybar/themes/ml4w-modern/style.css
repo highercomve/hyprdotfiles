@@ -222,6 +222,18 @@ window#waybar.empty #window {
 	color: @error;
 }
 
+#cpu,
+#memory,
+#disk,
+#temperature,
+#hyprland-language {
+	padding: 0 10px;
+}
+
+#hyprland-language {
+	margin: 0 10px;
+}
+
 /* -----------------------------------------------------
  * Idle Inhibitor
  * ----------------------------------------------------- */

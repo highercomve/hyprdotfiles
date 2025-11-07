@@ -35,6 +35,7 @@
         "network",
         "battery",
         "cpu",
+        "temperature",
 		"memory",
 		"hyprland/language",
         "group/tools",

@@ -60,7 +60,7 @@
 	},
 	// Tools
 	"custom/tools": {
-		"format": "",
+		"format": "",
 		"tooltip-format": "Tools"
 	},
 	// Cliphist
@@ -211,6 +211,11 @@
 	// Memory
 	"memory": {
 		"format": " {}% ",
+		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
+	},
+	"temperature": {
+		"thermal-zone": 1,
+		"format": " {temperatureC}°C ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	// Harddisc space used
