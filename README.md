@@ -12,9 +12,9 @@ This repository contains a comprehensive set of personal dotfiles for the Hyprla
 
 ## Screenshots
 
-![Screenshot 1](assets/screen1.jpg)
-![Screenshot 2](assets/screen2.jpg)
-![Screenshot 2](assets/screen3.jpg)
+![Screenshot 1](assets/screenshot_07112025_172521.jpg)
+![Screenshot 2](assets/screenshot_07112025_172444.jpg)
+![Screenshot 2](assets/screenshot_07112025_172511.jpg)
 
 ## Dotfile Structure
 
