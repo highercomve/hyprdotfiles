@@ -22,21 +22,26 @@
     ],
     // Modules Center
     "modules-center": [
-        "hyprland/workspaces"
+        "hyprland/workspaces",
+        "custom/empty"
     ],
     // Modules Right
     "modules-right": [
         "custom/updates",
+        // "group/hardware",
         "pulseaudio",
-        //"backlight",
+        "backlight",
         "bluetooth",
         "network",
         "battery",
-        "group/hardware",
+        "clock",
+        "custom/space",
+        "cpu",
+		"memory",
+		"hyprland/language",
         "group/tools",
         "tray",
         "custom/notification",
-        "clock",
-        "custom/exit"
+        "custom/exit",
     ]
 }

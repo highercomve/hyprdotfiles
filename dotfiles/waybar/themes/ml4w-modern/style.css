@@ -23,7 +23,7 @@
 }
 
 window#waybar {
-	background-color: rgba(0, 0, 0, 0.4);
+	background-color: rgba(0, 0, 0, 0);
 	transition-property: background-color;
 	transition-duration: 0.5s;
 }
@@ -82,14 +82,16 @@ window#waybar {
  * ----------------------------------------------------- */
 
 tooltip {
-	border-radius: 10px;
-	background-color: @background;
-	padding: 5px;
+	background-color: #1e1e2e; /* Dark background */
+	padding: 10px 15px;
 	margin: 0px;
+	border: 3px solid @border_color; /* Kept original border style for consistency */
+	border-radius: 5px; /* Rounded corners for consistency */
 }
 
 tooltip label {
-	color: @on_surface;
+	color: #cdd6f4; /* Light text for high contrast */
+	font-weight: bold; /* Make font bolder to appear clearer */
 }
 
 /* -----------------------------------------------------

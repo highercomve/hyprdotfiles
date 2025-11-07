@@ -9,5 +9,6 @@
 @define-color on_surface #000000;
 @define-color border_color #FFFFFF;
 @define-color background #FFFFFF;
+@define-color primary_container #E1779C;
 
 @import "../style.css";

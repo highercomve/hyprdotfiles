@@ -27,17 +27,22 @@
     ],
     // Modules Right
     "modules-right": [
+        "clock",
+        "custom/space",
+        "custom/space",
         "custom/updates",
+        // "group/hardware",
         "pulseaudio",
-        //"backlight",
+        "backlight",
         "bluetooth",
         "network",
         "battery",
-        "group/hardware",
+        "cpu",
+		"memory",
+		"hyprland/language",
         "group/tools",
         "tray",
         "custom/notification",
         "custom/exit",
-        "clock"
     ]
 }

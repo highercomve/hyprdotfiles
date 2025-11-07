@@ -55,9 +55,12 @@
 	"custom/empty": {
 		"format": ""
 	},
+	"custom/space": {
+		"format": "  "
+	},
 	// Tools
 	"custom/tools": {
-		"format": "",
+		"format": "",
 		"tooltip-format": "Tools"
 	},
 	// Cliphist
@@ -158,14 +161,14 @@
 	},
 	// Hyprshade
 	"custom/hyprshade": {
-		"format": "",
+		"format": "󰔎",
 		"tooltip-format": "Toggle Screen Shader",
 		"on-click": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh",
 		"on-click-right": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi"
 	},
 	// Hypridle inhibitor
 	"custom/hypridle": {
-		"format": "",
+		"format": "󰗅",
 		"return-type": "json",
 		"escape": true,
 		"exec-on-event": true,
@@ -179,8 +182,8 @@
 		"capslock": true,
 		"format": "{name} {icon}",
 		"format-icons": {
-			"locked": "",
-			"unlocked": ""
+			"locked": "󰍁",
+			"unlocked": "󰍄"
 		}
 	},
 	// System tray
@@ -202,23 +205,23 @@
 	},
 	// CPU
 	"cpu": {
-		"format": "/ C {usage}% ",
+		"format": " {usage}% ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	// Memory
 	"memory": {
-		"format": "/ M {}% ",
+		"format": " {}% ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	// Harddisc space used
 	"disk": {
 		"interval": 30,
-		"format": "D {percentage_used}% ",
+		"format": " {percentage_used}% ",
 		"path": "/",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	"hyprland/language": {
-		"format": "/ K {short}"
+		"format": " {short}"
 	},
 	// Group Hardware
 	"group/hardware": {
@@ -308,7 +311,7 @@
 		"tooltip": true,
 		"format-icons": {
 			"default": "",
-			"performance": "",
+			"performance": "",
 			"balanced": "",
 			"power-saver": ""
 		}
