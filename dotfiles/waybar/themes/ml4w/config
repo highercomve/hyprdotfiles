@@ -34,8 +34,6 @@
         "bluetooth",
         "network",
         "battery",
-        "clock",
-        "custom/space",
         "cpu",
 		"memory",
 		"hyprland/language",
@@ -43,5 +41,6 @@
         "tray",
         "custom/notification",
         "custom/exit",
+        "clock",
     ]
 }
