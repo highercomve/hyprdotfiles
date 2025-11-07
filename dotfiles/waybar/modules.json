@@ -67,9 +67,9 @@
 	"custom/cliphist": {
 		"format": "",
 		"on-click": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh",
-		"on-click-right": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh d",
-		"on-click-middle": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh w",
-		"tooltip-format": "Left: Open clipboard Manager\nRight: Delete an entry\nMiddle: Clear list"
+		"on-click-right": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh w",
+		"on-click-middle": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh d",
+		"tooltip-format": "Left: Open clipboard Manager\nRight: Clear list\nMiddle: Delete an entry"
 	},
 	// Updates Count
 	"custom/updates": {
