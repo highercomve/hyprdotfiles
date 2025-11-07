@@ -27,9 +27,6 @@
     ],
     // Modules Right
     "modules-right": [
-        "clock",
-        "custom/space",
-        "custom/space",
         "custom/updates",
         // "group/hardware",
         "pulseaudio",
@@ -44,5 +41,6 @@
         "tray",
         "custom/notification",
         "custom/exit",
+        "clock",
     ]
 }

@@ -33,7 +33,7 @@ window {
     enabled:                     true;
     border:                      1px solid;
     border-radius:               20px;
-    border-color:                @foreground;
+    border-color:                #f5bc6f;
     background-color:            @background;
     padding:                     0;
 }

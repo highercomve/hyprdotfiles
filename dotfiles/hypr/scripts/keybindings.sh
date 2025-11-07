@@ -43,7 +43,9 @@ echo "Reading from: ${files_to_read[@]}"
 # Determine mainMod value from config files
 # The last definition of mainMod encountered across all files will be used,
 # mimicking Hyprland\'s configuration loading behavior.
-MAIN_MOD_VALUE="SUPER" # Default value
+MAIN_MOD_VALUE="SUPER"  # Default value
+SECOND_MOD_VALUE="CTRL" # Default value
+THIRD_MOD_VALUE="ALT"   # Default value
 for file in "${files_to_read[@]}"; do
     if [[ -f "$file" ]]; then
         while IFS= read -r line; do
@@ -55,6 +57,24 @@ for file in "${files_to_read[@]}"; do
                 temp_mod_value="${temp_mod_value%"${temp_mod_value##*[![:space:]]}"}"
                 if [[ -n "$temp_mod_value" ]]; then
                     MAIN_MOD_VALUE="$temp_mod_value" # Update, last definition wins
+                fi
+            # Look for lines like "$secondMod = CTRL"
+            elif [[ "$line" =~ ^[[:space:]]*\$secondMod[[:space:]]*=[[:space:]]*(.*) ]]; then
+                temp_mod_value="${BASH_REMATCH[1]}"
+                # Remove comments and trim trailing whitespace
+                temp_mod_value="${temp_mod_value%%#*}"
+                temp_mod_value="${temp_mod_value%"${temp_mod_value##*[![:space:]]}"}"
+                if [[ -n "$temp_mod_value" ]]; then
+                    SECOND_MOD_VALUE="$temp_mod_value" # Update, last definition wins
+                fi
+            # Look for lines like "$thirdMod = ALT"
+            elif [[ "$line" =~ ^[[:space:]]*\$thirdMod[[:space:]]*=[[:space:]]*(.*) ]]; then
+                temp_mod_value="${BASH_REMATCH[1]}"
+                # Remove comments and trim trailing whitespace
+                temp_mod_value="${temp_mod_value%%#*}"
+                temp_mod_value="${temp_mod_value%"${temp_mod_value##*[![:space:]]}"}"
+                if [[ -n "$temp_mod_value" ]]; then
+                    THIRD_MOD_VALUE="$temp_mod_value" # Update, last definition wins
                 fi
             fi
         done <"$file"
@@ -69,7 +89,9 @@ for file in "${files_to_read[@]}"; do
     if [[ -f "$file" ]]; then
 
         # Run awk on the single file to extract its keybindings
-        file_keybinds=$(awk -F'=' -v main_mod_val="$MAIN_MOD_VALUE" '\
+        file_keybinds=$(awk -F'=' -v main_mod_val="$MAIN_MOD_VALUE" \
+            -v second_mod_val="$SECOND_MOD_VALUE" \
+            -v third_mod_val="$THIRD_MOD_VALUE" '\
             /^[[:space:]]*bind(m|e|le)?[[:space:]]*=/ {
                 # Split value and comment
                 val_comment = $2
@@ -84,6 +106,8 @@ for file in "${files_to_read[@]}"; do
                 }
 
                 gsub(/\$mainMod/, main_mod_val, val)
+                gsub(/\$secondMod/, second_mod_val, val)
+                gsub(/\$thirdMod/, third_mod_val, val)
                 gsub(/^[[:space:]]+/, "", val)
 
                 n = split(val, parts, ",")
@@ -120,7 +144,7 @@ for file in "${files_to_read[@]}"; do
                     print keys "\r" command
                 }
             }
-        \' "$file")
+        ' "$file")
 
         # Append keybindings from this file to the main keybinds string
         if [[ -n "$file_keybinds" ]]; then
