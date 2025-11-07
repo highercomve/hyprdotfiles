@@ -193,7 +193,7 @@
 	},
 	// Clock
 	"clock": {
-		"format": "{:%H:%M - %b %e}",
+		"format": "{:%I:%M %p - %b %e}",
 		"on-click": "~/.config/hypr/user_scripts/calendar.sh",
 		"timezone": "",
 		"tooltip": false
