@@ -1,8 +1,3 @@
-/* -----------------------------------------------------
- * Import Pywal colors
- * ----------------------------------------------------- */
-@import "../../../../../.config/waybar/colors.css";
-
 @define-color primary #FFFFFF;
 @define-color on_primary #000000;
 @define-color icon_color #FFFFFF;
@@ -10,5 +5,3 @@
 @define-color border_color #FFFFFF;
 @define-color background #FFFFFF;
 @define-color primary_container #c49627;
-
-@import "../style.css";

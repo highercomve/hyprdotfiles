@@ -26,45 +26,8 @@ sleep 0.5
 # Default theme: /THEMEFOLDER;/VARIATION
 # -----------------------------------------------------
 
-default_theme="/ml4w-modern;/ml4w-modern/white"
-
-# -----------------------------------------------------
-# Remove incompatible themes
-# -----------------------------------------------------
-
-if [ -f ~/.config/hypr/user_settings/waybar-theme.sh ]; then
-    themestyle=$(cat ~/.config/hypr/user_settings/waybar-theme.sh)
-    case "$themestyle" in
-    "/ml4w-modern;/ml4w-modern/light")
-        echo "$default_theme" >~/.config/hypr/user_settings/waybar-theme.sh
-        ;;
-    "/ml4w-modern;/ml4w-modern/dark")
-        echo "$default_theme" >~/.config/hypr/user_settings/waybar-theme.sh
-        ;;
-    "/ml4w;/ml4w/light")
-        echo "$default_theme" >~/.config/hypr/user_settings/waybar-theme.sh
-        ;;
-    "/ml4w;/ml4w/dark")
-        echo "$default_theme" >~/.config/hypr/user_settings/waybar-theme.sh
-        ;;
-    *)
-        echo
-        ;;
-    esac
-    if [ -d $HOME/.config/waybar/themes/ml4w-modern/light ]; then
-        rm -rf $HOME/.config/waybar/themes/ml4w-modern/light
-    fi
-    if [ -d $HOME/.config/waybar/themes/ml4w-modern/dark ]; then
-        rm -rf $HOME/.config/waybar/themes/ml4w-modern/dark
-    fi
-    if [ -d $HOME/.config/waybar/themes/ml4w/light ]; then
-        rm -rf $HOME/.config/waybar/themes/ml4w/light
-    fi
-    if [ -d $HOME/.config/waybar/themes/ml4w/dark ]; then
-        rm -rf $HOME/.config/waybar/themes/ml4w/dark
-    fi
-fi
-
+default_theme="light"
+themestyle=$default_theme
 # -----------------------------------------------------
 # Get current theme information from ~/.config/hypr/user_settings/waybar-theme.sh
 # -----------------------------------------------------
@@ -77,10 +40,7 @@ else
     themestyle=$default_theme
 fi
 
-IFS=';' read -ra arrThemes <<<"$themestyle"
-echo ":: Theme: ${arrThemes[0]}"
-
-if [ ! -f ~/.config/waybar/themes${arrThemes[1]}/style.css ]; then
+if [ ! -f ~/.config/waybar/themes/$themestyle/style.css ]; then
     themestyle=$default_theme
 fi
 
@@ -92,18 +52,18 @@ config_file="config"
 style_file="style.css"
 
 # Standard files can be overwritten with an existing config-custom or style-custom.css
-if [ -f ~/.config/waybar/themes${arrThemes[0]}/config-custom ]; then
+if [ -f ~/.config/waybar/themes/$themestyle/config-custom ]; then
     config_file="config-custom"
 fi
-if [ -f ~/.config/waybar/themes${arrThemes[1]}/style-custom.css ]; then
+if [ -f ~/.config/waybar/themes/$themestyle/style-custom.css ]; then
     style_file="style-custom.css"
 fi
 
 # Check if waybar-disabled file exists
 if [ ! -f $HOME/.config/hypr/user_settings/waybar-disabled ]; then
     HYPRLAND_SIGNATURE=$(hyprctl instances -j | jq -r '.[0].instance')
-    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/themes${arrThemes[0]}/$config_file -s ~/.config/waybar/themes${arrThemes[1]}/$style_file &
-    # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes${arrThemes[0]}/$config_file -s ~/.config/waybar/themes${arrThemes[1]}/$style_file &
+    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/themes/$themestyle/$config_file -s ~/.config/waybar/themes/$themestyle/$style_file &
+    # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes/$themestyle/$config_file -s ~/.config/waybar/themes/$themestyle/$style_file &
 else
     echo ":: Waybar disabled"
 fi
