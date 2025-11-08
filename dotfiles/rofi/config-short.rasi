@@ -28,20 +28,7 @@ configuration {
 
 }
 
-/* ---- Load font ---- */
-@import "~/.config/hypr/user_settings/rofi-font.rasi"
-
-/* ---- Load colors ---- */
-@theme "~/.config/rofi/colors.rasi"
-
-/* ---- Load wallpaper ---- */
-@import "~/.config/.cache/hyprland-dotfiles/current_wallpaper.rasi"
-
-/* ---- Load border width ---- */
-@import "~/.config/hypr/user_settings/rofi-border.rasi"
-
-/* ---- Load border radius ---- */
-@import "~/.config/hypr/user_settings/rofi-border-radius.rasi"
+@theme "~/.config/rofi/themes/highercomve-black.rasi"
 
 /* ---- Map colors ---- */
 * {
@@ -78,7 +65,6 @@ mainbox {
     orientation:                 horizontal;
     children:                    [ "listbox" ];
     background-color:            transparent;
-    background-image:            @current-image;
 }
 
 // Lists //
@@ -109,75 +95,10 @@ listview {
     text-color:                  @on-surface;
 }
 
-// Elements //
-element {
-    enabled:                     true;
-    padding:                     1em;
-    margin:                      0em;
-    cursor:                      pointer;
-    background-color:            transparent;
-    text-color:                  @on-surface;
-    border-radius:               1.1em;
-}
-
-element selected.normal {
-    background-color:            @surface;
-    text-color:                  @on-surface;
-    border-radius:               1.5em;
-}
-
-element normal.normal {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element normal.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element normal.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element selected.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element selected.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.normal {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
 element-icon {
-    size:                        0em;
+    size:                        0;
     cursor:                      inherit;
     background-color:            transparent;
     text-color:                  inherit;
-    content:                     "";
-}
-
-element-text {
-    vertical-align:              0.5;
-    horizontal-align:            0.0;
-    cursor:                      inherit;
-    background-color:            transparent;
-    text-color:                  inherit;
+    border-radius:               0em;
 }

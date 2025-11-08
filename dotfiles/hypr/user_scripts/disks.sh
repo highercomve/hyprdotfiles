@@ -45,7 +45,7 @@ selected_disk_info=$(lsblk -o NAME,SIZE,TYPE,VENDOR,MODEL -d -e 7,11 --noheading
             # Print the final formatted string: VENDOR MODEL (SIZE) - /dev/NAME
             print display_name " (" size ") - /dev/" name;
         }
-    ' | rofi -dmenu -p "Select a disk to copy /dev path:")
+    ' | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a disk to copy /dev path:")
 
 # Check if a disk was selected by the user (i.e., rofi was not closed without selection)
 if [ -n "$selected_disk_info" ]; then

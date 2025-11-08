@@ -48,7 +48,7 @@ take_instant_area() {
     local pid_picker region
 
     # freeze screen for region selection
-    hyprpicker -r -z & 
+    hyprpicker -r -z &
     pid_picker=$!
     trap 'kill "$pid_picker" 2>/dev/null' EXIT
     sleep 0.1
@@ -61,8 +61,11 @@ take_instant_area() {
     kill "$pid_picker" 2>/dev/null
     trap - EXIT
 
-    # capture and notify
-    grim -g "$region" "$NAME" && notify-send -t 1000 "Screenshot saved to $screenshot_folder/$NAME"
+    # capture, copy to clipboard, and notify
+    if grim -g "$region" "$NAME"; then
+        cat "$HOME/$NAME" | wl-copy
+        notify-send -t 1000 "Screenshot saved to $screenshot_folder/$NAME (and copied to clipboard)"
+    fi
     [[ -f "$HOME/$NAME" && -d "$screenshot_folder" && -w "$screenshot_folder" ]] && mv "$HOME/$NAME" "$screenshot_folder/"
 }
 
@@ -158,16 +161,13 @@ type_screenshot_exit() {
 
 # Confirm and execute
 type_screenshot_run() {
-    selected_type_screenshot=\"$(type_screenshot_exit)\"
+    selected_type_screenshot="$(type_screenshot_exit)"
     if [[ "$selected_type_screenshot" == "$option_capture_1" ]]; then
         option_type_screenshot=screen
-        "${1}"
     elif [[ "$selected_type_screenshot" == "$option_capture_2" ]]; then
         option_type_screenshot=output
-        "${1}"
     elif [[ "$selected_type_screenshot" == "$option_capture_3" ]]; then
         option_type_screenshot=area
-        "${1}"
     else
         exit
     fi
@@ -188,7 +188,7 @@ copy_save_editor_exit() {
 
 # Confirm and execute
 copy_save_editor_run() {
-    selected_chosen=\"$(copy_save_editor_exit)\"
+    selected_chosen="$(copy_save_editor_exit)"
     if [[ "$selected_chosen" == "$copy" ]]; then
         option_chosen=copy
         "${1}"
@@ -257,12 +257,12 @@ run_cmd() {
 }
 
 # Actions
-chosen=\"$(run_rofi)\" 
-case ${chosen} in
+chosen="$(run_rofi)"
+case "$chosen" in
 "$option_1")
     run_cmd --opt1
-    ;; 
+    ;;
 "$option_2")
     run_cmd --opt2
-    ;; 
+    ;;
 esac

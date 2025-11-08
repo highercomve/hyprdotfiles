@@ -76,7 +76,7 @@ if [ -z "$ttyusb_list" ]; then
 fi
 
 # Use rofi to let the user select a ttyUSB device
-selected_ttyusb_info=$(echo -e "$ttyusb_list" | rofi -dmenu -p "Select a ttyUSB device to copy /dev path:")
+selected_ttyusb_info=$(echo -e "$ttyusb_list" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a ttyUSB device to copy /dev path:")
 
 # Check if a device was selected by the user (i.e., rofi was not closed without selection)
 if [ -n "$selected_ttyusb_info" ]; then

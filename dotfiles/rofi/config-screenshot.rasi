@@ -28,20 +28,8 @@ configuration {
 
 }
 
-/* ---- Load font ---- */
-@import "~/.config/hypr/user_settings/rofi-font.rasi"
+@theme "~/.config/rofi/themes/highercomve-black.rasi"
 
-/* ---- Load colors ---- */
-@theme "~/.config/rofi/colors.rasi"
-
-/* ---- Load wallpaper ---- */
-@import "~/.config/.cache/hyprland-dotfiles/current_wallpaper.rasi"
-
-/* ---- Load border width ---- */
-@import "~/.config/hypr/user_settings/rofi-border.rasi"
-
-/* ---- Load border radius ---- */
-@import "~/.config/hypr/user_settings/rofi-border-radius.rasi"
 
 /* ---- Map colors ---- */
 * {
@@ -89,92 +77,8 @@ listbox {
     background-color:            @background;
 }
 
-listview {
-    padding:                     1em;
-    spacing:                     0em;
-    margin:                      0em;
-    enabled:                     true;
-    columns:                     1;
-    lines:                       8;
-    cycle:                       false;
-    dynamic:                     true;
-    scrollbar:                   false;
-    layout:                      vertical;
-    reverse:                     false;
-    fixed-height:                true;
-    fixed-columns:               true;
-    cursor:                      "default";
-    background-color:            transparent;
-    text-color:                  @on-surface;
-}
-
-// Elements //
-element {
-    enabled:                     true;
-    padding:                     0.8em;
-    margin:                      0.2em;
-    cursor:                      pointer;
-    background-color:            transparent;
-    text-color:                  @on-surface;
-    border-radius:               1.1em;
-}
-
-element selected.normal {
-    background-color:            @surface;
-    text-color:                  @on-surface;
-    border-radius:               1.5em;
-}
-
-element normal.normal {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element normal.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element normal.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element selected.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element selected.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.normal {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.urgent {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
-element alternate.active {
-    background-color:            inherit;
-    text-color:                  @on-surface;
-}
-
 element-icon {
-    size:                        7.2em;
-    cursor:                      inherit;
-    background-color:            transparent;
-    text-color:                  inherit;
-}
-
-element-text {
-    vertical-align:              0.5;
-    horizontal-align:            0.0;
+    size:                        0;
     cursor:                      inherit;
     background-color:            transparent;
     text-color:                  inherit;
