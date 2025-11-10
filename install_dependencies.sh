@@ -61,6 +61,7 @@ if [ -f /etc/arch-release ]; then
         wl-clipboard \
         network-manager-applet \
         procps-ng \
+        pinta \
         wireplumber \
         pipewire \
         pipewire-pulse \

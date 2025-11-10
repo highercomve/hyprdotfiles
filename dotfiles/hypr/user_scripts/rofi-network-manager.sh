@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Rofi Network Manager
+ROFI_CONFIG="${HOME}/.config/rofi/config-nm.rasi"
 
 # Main menu function
 main_menu() {
@@ -38,7 +39,7 @@ show_details() {
     if [ -z "$device" ]; then
         details_output=$(nmcli connection show "$connection_name" | grep -E "connection.id|ipv4.method|ipv6.method")
         # Add "Back" option at the top for inactive connection details
-        echo -e " Back\n\nConnection is not active.\n$details_output" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Details for $connection_name" -markup-rows -l 5
+        echo -e " Back\n\nConnection is not active.\n$details_output" | rofi -config "$ROFI_CONFIG" -dmenu -p "Details for $connection_name" -markup-rows -l 5
         return
     fi
 
@@ -113,7 +114,7 @@ show_details() {
     [ -n "$dns6_2" ] && formatted_details+="DNS 2 (IPv6): $dns6_2\n"
 
     # Display details. Rofi -dmenu closes upon selection or escape.
-    echo -e "$formatted_details" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Details for $connection_name" -markup-rows -l 25
+    echo -e "$formatted_details" | rofi -config "$ROFI_CONFIG" -dmenu -p "Details for $connection_name" -markup-rows -l 25
     return
 }
 
@@ -129,7 +130,7 @@ device_menu() {
             options+=" Activate"
         fi
 
-        choice=$(echo -e "$options" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "$device" -i -l 3)
+        choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$device" -i -l 3)
 
         case "$choice" in
         " Activate")
@@ -159,7 +160,7 @@ scan_menu() {
     (
         echo "Scanning..."
         tail -f /dev/null
-    ) | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Wi-Fi Scan" &
+    ) | rofi -config "$ROFI_CONFIG" -dmenu -p "Wi-Fi Scan" &
     rofi_pid=$!
 
     # Get a list of available Wi-Fi networks and format them
@@ -178,13 +179,13 @@ scan_menu() {
     kill $rofi_pid
     wait $rofi_pid 2>/dev/null
 
-    choice=$(echo -e "$options" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Wi-Fi Connections" -i -l 10 -no-sort)
+    choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "Wi-Fi Connections" -i -l 10 -no-sort)
 
     if [ "$choice" = " Rescan" ]; then
         (
             echo "Scanning..."
             tail -f /dev/null
-        ) | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Wi-Fi Scan" &
+        ) | rofi -config "$ROFI_CONFIG" -dmenu -p "Wi-Fi Scan" &
         rofi_pid=$!
         nmcli dev wifi rescan
         kill $rofi_pid
@@ -201,7 +202,7 @@ scan_menu() {
         else
             # If the network is secured, ask for a password
             if [[ "$choice" == ""* ]]; then
-                password=$(rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Password for $ssid" -password)
+                password=$(rofi -config "$ROFI_CONFIG" -dmenu -p "Password for $ssid" -password)
                 if [ -n "$password" ]; then
                     nmcli dev wifi connect "$ssid" password "$password"
                 fi
@@ -234,7 +235,7 @@ connections_menu() {
         fi
     done)
 
-    choice=$(echo -e "$options" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Connections" -i -l 10)
+    choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "Connections" -i -l 10)
 
     if [[ "$choice" == " Back" ]]; then
         return
@@ -259,7 +260,7 @@ connection_menu() {
         options+=" Forget\n"
         options+=" Details"
 
-        choice=$(echo -e "$options" | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "$connection_name" -i -l 4)
+        choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$connection_name" -i -l 4)
 
         case "$choice" in
         " Activate")
@@ -287,7 +288,7 @@ connection_menu() {
 
 # Main loop
 while true; do
-    choice=$(main_menu | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Network Manager" -markup-rows -i -l 10)
+    choice=$(main_menu | rofi -config "$ROFI_CONFIG" -dmenu -p "Network Manager" -markup-rows -i -l 10)
 
     if [ "$choice" = " Exit" ]; then
         exit 0
