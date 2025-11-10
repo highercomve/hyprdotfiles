@@ -1,0 +1,60 @@
+/*
+#  ____        __ _
+# |  _ \ ___  / _(_)
+# | |_) / _ \| |_| |
+# |  _ < (_) |  _| |
+# |_| \_\___/|_| |_|
+#
+# by Stephan Raabe (2023)
+# -----------------------------------------------------
+*/
+
+/* ---- Configuration ---- */
+configuration {
+    modi:                       "drun,filebrowser,window,run";
+    font:                       "Fira Sans 11";
+    show-icons:                 true;
+    icon-theme:                 "Tela-circle-dracula";
+    display-drun:                " ";
+    display-run:                 " ";
+    display-filebrowser:         " ";
+    display-window:              " ";
+	drun-display-format:        "{name}";
+    hover-select:               false;
+    scroll-method:              1;
+    me-select-entry:            "";
+    me-accept-entry:            "MousePrimary";
+    window-format:              "{w} · {c} · {t}";
+
+}
+
+@theme "~/.config/rofi/themes/highercomve-black.rasi"
+
+// Main //
+window {
+    width:                        50em;
+    x-offset:                     0em;
+    y-offset:                     2em;
+    spacing:                      0em;
+    padding:                      0em;
+    margin:                       0em;
+    color:                        #FFFFFF;
+    border:                       @border-width;
+    border-color:                 @primary;
+    cursor:                       "default";
+    transparency:                 "real";
+    location:                     north;
+    anchor:                       north;
+    fullscreen:                   false;
+    enabled:                      true;
+    border-radius:                @border-radius;
+    background-color:             @background;
+}
+
+element-icon {
+    size:                        0;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+    border-radius:               0em;
+}

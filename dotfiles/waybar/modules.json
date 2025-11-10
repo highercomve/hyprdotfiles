@@ -290,7 +290,7 @@
 		"tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
 		"tooltip-format-disconnected": "Disconnected",
 		"max-length": 50,
-		"on-click": "~/.config/hypr/user_settings/networkmanager.sh",
+		"on-click": "~/.config/hypr/user_scripts/rofi-network-manager.sh",
 		"on-click-right": "~/.config/hypr/user_scripts/nm-applet.sh toggle"
 	},
 	// Battery
