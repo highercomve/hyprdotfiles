@@ -120,17 +120,29 @@ show_details() {
 
 device_menu() {
     device="$1"
+    # Get device type
+    device_type=$(nmcli -t -f GENERAL.TYPE device show "$device" | awk -F':' '{print $2}')
+
     while true; do
         state=$(nmcli -t -f GENERAL.STATE device show "$device" | awk -F':' '{print $2}')
         options=" Back\n"
         if [ "$state" = "100 (connected)" ] || [ "$state" = "80 (connecting)" ]; then
             options+=" Deactivate\n"
             options+=" Details"
+            if [ "$device_type" = "wifi" ]; then
+                options+="\n Forget" # Add forget option for wifi devices
+            fi
         else
             options+=" Activate"
         fi
 
-        choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$device" -i -l 3)
+        # Adjust the number of lines for Rofi based on whether "Forget" is an option
+        num_rofi_lines=3 # Default for "Back", "(De)Activate", "Details"
+        if [ "$device_type" = "wifi" ] && ([ "$state" = "100 (connected)" ] || [ "$state" = "80 (connecting)" ]); then
+            num_rofi_lines=4 # Add one line for "Forget"
+        fi
+
+        choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$device" -i -l "$num_rofi_lines")
 
         case "$choice" in
         " Activate")
@@ -142,6 +154,15 @@ device_menu() {
         " Details")
             connection_name=$(nmcli -t -f NAME,DEVICE connection show --active | grep "^.*:$device$" | cut -d':' -f1)
             show_details "$connection_name"
+            ;;
+        " Forget")
+            # This option is only available for active Wi-Fi devices as per the condition above.
+            # Get the name of the currently active connection on this device.
+            connection_name=$(nmcli -t -f NAME,DEVICE connection show --active | grep "^.*:$device$" | cut -d':' -f1)
+            if [ -n "$connection_name" ]; then
+                nmcli connection delete "$connection_name"
+                return # Exit the device menu after forgetting the connection
+            fi
             ;;
         " Back")
             return
@@ -200,15 +221,20 @@ scan_menu() {
         if nmcli -t -f NAME con show | grep -q "^$ssid$"; then
             connection_menu "$ssid"
         else
-            # If the network is secured, ask for a password
-            if [[ "$choice" == ""* ]]; then
-                password=$(rofi -config "$ROFI_CONFIG" -dmenu -p "Password for $ssid" -password)
-                if [ -n "$password" ]; then
-                    nmcli dev wifi connect "$ssid" password "$password"
-                fi
-            else
-                # If the network is not secured, connect directly
-                nmcli dev wifi connect "$ssid"
+            # Flag to track if nm-applet was started by this script
+            NM_APPLET_WAS_STARTED="false"
+            # Check if nm-applet is already running
+            if ! pgrep -x "nm-applet" >/dev/null; then
+                "${HOME}"/.config/hypr/user_scripts/nm-applet.sh
+                # Give nm-applet a moment to initialize and register for prompts
+                sleep 0.5
+                NM_APPLET_WAS_STARTED="true"
+            fi
+
+            nmcli dev wifi connect "$ssid"
+
+            if [ "$NM_APPLET_WAS_STARTED" = "true" ]; then
+                "${HOME}"/.config/hypr/user_scripts/nm-applet.sh stop
             fi
         fi
     fi

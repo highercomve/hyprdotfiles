@@ -5,6 +5,11 @@ This repository contains a comprehensive set of personal dotfiles for the Hyprla
 ## Features
 
 - **Modular Configuration**: The Hyprland setup is broken down into modular files for easy management of settings, keybindings, and more.
+- **Rofi-based System Management**:
+  - **Bluetooth Manager**: A full-featured Rofi-based UI (`rofi-bluetooth.sh`) to scan, pair, connect, and manage Bluetooth devices.
+  - **Network Manager**: A powerful Rofi-based UI (`rofi-network-manager.sh`) for managing network connections, scanning Wi-Fi, and viewing connection details.
+    [![How the Rofi Network Manager works](https://img.youtube.com/vi/xUOHHbTmlFE/0.jpg)](https://youtu.be/xUOHHbTmlFE)
+- **Screen Recording**: A simple script (`record.sh`) to start, stop, and toggle screen recording with `wf-recorder`, including status integration for Waybar.
 - **Extensive Scripting**: A wide range of scripts are included for automation, system management, and user convenience.
 - **Dynamic Theming**: Utilizes `matugen` for dynamic theme generation from wallpapers.
 - **Complete Desktop Environment**: Includes configurations for a status bar (Waybar), application launcher (rofi), notification daemon (SwayNC), and more.

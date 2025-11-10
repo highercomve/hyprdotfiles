@@ -176,6 +176,32 @@
 		"exec": "~/.config/hypr/scripts/hypridle.sh status",
 		"on-click": "~/.config/hypr/scripts/hypridle.sh toggle"
 	},
+	// Record
+	"custom/record": {
+		"format": "{icon}",
+		"format-icons": {
+			"recording": "",
+			"default": ""
+		},
+		"return-type": "json",
+		"interval": 1,
+		"exec": "~/.config/hypr/user_scripts/record.sh status",
+		"on-click": "~/.config/hypr/user_scripts/record.sh toggle",
+		"tooltip": true
+	},
+	// Recording Indicator
+	"custom/recording-indicator": {
+		"format": "{icon}",
+		"format-icons": {
+			"recording": "",
+			"default": ""
+		},
+		"return-type": "json",
+		"interval": 1,
+		"exec": "~/.config/hypr/user_scripts/record.sh status",
+		"on-click": "~/.config/hypr/user_scripts/record.sh stop",
+		"tooltip-format": "Click to stop recording"
+	},
 	// Keyboard State
 	"keyboard-state": {
 		"numlock": true,
@@ -210,11 +236,11 @@
 	},
 	// Memory
 	"memory": {
-		"format": " {}% ",
+		"format": " {used}G  ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	"temperature": {
-		"thermal-zone": 1,
+		"thermal-zone": 0,
 		"format": " {temperatureC}°C ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
@@ -226,7 +252,7 @@
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	"hyprland/language": {
-		"format": " {short}"
+		"format": "  {short} "
 	},
 	// Group Hardware
 	"group/hardware": {
@@ -257,7 +283,8 @@
 			"custom/cliphist",
 			"custom/hypridle",
 			"custom/hyprshade",
-			"power-profiles-daemon"
+			"power-profiles-daemon",
+			"custom/record"
 		]
 	},
 	// Group Links
@@ -377,5 +404,32 @@
 			""
 		],
 		"scroll-step": 1
+	},
+	// External Monitor Backlight
+	"custom/backlight": {
+		"format": "{icon} {percent}%",
+		"format-icons": [
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			"",
+			""
+		],
+		"exec": "~/.config/hypr/user_scripts/external_backlight.sh get",
+		"on-scroll-up": "~/.config/hypr/user_scripts/external_backlight.sh up",
+		"on-scroll-down": "~/.config/hypr/user_scripts/external_backlight.sh down",
+		"interval": 2,
+		"return-type": "json",
+		"tooltip-format": "Brightness: {percent}%"
 	}
 }

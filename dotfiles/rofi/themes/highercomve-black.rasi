@@ -58,6 +58,12 @@ listbox {
     children:                    [ "message", "listview" ];
 }
 
+message {
+    padding: 20px 20px 0;
+    background-color: transparent;
+    horizontal-align: 0.5;
+}
+
 // DEFAULT TOP BAR
 inputbar {
     enabled:                     true;

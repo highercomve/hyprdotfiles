@@ -207,6 +207,28 @@ window#waybar.empty #window {
 	color: @error;
 }
 
+#custom-record {
+	margin-right: 16px;
+	font-size: 20px;
+	font-weight: bold;
+	color: @icon_color;
+}
+
+#custom-record.recording {
+	color: @error;
+}
+
+#custom-recording-indicator {
+	margin-right: 16px;
+	font-size: 20px;
+	font-weight: bold;
+	color: @icon_color;
+}
+
+#custom-recording-indicator.recording {
+	color: @error;
+}
+
 #cpu,
 #memory,
 #disk,
@@ -352,6 +374,16 @@ window#waybar.empty #window {
  * ----------------------------------------------------- */
 
 #backlight {
+	background-color: @background;
+	font-size: 16px;
+	color: @on_surface;
+	border-radius: 5px 5px 5px 5px;
+	padding: 2px 10px 0px 10px;
+	margin: 3px 15px 3px 0px;
+	border: 3px solid @border_color;
+}
+
+#custom-backlight {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
