@@ -6,7 +6,8 @@
 main_menu() {
     printf " Exit\n"
     echo "  Wi-Fi connections"
-    echo "  Network devices"
+    echo "  All Connections"
+    echo "<b>Active Connections</b>" # Added header for active connections
     nmcli -t -f DEVICE,TYPE,STATE device | while read -r line; do
         device=$(echo "$line" | cut -d':' -f1)
         type=$(echo "$line" | cut -d':' -f2)
@@ -286,14 +287,14 @@ connection_menu() {
 
 # Main loop
 while true; do
-    choice=$(main_menu | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Network Manager" -i -l 10)
+    choice=$(main_menu | rofi -config ~/.config/rofi/config-nm.rasi -dmenu -p "Network Manager" -markup-rows -i -l 10)
 
     if [ "$choice" = " Exit" ]; then
         exit 0
     elif [[ "$choice" == *"Wi-Fi connections"* ]]; then
         # Scan for Wi-Fi networks
         scan_menu
-    elif [[ "$choice" == *"Network devices"* ]]; then
+    elif [[ "$choice" == *"All Connections"* ]]; then
         # Show connections
         connections_menu
     elif [ -n "$choice" ]; then
