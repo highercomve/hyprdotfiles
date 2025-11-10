@@ -1,0 +1,136 @@
+#!/bin/bash
+
+# --- Configuration ---
+# Device is passed as the first argument, format as the second.
+# A -f flag can be passed as the third argument to skip confirmation.
+# e.g., ./format_disk.sh /dev/sdc fat32 -f
+DEVICE="$1"
+FILESYSTEM="$2"
+FORCE_FLAG="$3"
+
+FORCE=false
+# Check if all arguments for non-interactive mode are present
+if [ -n "$DEVICE" ] && [ -n "$FILESYSTEM" ] && [ "$FORCE_FLAG" = "-f" ]; then
+    FORCE=true
+fi
+
+# Check for required argument. If not provided, list devices and ask.
+if [ -z "$DEVICE" ]; then
+    echo "No device specified. Listing available block devices:"
+    # Use lsblk with -d to only show main devices, not partitions. -p shows full path.
+    lsblk -d -p -o NAME,SIZE,TYPE,MODEL,VENDOR,TRAN
+    echo "------------------------------------"
+    read -r -p "Please enter the device path to format (e.g., /dev/sdc): " DEVICE
+fi
+
+# After potential user input, check if a device is now set.
+if [ -z "$DEVICE" ]; then
+    echo "Error: No device selected. Aborting." >&2
+    echo "Usage: ./format_disk.sh /dev/sdX [filesystem] [-f]" >&2
+    exit 1
+fi
+
+# Check if the device exists
+if [ ! -b "$DEVICE" ]; then
+    echo "Error: Device $DEVICE not found or is not a block device." >&2
+    exit 1
+fi
+
+# Ask for the desired filesystem if not provided as an argument
+if [ -z "$FILESYSTEM" ]; then
+    read -r -p "Enter desired filesystem (e.g., fat32, exfat, ntfs, ext4) [fat32]: " FILESYSTEM
+    : "${FILESYSTEM:=fat32}"
+fi
+FILESYSTEM=$(echo "$FILESYSTEM" | tr '[:upper:]' '[:lower:]')
+
+# Validate the filesystem choice
+case "$FILESYSTEM" in
+fat32 | exfat | ntfs | ext4) ;; # This is a supported filesystem, continue.
+*)
+    echo "Error: Unsupported filesystem '$FILESYSTEM'." >&2
+    echo "Please choose one of: fat32, exfat, ntfs, ext4" >&2
+    exit 1
+    ;;
+esac
+
+# Safety confirmation, unless force flag is used
+echo "--- Verifying Device: $DEVICE ---"
+# Use lsblk with -d to only show the main device, not partitions. -p shows full path.
+lsblk -d -p -o NAME,SIZE,TYPE,MODEL,VENDOR,TRAN "$DEVICE"
+echo "------------------------------------"
+
+if [ "$FORCE" = false ]; then
+    echo "⚠️ WARNING: This will permanently erase ALL data on the device shown above ($DEVICE) and format it to ${FILESYSTEM^^}."
+    read -r -p "Are you absolutely sure you want to format this device? Type 'YES' to continue: " CONFIRMATION
+
+    if [ "$CONFIRMATION" != "YES" ]; then
+        echo "Operation cancelled."
+        exit 0
+    fi
+else
+    echo "Force flag (-f) detected. Proceeding with formatting $DEVICE to ${FILESYSTEM^^} without confirmation."
+fi
+
+# --- Execution ---
+
+echo "1. Unmounting all partitions on $DEVICE..."
+# Dynamically find partitions for the given device and unmount them quietly
+DEVICE_NAME=$(basename "$DEVICE")
+for partition in $(lsblk -lno NAME "$DEVICE" | grep -E "${DEVICE_NAME}[0-9]+"); do
+    umount "/dev/$partition" 2>/dev/null
+done
+echo "Unmount attempts complete."
+
+echo "2. Creating new MS-DOS partition label on $DEVICE..."
+# Create new MS-DOS label (destroys old partition structure)
+parted -s "$DEVICE" mklabel msdos
+
+echo "3. Creating a single primary partition (1MiB to 100%)..."
+# The 'fs-type' for parted is a hint that sets the MBR partition ID.
+# Parted doesn't recognize 'exfat', so we map it to 'ntfs' which uses the same ID (0x07).
+PARTED_FS_TYPE="$FILESYSTEM"
+if [ "$FILESYSTEM" = "exfat" ]; then
+    PARTED_FS_TYPE="ntfs"
+fi
+parted -s -a optimal "$DEVICE" mkpart primary "$PARTED_FS_TYPE" 1MiB 100%
+
+echo "4. Informing the kernel of the new partition layout..."
+# Refresh kernel's view of the partitions
+partprobe "$DEVICE"
+
+# The new partition will typically be $DEVICE1 (e.g., /dev/sdc1)
+PARTITION="${DEVICE}1"
+
+# Give the system a moment to recognize the new partition
+sleep 1
+
+# Check if the partition was created before formatting
+if [ ! -b "$PARTITION" ]; then
+    echo "Error: Partition $PARTITION was not created. Aborting format." >&2
+    exit 1
+fi
+
+echo "5. Formatting partition $PARTITION to ${FILESYSTEM^^} (No Label)..."
+# Create the filesystem based on the user's choice
+case "$FILESYSTEM" in
+fat32)
+    mkfs.vfat -F 32 -n "" "$PARTITION"
+    ;;
+exfat)
+    mkfs.exfat -n "" "$PARTITION"
+    ;;
+ntfs)
+    mkfs.ntfs -Q -L "" "$PARTITION"
+    ;;
+ext4)
+    mkfs.ext4 -F -L "" "$PARTITION"
+    ;;
+esac
+
+# Check if the format command succeeded.
+if [ $? -ne 0 ]; then
+    echo "Error: Formatting failed. Make sure the required mkfs utility (e.g., dosfstools, exfatprogs, ntfs-3g) is installed." >&2
+    exit 1
+fi
+
+echo "✅ Success! Device $DEVICE is now formatted as ${FILESYSTEM^^}."

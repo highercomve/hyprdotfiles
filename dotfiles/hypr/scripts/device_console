@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+
+device=$1
+speed=${2-115200}
+picocom "$device" --b "$speed" -l
