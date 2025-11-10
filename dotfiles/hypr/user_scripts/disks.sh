@@ -45,26 +45,55 @@ selected_disk_info=$(lsblk -o NAME,SIZE,TYPE,VENDOR,MODEL -d -e 7,11 --noheading
             # Print the final formatted string: VENDOR MODEL (SIZE) - /dev/NAME
             print display_name " (" size ") - /dev/" name;
         }
-    ' | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a disk to copy /dev path:")
+    ' | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a disk:")
 
 # Check if a disk was selected by the user (i.e., rofi was not closed without selection)
 if [ -n "$selected_disk_info" ]; then
     # Extract the /dev/NAME part, which is consistently the last field in our formatted string.
     dev_path=$(echo "$selected_disk_info" | awk '{print $NF}')
 
-    # Copy the /dev path to the Wayland clipboard using wl-copy.
-    if wl-copy "$dev_path"; then
-        # Optional: Send a desktop notification for user feedback.
-        if command -v notify-send &>/dev/null; then
-            notify-send "Disk /dev path copied" "Copied: $dev_path"
+    # Ask for action
+    actions="Copy path\nFormat disk"
+    selected_action=$(echo -e "$actions" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Action for $dev_path")
+
+    case "$selected_action" in
+    "Copy path")
+        # Copy the /dev path to the Wayland clipboard using wl-copy.
+        if wl-copy "$dev_path"; then
+            # Optional: Send a desktop notification for user feedback.
+            if command -v notify-send &>/dev/null; then
+                notify-send "Disk /dev path copied" "Copied: $dev_path"
+            fi
+        else
+            echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
+            # Optional: Send an error notification.
+            if command -v notify-send &>/dev/null; then
+                notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
+            fi
         fi
-    else
-        echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
-        # Optional: Send an error notification.
-        if command -v notify-send &>/dev/null; then
-            notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
+        ;;
+    "Format disk")
+        # Get the path to the format script. Assuming it's in the user's config directory.
+        format_script_path="$HOME/.config/hypr/scripts/format_disk"
+
+        if [ ! -f "$format_script_path" ]; then
+            echo "Error: Format script not found at $format_script_path"
+            if command -v notify-send &>/dev/null; then
+                notify-send -u critical "Script Error" "Format script not found."
+            fi
+            exit 1
         fi
-    fi
+
+        # Get the terminal command
+        terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
+
+        # Execute the format script in a new terminal
+        $terminal_cmd --title "format-disk-applet" --class dotfiles-floating -e sudo "$format_script_path" "$dev_path"
+        ;;
+    *)
+        echo "No action selected. Operation cancelled."
+        ;;
+    esac
 else
     # User closed rofi or did not make a selection.
     echo "No disk selected. Operation cancelled."

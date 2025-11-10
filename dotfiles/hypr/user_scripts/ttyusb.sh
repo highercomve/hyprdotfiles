@@ -76,26 +76,55 @@ if [ -z "$ttyusb_list" ]; then
 fi
 
 # Use rofi to let the user select a ttyUSB device
-selected_ttyusb_info=$(echo -e "$ttyusb_list" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a ttyUSB device to copy /dev path:")
+selected_ttyusb_info=$(echo -e "$ttyusb_list" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select a ttyUSB device:")
 
 # Check if a device was selected by the user (i.e., rofi was not closed without selection)
 if [ -n "$selected_ttyusb_info" ]; then
-    # Extract the /dev/ttyUSBX part, which is consistently the last field in our formatted string.
-    dev_path=$(echo "$selected_ttyusb_info" | awk '{print $NF}')
+    # Extract the /dev/path part, which is the first field in our formatted string.
+    dev_path=$(echo "$selected_ttyusb_info" | awk '{print $1}')
 
-    # Copy the /dev path to the Wayland clipboard using wl-copy.
-    if wl-copy "$dev_path"; then
-        # Optional: Send a desktop notification for user feedback.
-        if command -v notify-send &>/dev/null; then
-            notify-send "ttyUSB /dev path copied" "Copied: $dev_path"
+    # Ask for action
+    actions="Copy path\nOpen console"
+    selected_action=$(echo -e "$actions" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Action for $dev_path")
+
+    case "$selected_action" in
+    "Copy path")
+        # Copy the /dev path to the Wayland clipboard using wl-copy.
+        if wl-copy "$dev_path"; then
+            # Optional: Send a desktop notification for user feedback.
+            if command -v notify-send &>/dev/null; then
+                notify-send "ttyUSB /dev path copied" "Copied: $dev_path"
+            fi
+        else
+            echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
+            # Optional: Send an error notification.
+            if command -v notify-send &>/dev/null; then
+                notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
+            fi
         fi
-    else
-        echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
-        # Optional: Send an error notification.
-        if command -v notify-send &>/dev/null; then
-            notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
+        ;;
+    "Open console")
+        # Get the path to the device console script.
+        device_console_script_path="$HOME/.config/hypr/scripts/device_console"
+
+        if [ ! -f "$device_console_script_path" ]; then
+            echo "Error: Device console script not found at $device_console_script_path"
+            if command -v notify-send &>/dev/null; then
+                notify-send -u critical "Script Error" "Device console script not found."
+            fi
+            exit 1
         fi
-    fi
+
+        # Get the terminal command
+        terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
+
+        # Execute the device console script in a new terminal
+        $terminal_cmd --title "device-console-applet" -e sudo "$device_console_script_path" "$dev_path"
+        ;;
+    *)
+        echo "No action selected. Operation cancelled."
+        ;;
+    esac
 else
     # User closed rofi or did not make a selection.
     echo "No ttyUSB device selected. Operation cancelled."
