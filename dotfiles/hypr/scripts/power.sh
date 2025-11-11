@@ -13,13 +13,13 @@ terminate_clients() {
     # Send SIGTERM (kill -15) to each client PID and wait for termination
     for pid in $client_pids; do
         echo ":: Sending SIGTERM to PID $pid"
-        kill -15 "$pid"
+        kill -15 $pid
     done
 
     start_time=$(date +%s)
     for pid in $client_pids; do
         # Wait for the process to terminate
-        while kill -0 "$pid" 2>/dev/null; do
+        while kill -0 $pid 2>/dev/null; do
             current_time=$(date +%s)
             elapsed_time=$((current_time - start_time))
 
@@ -34,7 +34,7 @@ terminate_clients() {
 
         echo ":: PID $pid has terminated."
     done
-    bash "$HOME"/.config/hypr/user_scripts/listeners.sh --stopall
+    bash $home/.config/hypr/scripts/listeners.sh --stopall
 }
 
 if [[ "$1" == "exit" ]]; then

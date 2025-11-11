@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# shellcheck source=user_scripts/library.sh
+# shellcheck source=scripts/library.sh
 # shellcheck source=effects/wallpaper/*
 #  _      __     ____
 # | | /| / /__ _/ / /__  ___ ____  ___ ____
@@ -8,8 +8,8 @@
 #                /_/       /_/
 
 # Source library.sh
-# shellcheck source=user_scripts/library.sh
-source "$HOME"/.config/hypr/user_scripts/library.sh
+# shellcheck source=scripts/library.sh
+source "$HOME"/.config/hypr/scripts/library.sh
 
 # -----------------------------------------------------
 # Check to use wallpaper cache

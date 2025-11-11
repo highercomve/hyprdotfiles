@@ -1,1 +1,1 @@
-~/.config/hypr/user_scripts/rofi-bluetooth.sh
+~/.config/hypr/scripts/rofi-bluetooth.sh

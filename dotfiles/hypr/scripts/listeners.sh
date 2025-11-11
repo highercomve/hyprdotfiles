@@ -7,7 +7,7 @@
 # Add more listeners here as needed, following the format:
 # LISTENERS["short-name"]="full/path/to/script.sh"
 declare -A LISTENERS
-LISTENERS["gtk-theme-switcher"]="$HOME/.config/hypr/user_scripts/listeners/gtk-theme-switcher.sh"
+LISTENERS["gtk-theme-switcher"]="$HOME/.config/hypr/scripts/listeners/gtk-theme-switcher.sh"
 # Example for another listener:
 # LISTENERS["another-listener"]="$HOME/.config/hypr/user_scripts/listeners/another-listener.sh"
 

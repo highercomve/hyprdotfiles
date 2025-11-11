@@ -25,7 +25,7 @@ This repository contains a comprehensive set of personal dotfiles for the Hyprla
 
 The dotfiles are organized into the following structure within the `dotfiles/` directory:
 
-- **`hypr/`**: Hyprland configuration, including modular `conf/` files, `scripts/`, and `user_scripts/`.
+- **`hypr/`**: Hyprland configuration, including modular `conf/` files, and `scripts/`.
 - **`nvim/`**: Neovim configuration with LazyVim.
 - **`zellij/`**: Zellij terminal multiplexer configuration.
 - **`starship/`**: Starship cross-shell prompt configuration.
@@ -103,7 +103,7 @@ Key configuration files include:
 This repository includes a wide variety of scripts to extend functionality:
 
 - **`hypr/scripts/`**: Core scripts for managing wallpapers, power settings, screenshots, and more.
-- **`hypr/user_scripts/`**: User-specific scripts for things like event listeners, update notifications, and theme switching.
+- **`hypr/scripts/`**: User-specific scripts for things like event listeners, update notifications, and theme switching.
 - **`hypr/user_settings/`**: A directory for storing user preferences that can be sourced by various scripts.
 - **`set_default.sh`**: This script automatically detects and sets default applications (like browser, file manager, terminal, etc.) based on what's installed on your system. It updates the relevant files in `hypr/user_settings/`.
 
@@ -111,7 +111,7 @@ Many of these scripts, especially the interactive utilities, are designed to be 
 
 All shell scripts are linted with `shellcheck` to ensure quality and correctness.
 
-### Featured User Scripts
+### Featured Scripts
 
 #### `disks.sh`
 

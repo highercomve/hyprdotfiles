@@ -43,7 +43,7 @@ apply_theme() {
         swaync-client -rs
     elif [ "$THEME_PREF" -eq 0 ]; then
         echo "Detected light theme preference (gtk-application-prefer-dark-theme=0). Applying light matugen theme..."
-        "$HOME"/.local/bin/matugen image "$(cat ~/.config/.cache/hyprconfig/current_wallpaper)" -m "light"
+        "$HOME"/.local/bin/matugen image "$(cat ~/.config/.cache/hyprland-dotfiles/current_wallpaper)" -m "light"
         "$HOME"/.config/waybar/launch.sh &
         "$HOME"/.config/hypr/scripts/gtk.sh &
         swaync-client -rs

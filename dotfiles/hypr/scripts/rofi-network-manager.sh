@@ -147,14 +147,14 @@ device_menu() {
         case "$choice" in
         " Activate")
             nmcli device connect "$device"
-            ;;
+            ;; 
         " Deactivate")
             nmcli device disconnect "$device"
-            ;;
+            ;; 
         " Details")
             connection_name=$(nmcli -t -f NAME,DEVICE connection show --active | grep "^.*:$device$" | cut -d':' -f1)
             show_details "$connection_name"
-            ;;
+            ;; 
         " Forget")
             # This option is only available for active Wi-Fi devices as per the condition above.
             # Get the name of the currently active connection on this device.
@@ -163,13 +163,13 @@ device_menu() {
                 nmcli connection delete "$connection_name"
                 return # Exit the device menu after forgetting the connection
             fi
-            ;;
+            ;; 
         " Back")
             return
-            ;;
+            ;; 
         *) # Esc
             return
-            ;;
+            ;; 
         esac
     done
 }
@@ -225,7 +225,7 @@ scan_menu() {
             NM_APPLET_WAS_STARTED="false"
             # Check if nm-applet is already running
             if ! pgrep -x "nm-applet" >/dev/null; then
-                "${HOME}"/.config/hypr/user_scripts/nm-applet.sh
+                "${HOME}"/.config/hypr/scripts/nm-applet.sh
                 # Give nm-applet a moment to initialize and register for prompts
                 sleep 0.5
                 NM_APPLET_WAS_STARTED="true"
@@ -234,7 +234,7 @@ scan_menu() {
             nmcli dev wifi connect "$ssid"
 
             if [ "$NM_APPLET_WAS_STARTED" = "true" ]; then
-                "${HOME}"/.config/hypr/user_scripts/nm-applet.sh stop
+                "${HOME}"/.config/hypr/scripts/nm-applet.sh stop
             fi
         fi
     fi
@@ -291,23 +291,23 @@ connection_menu() {
         case "$choice" in
         " Activate")
             nmcli con up "$connection_name"
-            ;;
+            ;; 
         " Deactivate")
             nmcli con down "$connection_name"
-            ;;
+            ;; 
         " Forget")
             nmcli connection delete "$connection_name"
             return # Exit after forgetting
-            ;;
+            ;; 
         " Details")
             show_details "$connection_name"
-            ;;
+            ;; 
         " Back")
             return
-            ;;
+            ;; 
         *) # Esc
             return
-            ;;
+            ;; 
         esac
     done
 }

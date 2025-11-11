@@ -66,9 +66,9 @@
 	// Cliphist
 	"custom/cliphist": {
 		"format": "",
-		"on-click": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh",
-		"on-click-right": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh w",
-		"on-click-middle": "sleep 0.1 && ~/.config/hypr/user_scripts/cliphist.sh d",
+		"on-click": "sleep 0.1 && ~/.config/hypr/scripts/cliphist.sh",
+		"on-click-right": "sleep 0.1 && ~/.config/hypr/scripts/cliphist.sh w",
+		"on-click-middle": "sleep 0.1 && ~/.config/hypr/scripts/cliphist.sh d",
 		"tooltip-format": "Left: Open clipboard Manager\nRight: Clear list\nMiddle: Delete an entry"
 	},
 	// Updates Count
@@ -76,7 +76,7 @@
 		"format": "  {}",
 		"escape": true,
 		"return-type": "json",
-		"exec": "~/.config/hypr/user_scripts/updates.sh",
+		"exec": "~/.config/hypr/scripts/updates.sh",
 		"interval": 1800,
 		"signal": 1,
 		"hide-empty-text": true,
@@ -112,7 +112,7 @@
 	// Windows VM
 	"custom/windowsvm": {
 		"format": "",
-		"on-click": "~/.config/hypr/user_scripts/launchvm.sh",
+		"on-click": "~/.config/hypr/scripts/launchvm.sh",
 		"tooltip": false
 	},
 	// Rofi Application Launcher
@@ -134,7 +134,7 @@
 	// Power Menu
 	"custom/exit": {
 		"format": "",
-		"on-click": "~/.config/hypr/user_scripts/wlogout.sh",
+		"on-click": "~/.config/hypr/scripts/wlogout.sh",
 		"on-click-right": "hyprlock",
 		"tooltip-format": "Left: Power menu\nRight: Lock screen"
 	},
@@ -185,8 +185,8 @@
 		},
 		"return-type": "json",
 		"interval": 1,
-		"exec": "~/.config/hypr/user_scripts/record.sh status",
-		"on-click": "~/.config/hypr/user_scripts/record.sh toggle",
+		"exec": "~/.config/hypr/scripts/record.sh status",
+		"on-click": "~/.config/hypr/scripts/record.sh toggle",
 		"tooltip": true
 	},
 	// Recording Indicator
@@ -198,8 +198,8 @@
 		},
 		"return-type": "json",
 		"interval": 1,
-		"exec": "~/.config/hypr/user_scripts/record.sh status",
-		"on-click": "~/.config/hypr/user_scripts/record.sh stop",
+		"exec": "~/.config/hypr/scripts/record.sh status",
+		"on-click": "~/.config/hypr/scripts/record.sh stop",
 		"tooltip-format": "Click to stop recording"
 	},
 	// Keyboard State
@@ -220,7 +220,7 @@
 	// Clock
 	"clock": {
 		"format": "{:%I:%M %p - %b %e}",
-		"on-click": "~/.config/hypr/user_scripts/calendar.sh",
+		"on-click": "~/.config/hypr/scripts/calendar.sh",
 		"timezone": "",
 		"tooltip": false
 	},
@@ -317,8 +317,8 @@
 		"tooltip-format-ethernet": " {ifname}\nIP: {ipaddr}\n up: {bandwidthUpBits} down: {bandwidthDownBits}",
 		"tooltip-format-disconnected": "Disconnected",
 		"max-length": 50,
-		"on-click": "~/.config/hypr/user_scripts/rofi-network-manager.sh",
-		"on-click-right": "~/.config/hypr/user_scripts/nm-applet.sh toggle"
+		"on-click": "~/.config/hypr/scripts/rofi-network-manager.sh",
+		"on-click-right": "~/.config/hypr/scripts/nm-applet.sh toggle"
 	},
 	// Battery
 	"battery": {
@@ -366,7 +366,7 @@
 			"car": " ",
 			"default": ["", "", ""]
 		},
-		"on-click": "~/.config/hypr/user_scripts/audio.sh"
+		"on-click": "~/.config/hypr/scripts/audio.sh"
 	},
 	// Bluetooth
 	"bluetooth": {
@@ -425,9 +425,9 @@
 			"",
 			""
 		],
-		"exec": "~/.config/hypr/user_scripts/external_backlight.sh get",
-		"on-scroll-up": "~/.config/hypr/user_scripts/external_backlight.sh up",
-		"on-scroll-down": "~/.config/hypr/user_scripts/external_backlight.sh down",
+		"exec": "~/.config/hypr/scripts/external_backlight.sh get",
+		"on-scroll-up": "~/.config/hypr/scripts/external_backlight.sh up",
+		"on-scroll-down": "~/.config/hypr/scripts/external_backlight.sh down",
 		"interval": 2,
 		"return-type": "json",
 		"tooltip-format": "Brightness: {percent}%"
