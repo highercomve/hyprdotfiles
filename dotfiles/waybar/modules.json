@@ -375,7 +375,10 @@
 		"format-off": "",
 		"interval": 30,
 		"on-click": "sleep 0.1 && ~/.config/hypr/user_settings/bluetooth.sh",
-		"format-no-controller": ""
+		"on-click-right": "blueman-manager",
+		"format-no-controller": "",
+		"tooltip": true,
+		"tooltip-format": "Bluetooth: {status}\nLeft click: Toggle Bluetooth or show devices\nRight click: Open Blueman Manager"
 	},
 	// Other
 	"user": {

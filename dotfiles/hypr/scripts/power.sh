@@ -34,7 +34,7 @@ terminate_clients() {
 
         echo ":: PID $pid has terminated."
     done
-    bash $home/.config/hypr/scripts/listeners.sh --stopall
+    bash "$HOME"/.config/hypr/scripts/listeners.sh --stopall
 }
 
 if [[ "$1" == "exit" ]]; then
