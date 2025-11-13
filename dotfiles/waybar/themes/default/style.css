@@ -60,6 +60,8 @@ window#waybar {
 	color: @on_primary_container;
 	background: @primary_container;
 	border-radius: 5px 5px 5px 5px;
+	box-shadow: none;
+	text-shadow: none;
 }
 
 /* -----------------------------------------------------
@@ -122,6 +124,11 @@ window#waybar.empty #window {
 	border: 0;
 	padding: 0;
 	margin: 0;
+}
+
+#taskbar button:hover {
+	color: @on_primary_container;
+	background: @primary_container;
 }
 
 /* -----------------------------------------------------
