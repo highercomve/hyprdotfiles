@@ -2,11 +2,11 @@
 /* Edited (poorly) by @GeodeArc */
 
 @define-color text            @foreground;
-@define-color border          alpha(@foreground, 0.8);
-@define-color background-alt  alpha(@color1, .4);
-@define-color background-bg  alpha(@color1, .75);
+@define-color border          alpha(@foreground, 0.9);
+@define-color background-alt  alpha(@color1, 0.9);
+@define-color background-bg  alpha(@color1, 0.9);
 @define-color selected        @color6;
-@define-color hover           alpha(@selected, .4);
+@define-color hover           alpha(@selected, 0.9);
 @define-color urgent          @color2;
 
 * {
@@ -25,7 +25,7 @@
 /* CONTROL CENTER ------------------------------------------------------------------------ */
 
 .control-center {
-	background: alpha(@background, 0.5);
+	background: alpha(@background, 0.9);
 	border-radius: 18px;
 	border: 1px solid @border;
 	box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.6);
@@ -40,7 +40,7 @@
 	.notification-row
 	.notification-background
 	.notification.critical {
-	background-color: alpha(@background, 0.8);
+	background-color: alpha(@background, 0.9);
 	border: 1px solid alpha(@foreground, 0.6);
 	border-radius: 8px;
 	margin: 4px 0px;
@@ -79,7 +79,7 @@
 	> *:last-child
 	> *
 	.notification-action {
-	background: alpha(@selected, 0.8);
+	background: alpha(@selected, 0.9);
 	color: @text;
 	border-radius: 12px;
 	margin: 6px;
