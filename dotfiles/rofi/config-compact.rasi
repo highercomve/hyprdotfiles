@@ -32,7 +32,7 @@ configuration {
 
 // Main //
 window {
-    width:                        50em;
+    width:                        40em;
     x-offset:                     0em;
     y-offset:                     2em;
     spacing:                      0em;
