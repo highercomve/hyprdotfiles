@@ -366,7 +366,9 @@
 			"car": " ",
 			"default": ["", "", ""]
 		},
-		"on-click": "~/.config/hypr/scripts/audio.sh"
+		"on-click": "~/.config/hypr/scripts/audio.sh",
+		"on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
+		"tooltip-format": "Volume: {volume}%\nLeft click: Select Output/Input\nRight click: Toggle Mute"
 	},
 	// Bluetooth
 	"bluetooth": {
