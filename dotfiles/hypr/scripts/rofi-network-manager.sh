@@ -3,6 +3,12 @@
 # Rofi Network Manager
 ROFI_CONFIG="${HOME}/.config/rofi/config-nm.rasi"
 
+notify() {
+    if command -v notify-send &>/dev/null; then
+        notify-send -u normal "$@"
+    fi
+}
+
 # Main menu function
 main_menu() {
     printf " Exit\n"
@@ -59,17 +65,27 @@ show_details() {
     # Convert prefix to subnet mask
     subnet_mask=""
     if [ -n "$ip4_prefix" ]; then
-        c=0
-        for i in $(seq 1 "$ip4_prefix"); do
-            if [ "$i" -le "$ip4_prefix" ]; then
-                c=$((c * 2 + 1))
-            else
-                c=$((c * 2))
+        for octet_num in 0 1 2 3; do
+            octet_value=0
+            bits_processed_before_this_octet=$((octet_num * 8))
+
+            # Calculate how many bits of the prefix fall into the current octet
+            remaining_prefix_for_this_octet=$((ip4_prefix - bits_processed_before_this_octet))
+
+            if [ "$remaining_prefix_for_this_octet" -ge 8 ]; then
+                # If 8 or more bits of the prefix are left for this octet, it's a full 255
+                octet_value=255
+            elif [ "$remaining_prefix_for_this_octet" -gt 0 ]; then
+                # If some bits (1-7) are left, calculate the partial octet value
+                for k in $(seq 0 $((remaining_prefix_for_this_octet - 1))); do
+                    octet_value=$((octet_value | (1 << (7 - k))))
+                done
+            # If remaining_prefix_for_this_octet is 0 or less, the octet value remains 0.
             fi
-            if [ $((i % 8)) -eq 0 ]; then
-                subnet_mask+="$((c))"
-                [ "$i" -lt 32 ] && subnet_mask+="."
-                c=0
+
+            subnet_mask+="$octet_value"
+            if [ "$octet_num" -lt 3 ]; then
+                subnet_mask+="."
             fi
         done
     fi
@@ -114,7 +130,16 @@ show_details() {
     [ -n "$dns6_2" ] && formatted_details+="DNS 2 (IPv6): $dns6_2\n"
 
     # Display details. Rofi -dmenu closes upon selection or escape.
-    echo -e "$formatted_details" | rofi -config "$ROFI_CONFIG" -dmenu -p "Details for $connection_name" -markup-rows -l 25
+    choice=$(echo -e "$formatted_details" | rofi -config "$ROFI_CONFIG" -dmenu -p "Details for $connection_name" -markup-rows -l 25)
+
+    if [[ "$choice" == " Back" ]]; then
+        : # No-op
+    else
+        extracted_value=$(echo "$choice" | awk -F': ' '{print $2}')
+        extracted_key=$(echo "$choice" | awk -F': ' '{print $1}')
+        wl-copy "$extracted_value"
+        notify "$connection_name $extracted_key" "$extracted_value copy to clipboard"
+    fi
     return
 }
 
@@ -147,14 +172,14 @@ device_menu() {
         case "$choice" in
         " Activate")
             nmcli device connect "$device"
-            ;; 
+            ;;
         " Deactivate")
             nmcli device disconnect "$device"
-            ;; 
+            ;;
         " Details")
             connection_name=$(nmcli -t -f NAME,DEVICE connection show --active | grep "^.*:$device$" | cut -d':' -f1)
             show_details "$connection_name"
-            ;; 
+            ;;
         " Forget")
             # This option is only available for active Wi-Fi devices as per the condition above.
             # Get the name of the currently active connection on this device.
@@ -163,13 +188,13 @@ device_menu() {
                 nmcli connection delete "$connection_name"
                 return # Exit the device menu after forgetting the connection
             fi
-            ;; 
+            ;;
         " Back")
             return
-            ;; 
+            ;;
         *) # Esc
             return
-            ;; 
+            ;;
         esac
     done
 }
@@ -291,23 +316,23 @@ connection_menu() {
         case "$choice" in
         " Activate")
             nmcli con up "$connection_name"
-            ;; 
+            ;;
         " Deactivate")
             nmcli con down "$connection_name"
-            ;; 
+            ;;
         " Forget")
             nmcli connection delete "$connection_name"
             return # Exit after forgetting
-            ;; 
+            ;;
         " Details")
             show_details "$connection_name"
-            ;; 
+            ;;
         " Back")
             return
-            ;; 
+            ;;
         *) # Esc
             return
-            ;; 
+            ;;
         esac
     done
 }

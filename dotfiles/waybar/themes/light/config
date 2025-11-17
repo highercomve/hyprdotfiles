@@ -18,11 +18,12 @@
         "group/links",
         "wlr/taskbar",
         //"group/quicklinks",
+        "hyprland/window",
         "custom/empty"
     ],
     // Modules Center
     "modules-center": [
-        "hyprland/window",
+        "clock",
         "custom/empty"
     ],
     // Modules Right
@@ -42,6 +43,5 @@
         "custom/recording-indicator",
         "custom/notification",
         "custom/exit",
-        "clock",
     ]
 }
