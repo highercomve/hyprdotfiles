@@ -38,6 +38,7 @@ if [ -f /etc/arch-release ]; then
         polkit-gnome \
         alacritty \
         wofi \
+        go \
         waybar \
         pamixer \
         brightnessctl \
@@ -116,6 +117,12 @@ fi
 
 git clone https://github.com/LazyVim/starter dotfiles/nvim
 rm -rf dotfiles/nvim/.git
+
+if command -v go &>/dev/null; then
+    go install github.com/highercomve/waybar-music@latest
+else
+    echo "Error: 'go' command not found. Please install Go to compile waybar-music."
+fi
 
 echo "Dependency installation script finished."
 

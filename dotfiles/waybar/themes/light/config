@@ -28,8 +28,7 @@
     ],
     // Modules Right
     "modules-right": [
-        "custom/updates",
-        // "group/hardware",
+        "custom/waybar-music",
         "pulseaudio",
         "backlight",
         "bluetooth",

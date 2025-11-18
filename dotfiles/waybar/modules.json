@@ -436,5 +436,20 @@
 		"interval": 2,
 		"return-type": "json",
 		"tooltip-format": "Brightness: {percent}%"
+	},
+	"custom/waybar-music": {
+		"return-type": "json",
+		"exec": "~/.config/hypr/scripts/waybar-music.sh",
+		"on-click": "waybar-music --send toggle",
+		"on-click-right": "waybar-music --send next",
+		"on-scroll-up": "waybar-music --send next",
+		"on-scroll-down": "waybar-music --send prev",
+		"format": "{icon} {text}",
+		"format-icons": {
+			"playing": "⏸ ",
+			"paused": " ",
+			"stopped": "󰝚 ",
+			"default": ""
+		}
 	}
 }

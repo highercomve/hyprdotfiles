@@ -40,7 +40,7 @@ else
     themestyle=$default_theme
 fi
 
-if [ ! -f ~/.config/waybar/themes/$themestyle/style.css ]; then
+if [ ! -f ~/.config/waybar/themes/"$themestyle"/style.css ]; then
     themestyle=$default_theme
 fi
 
@@ -52,17 +52,18 @@ config_file="config"
 style_file="style.css"
 
 # Standard files can be overwritten with an existing config-custom or style-custom.css
-if [ -f ~/.config/waybar/themes/$themestyle/config-custom ]; then
+if [ -f ~/.config/waybar/themes/"$themestyle"/config-custom ]; then
     config_file="config-custom"
 fi
-if [ -f ~/.config/waybar/themes/$themestyle/style-custom.css ]; then
+if [ -f ~/.config/waybar/themes/"$themestyle"/style-custom.css ]; then
     style_file="style-custom.css"
 fi
 
 # Check if waybar-disabled file exists
-if [ ! -f $HOME/.config/hypr/user_settings/waybar-disabled ]; then
+if [ ! -f "$HOME"/.config/hypr/user_settings/waybar-disabled ]; then
     HYPRLAND_SIGNATURE=$(hyprctl instances -j | jq -r '.[0].instance')
-    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/themes/$themestyle/$config_file -s ~/.config/waybar/themes/$themestyle/$style_file &
+    # Launch waybar and redirect all output to a log file
+    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/themes/"$themestyle"/"$config_file" -s ~/.config/waybar/themes/"$themestyle"/"$style_file" &>~/.cache/waybar.log &
     # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes/$themestyle/$config_file -s ~/.config/waybar/themes/$themestyle/$style_file &
 else
     echo ":: Waybar disabled"
