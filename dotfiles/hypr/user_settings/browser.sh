@@ -1,1 +1,1 @@
-thorium-browser
+google-chrome-stable

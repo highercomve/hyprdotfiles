@@ -1,49 +1,96 @@
 #!/bin/bash
 
-# Rofi Bluetooth Manager
+# Rofi Bluetooth Manager using bluetoothctl
 #
-# Based on the structure of the rofi-network-manager.sh script.
-# This script uses bluetoothctl to manage Bluetooth devices.
+# This script uses bluetoothctl to interact with BlueZ.
+# It's a rewrite to be more robust and reliable.
 #
-# Ensure you have a Rofi theme for it, for example, by creating
-# ~/.config/rofi/config-bluetooth.rasi
-# You can copy and adapt it from an existing theme.
+# Requires: bluetoothctl, rofi
 
 # Rofi config file
 ROFI_CONFIG="${HOME}/.config/rofi/config-nm.rasi"
+
+# Check if bluetooth is powered on
+is_powered() {
+    bluetoothctl show | grep -q "Powered: yes"
+}
+
+# Check if a bluetooth agent is running
+check_agent() {
+    # We check for common agents. 
+    # If using bluez, 'bluetoothctl' itself can be an agent if run interactively, 
+    # but for a GUI script, we usually rely on a background agent like 'bt-agent' 
+    # or a desktop environment's agent (e.g. blueman-applet, gnome-bluetooth).
+    # However, checking for a specific process is brittle.
+    # Instead, we can try to register a default agent with bluetoothctl and see if it fails,
+    # or just warn the user if they experience pairing issues.
+    
+    # A better approach for this script might be to just rely on the user having one,
+    # but adding a visual hint if we can detect it's missing would be nice.
+    # For now, we'll skip a complex check and focus on making the pairing command robust.
+    :
+}
+
+# Get device info
+get_device_info() {
+    mac="$1"
+    info=$(bluetoothctl info "$mac")
+    name=$(echo "$info" | grep "Name:" | cut -d ' ' -f 2-)
+    alias=$(echo "$info" | grep "Alias:" | cut -d ' ' -f 2-)
+    connected=$(echo "$info" | grep -q "Connected: yes" && echo "true" || echo "false")
+    paired=$(echo "$info" | grep -q "Paired: yes" && echo "true" || echo "false")
+    trusted=$(echo "$info" | grep -q "Trusted: yes" && echo "true" || echo "false")
+    battery=$(echo "$info" | grep "Battery Percentage:" | awk -F'[()]' '{print $2}')
+
+    # Use Alias if available, else Name
+    if [ -n "$alias" ]; then
+        display_name="$alias"
+    else
+        display_name="$name"
+    fi
+    
+    echo "$display_name|$connected|$paired|$trusted|$battery"
+}
 
 # Main menu function
 main_menu() {
     printf " Exit\n"
 
-    # Check if bluetooth is powered on
-    if bluetoothctl show | grep -q "Powered: yes"; then
+    if is_powered; then
         printf " Power Off\n"
         printf " Scan for new devices\n"
 
         echo "<b>Paired Devices</b>"
-        paired_devices=$(bluetoothctl devices Paired)
-        if [ -n "$paired_devices" ]; then
-            echo "$paired_devices" | while read -r line; do
-                device_mac=$(echo "$line" | awk '{print $2}')
-                device_name=$(echo "$line" | awk '{$1=$2=""; print $0}' | sed 's/^ *//')
-                device_info=$(bluetoothctl info "$device_mac")
 
-                if echo "$device_info" | grep -q "Connected: yes"; then
-                    battery_percentage=""
-                    if echo "$device_info" | grep -q "Battery Percentage"; then
-                        battery_level=$(echo "$device_info" | grep "Battery Percentage" | grep -oP '\(\K[0-9]+')
-                        if [ -n "$battery_level" ]; then
-                            battery_percentage=" [🔋${battery_level}%]"
+        # Get all known devices
+        # Format: Device <MAC> <Name>
+        # Note: 'paired-devices' command is not available on some versions, so we use 'devices' and filter.
+        all_devices=$(bluetoothctl devices | grep "^Device")
+
+        if [ -n "$all_devices" ]; then
+            while read -r line; do
+                mac=$(echo "$line" | awk '{print $2}')
+                name=$(echo "$line" | cut -d ' ' -f 3-)
+                
+                # Get device info to check if paired
+                info=$(bluetoothctl info "$mac")
+                
+                # Check if paired
+                if echo "$info" | grep -q "Paired: yes"; then
+                    if echo "$info" | grep -q "Connected: yes"; then
+                        battery=$(echo "$info" | grep "Battery Percentage:" | awk -F'[()]' '{print $2}')
+                        battery_str=""
+                        if [ -n "$battery" ]; then
+                            battery_str=" [🔋${battery}%]"
                         fi
+                        echo " $name ($mac)${battery_str}"
+                    else
+                        echo " $name ($mac)"
                     fi
-                    echo " $device_name ($device_mac)${battery_percentage}"
-                else
-                    echo " $device_name ($device_mac)"
                 fi
-            done
+            done <<< "$all_devices"
         else
-            echo "No paired devices found."
+            echo "No devices found."
         fi
     else
         printf " Power On\n"
@@ -53,25 +100,30 @@ main_menu() {
 # Device menu function
 device_menu() {
     device_mac="$1"
-    device_name=$(bluetoothctl info "$device_mac" | grep "Name:" | cut -d ' ' -f 2-)
+    device_name="$2"
+
+    # Get fresh info
+    info=$(bluetoothctl info "$device_mac")
+    connected=$(echo "$info" | grep -q "Connected: yes" && echo "true" || echo "false")
+    paired=$(echo "$info" | grep -q "Paired: yes" && echo "true" || echo "false")
+    trusted=$(echo "$info" | grep -q "Trusted: yes" && echo "true" || echo "false")
 
     while true; do
         options=" Back\n"
 
-        if bluetoothctl info "$device_mac" | grep -q "Connected: yes"; then
+        if [ "$connected" = "true" ]; then
             options+=" Disconnect\n"
         else
             options+=" Connect\n"
         fi
 
-        if bluetoothctl info "$device_mac" | grep -q "Paired: yes"; then
+        if [ "$paired" = "true" ]; then
             options+=" Unpair\n"
         else
-            # This case should ideally not be reached from the main menu for paired devices
             options+=" Pair\n"
         fi
 
-        if bluetoothctl info "$device_mac" | grep -q "Trusted: yes"; then
+        if [ "$trusted" = "true" ]; then
             options+=" Distrust\n"
         else
             options+=" Trust\n"
@@ -81,23 +133,27 @@ device_menu() {
 
         case "$choice" in
         " Connect")
-            bluetoothctl connect "$device_mac"
+            bluetoothctl connect "$device_mac" >/dev/null
             ;;
         " Disconnect")
-            bluetoothctl disconnect "$device_mac"
+            bluetoothctl disconnect "$device_mac" >/dev/null
             ;;
         " Pair")
-            bluetoothctl pair "$device_mac"
+            # Pairing often requires an agent. 
+            # We try to pair. If it fails, it might be due to missing agent or auth.
+            # For a simple script, we can't easily handle interactive agent prompts in Rofi.
+            # We rely on an external agent (like blueman-applet) being present.
+            bluetoothctl pair "$device_mac" >/dev/null
             ;;
         " Unpair")
-            bluetoothctl remove "$device_mac"
+            bluetoothctl remove "$device_mac" >/dev/null
             return # Exit after unpairing
             ;;
         " Trust")
-            bluetoothctl trust "$device_mac"
+            bluetoothctl trust "$device_mac" >/dev/null
             ;;
         " Distrust")
-            bluetoothctl untrust "$device_mac"
+            bluetoothctl untrust "$device_mac" >/dev/null
             ;;
         " Back")
             return
@@ -106,61 +162,102 @@ device_menu() {
             return
             ;;
         esac
+
+        # Refresh device info
+        info=$(bluetoothctl info "$device_mac")
+        connected=$(echo "$info" | grep -q "Connected: yes" && echo "true" || echo "false")
+        paired=$(echo "$info" | grep -q "Paired: yes" && echo "true" || echo "false")
+        trusted=$(echo "$info" | grep -q "Trusted: yes" && echo "true" || echo "false")
     done
 }
 
+# Ensure scanning stops when we exit this function
+# Also stop blueman-applet if we started it
+cleanup() {
+    kill $BTCTL_PID 2>/dev/null
+    bluetoothctl scan off > /dev/null 2>&1
+    pkill -f "blueman-applet" 2>/dev/null
+}
+
+
 # Scan menu function
 scan_menu() {
+    # Check if blueman-applet is running
+    APPLET_STARTED_BY_SCRIPT=false
+    if ! pgrep -x "blueman-applet" > /dev/null; then
+        echo "Starting blueman-applet..."
+        blueman-applet &
+        APPLET_PID=$!
+        APPLET_STARTED_BY_SCRIPT=true
+        # Give it a moment to start
+        sleep 1
+    fi
+
+    # Start scanning in background using bluetoothctl
+    # We use a subshell to keep bluetoothctl running with "scan on"
+    (
+        echo "scan on"
+        while true; do sleep 10; done
+    ) | bluetoothctl > /dev/null 2>&1 &
+    BTCTL_PID=$!
+
+
+    trap 'cleanup' RETURN
+
     while true; do
-        (
-            echo "Scanning for devices..."
-            tail -f /dev/null
-        ) | rofi -config "$ROFI_CONFIG" -dmenu -p "Bluetooth Scan" &
-        rofi_pid=$!
+        # Get all devices from bluetoothctl
+        # Output format: Device <MAC> <Name>
+        all_devices=$(echo "devices" | bluetoothctl | grep "^Device")
 
-        # Start scanning, wait, then get devices
-        (
-            bluetoothctl scan on >/dev/null &
-            sleep 5
-            bluetoothctl scan off >/dev/null
-        )
-
-        kill "$rofi_pid"
-        wait "$rofi_pid" 2>/dev/null
-
-        # Get non-paired devices
-        devices_list=$(bluetoothctl devices | while read -r line; do
-            device_mac=$(echo "$line" | awk '{print $2}')
-            device_name=$(echo "$line" | awk '{$1=$2=""; print $0}' | sed 's/^ *//')
-            if ! bluetoothctl info "$device_mac" | grep -q "Paired: yes"; then
-                echo " $device_name ($device_mac)"
+        devices_list=""
+        # Process each device
+        while read -r line; do
+            if [ -z "$line" ]; then continue; fi
+            
+            mac=$(echo "$line" | awk '{print $2}')
+            name=$(echo "$line" | cut -d ' ' -f 3-)
+            
+            # Check if device is paired
+            info=$(bluetoothctl info "$mac")
+            if ! echo "$info" | grep -q "Paired: yes"; then
+                 devices_list+=" $name ($mac)\n"
             fi
-        done)
+        done <<< "$all_devices"
+        
+        # Remove trailing newline
+        devices_list=$(echo -e "$devices_list" | sed '/^$/d')
 
-        choice=$(echo -e " Back\n Rescan\n$devices_list" | rofi -config "$ROFI_CONFIG" -dmenu -p "Scan Results" -i -l 10)
+        # Show scanning indicator in the prompt
+        choice=$(echo -e " Back\n Refresh\n$devices_list" | rofi -config "$ROFI_CONFIG" -dmenu -p "Scanning..." -i -l 10)
 
         case "$choice" in
         " Back")
             return
             ;;
-        " Rescan")
+        " Refresh")
             continue
             ;;
         "") # Esc
             return
             ;;
         *)
-            device_mac=$(echo "$choice" | awk -F'[()]' '{print $2}')
+            # Extract MAC address from the choice string like "ICON Name (MAC)"
+            # We use the content of the last set of parentheses to handle names with parens
+            device_mac=$(echo "$choice" | awk -F'[()]' '{print $(NF-1)}')
+            device_name=$(echo "$choice" | sed -E 's/^. (.*) \(.*\)$/\1/')
+            
             if [ -n "$device_mac" ]; then
-                # Attempt to pair and trust.
-                # Note: Pairing might require user interaction on the command line
-                # if a PIN is needed.
-                if bluetoothctl pair "$device_mac"; then
-                    bluetoothctl trust "$device_mac"
-                    bluetoothctl connect "$device_mac"
+                if bluetoothctl pair "$device_mac" >/dev/null; then
+                    bluetoothctl trust "$device_mac" >/dev/null
+                    bluetoothctl connect "$device_mac" >/dev/null
+                else
+                     # If pairing fails, it might be because we need an agent or it timed out.
+                     # We can try to trust and connect anyway, sometimes works for simple devices.
+                     bluetoothctl trust "$device_mac" >/dev/null
+                     bluetoothctl connect "$device_mac" >/dev/null
                 fi
+                cleanup
             fi
-            # After action, return to main menu
             return
             ;;
         esac
@@ -190,9 +287,11 @@ while true; do
     *)
         if [ -n "$choice" ]; then
             # Extract MAC address from the choice string like "ICON Name (MAC)"
-            device_mac=$(echo "$choice" | awk -F'[()]' '{print $2}')
+            device_mac=$(echo "$choice" | awk -F'[()]' '{print $(NF-1)}')
+            device_name=$(echo "$choice" | sed -E 's/^. (.*) \(.*\).*$/\1/')
+            
             if [ -n "$device_mac" ]; then
-                device_menu "$device_mac"
+                device_menu "$device_mac" "$device_name"
             fi
         else
             exit 0

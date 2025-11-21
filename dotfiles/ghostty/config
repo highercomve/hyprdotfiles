@@ -16,7 +16,7 @@ window-theme = ghostty
 link-url = true
 theme = Builtin Pastel Dark
 font-size = 13
-# copy-on-select = clipboard
+copy-on-select = clipboard
 
 #=======================================================================
 # KEYBINDINGS - ZELLIJ EMULATION (VERIFIED)

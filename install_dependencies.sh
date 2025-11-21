@@ -118,10 +118,20 @@ fi
 git clone https://github.com/LazyVim/starter dotfiles/nvim
 rm -rf dotfiles/nvim/.git
 
-if command -v go &>/dev/null; then
-    go install github.com/highercomve/waybar-music@latest
+echo "Installing waybar-music..."
+if command -v curl &>/dev/null && command -v jq &>/dev/null; then
+    DOWNLOAD_URL=$(curl -s https://api.github.com/repos/highercomve/waybar-music-zig/releases/latest | jq -r '.assets[] | select(.name == "waybar-music") | .browser_download_url')
+    if [ -n "$DOWNLOAD_URL" ] && [ "$DOWNLOAD_URL" != "null" ]; then
+        echo "Downloading from $DOWNLOAD_URL..."
+        curl -L -o /tmp/waybar-music "$DOWNLOAD_URL"
+        chmod +x /tmp/waybar-music
+        sudo mv /tmp/waybar-music /usr/local/bin/waybar-music
+        echo "waybar-music installed successfully to /usr/local/bin/waybar-music"
+    else
+        echo "Error: Could not find download URL for waybar-music."
+    fi
 else
-    echo "Error: 'go' command not found. Please install Go to compile waybar-music."
+    echo "Error: curl or jq not found. Cannot install waybar-music."
 fi
 
 echo "Dependency installation script finished."

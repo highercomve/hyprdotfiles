@@ -7,7 +7,8 @@ pkill -x waybar-music || true
 RETRY_COUNT=0
 MAX_RETRIES=5
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-    waybar-music --position --autofocus --scroll-width 50 --replace &
+    # waybar-music --position --autofocus --scroll-width 50 --replace &
+    waybar-music listen &
     PID=$!
 
     # Give the process a moment to establish itself or exit if it failed
