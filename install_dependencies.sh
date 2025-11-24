@@ -37,7 +37,7 @@ if [ -f /etc/arch-release ]; then
         xdg-desktop-portal-hyprland \
         polkit-gnome \
         alacritty \
-        wofi \
+        rofi \
         go \
         waybar \
         pamixer \
@@ -82,6 +82,9 @@ if [ -f /etc/arch-release ]; then
         bluez \
         networkmanager \
         bluez-utils \
+        wf-recorder \
+        gpu-screen-recorder-git \
+        bluetoothctl \
         gnome-bluetooth-3.0
 
 else
