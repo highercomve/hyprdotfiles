@@ -131,9 +131,20 @@ device_menu() {
 
         choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$device_name" -i -l 5)
 
+
+        if ! pgrep -x "blueman-applet" > /dev/null; then
+            echo "Starting blueman-applet..."
+            blueman-applet &
+            APPLET_PID=$!
+            APPLET_STARTED_BY_SCRIPT=true
+            # Give it a moment to start
+            sleep 1
+        fi
+
         case "$choice" in
         " Connect")
             bluetoothctl connect "$device_mac" >/dev/null
+
             ;;
         " Disconnect")
             bluetoothctl disconnect "$device_mac" >/dev/null
@@ -162,6 +173,12 @@ device_menu() {
             return
             ;;
         esac
+        sleep 1
+
+        if [ "$APPLET_STARTED_BY_SCRIPT" = "true" ]; then
+            echo "Stopping blueman-applet..."
+            kill $APPLET_PID 2>/dev/null
+        fi
 
         # Refresh device info
         info=$(bluetoothctl info "$device_mac")
