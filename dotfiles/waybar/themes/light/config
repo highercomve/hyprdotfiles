@@ -29,7 +29,7 @@
     // Modules Right
     "modules-right": [
         "custom/waybar-music",
-        // "custom/mediaplayer",
+        //"custom/mediaplayer",
         "pulseaudio",
         "backlight",
         "bluetooth",

@@ -40,8 +40,15 @@ cycle_player() {
     set_current_player "${players[0]}"
 }
 
+SCROLL_INDEX_FILE="/tmp/playerctl_scroll_index"
+LAST_SONG_FILE="/tmp/playerctl_last_song"
+
+# ... (other functions remain the same) ...
+
 player_status() {
+    max_width=$1
     current_player=$(get_current_player)
+
     if [[ -z "$current_player" ]]; then
         echo "{\"text\": \"No Media\", \"tooltip\": \"No media player running\", \"alt\": \"Stopped\"}"
         return
@@ -52,14 +59,19 @@ player_status() {
         title=$(playerctl --player="$current_player" metadata title 2>/dev/null)
         album=$(playerctl --player="$current_player" metadata album 2>/dev/null)
 
+        # Check if song has changed to reset scroll
+        last_song=$(cat "$LAST_SONG_FILE" 2>/dev/null)
+        if [[ "$title" != "$last_song" ]]; then
+            echo "$title" > "$LAST_SONG_FILE"
+            echo "0" > "$SCROLL_INDEX_FILE"
+        fi
+
         position_us=$(playerctl --player="$current_player" position 2>/dev/null)
         duration_us=$(playerctl --player="$current_player" metadata mpris:length 2>/dev/null)
 
-        # Truncate to integer part
         position_us=${position_us%%.*}
         duration_us=${duration_us%%.*}
 
-        # position is in seconds, duration is in microseconds
         position_s=$position_us
         duration_s=$((duration_us / 1000000))
 
@@ -70,9 +82,9 @@ player_status() {
 
         status_icon="⏹" # Default to stopped
         if [[ "$player_status" == "Playing" ]]; then
-            status_icon="⏸"
-        elif [[ "$player_status" == "Paused" ]]; then
             status_icon="▶"
+        elif [[ "$player_status" == "Paused" ]]; then
+            status_icon="⏸"
         fi
 
         time_info=""
@@ -83,7 +95,20 @@ player_status() {
         fi
 
         if [[ -n "$title" ]]; then
-            text="${status_icon} ${title}${time_info}"
+            display_title=$title
+            if [[ -n "$max_width" && "${#title}" -gt "$max_width" ]]; then
+                scroll_index=$(cat "$SCROLL_INDEX_FILE" 2>/dev/null || echo 0)
+                
+                # Add padding for seamless scrolling
+                padded_title="$title   "
+                
+                display_title=$(echo "$padded_title" | cut -c$((scroll_index + 1))-$((scroll_index + max_width)))
+                
+                scroll_index=$(( (scroll_index + 1) % ${#padded_title} ))
+                echo "$scroll_index" > "$SCROLL_INDEX_FILE"
+            fi
+            
+            text="${status_icon} ${display_title}${time_info}"
 
             tooltip="${title}"
             if [[ -n "$artist" ]]; then
@@ -102,13 +127,7 @@ player_status() {
     fi
 }
 
-player_command() {
-    command=$1
-    current_player=$(get_current_player)
-    if [[ -n "$current_player" ]]; then
-        playerctl --player="$current_player" "$command" &>/dev/null
-    fi
-}
+# ... (player_command remains the same) ...
 
 case "$1" in
 toggle)
@@ -125,9 +144,10 @@ player-next)
     player_status
     ;;
 listen)
+    max_width=${2:-20} # Default max-width to 20
     last_output=""
     while true; do
-        current_output=$(player_status)
+        current_output=$(player_status "$max_width")
         if [[ "$current_output" != "$last_output" ]]; then
             echo "$current_output"
             last_output=$current_output
