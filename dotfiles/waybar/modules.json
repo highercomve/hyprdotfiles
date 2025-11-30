@@ -218,10 +218,10 @@
 	},
 	// Clock
 	"clock": {
+		// "timezone": "America/New_York",
+		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 		"format": "{:%I:%M %p - %b %e}",
 		"on-click": "~/.config/hypr/scripts/calendar.sh",
-		"timezone": "",
-		"tooltip": false
 	},
 	// System
 	"custom/system": {
@@ -230,7 +230,7 @@
 	},
 	// CPU
 	"cpu": {
-		"format": " {usage}% ",
+		"format": "   {usage}% ",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	// Memory
@@ -289,7 +289,7 @@
 	// Group Links
 	"group/links": {
 		"orientation": "horizontal",
-		"modules": ["custom/empty"]
+		"modules": []
 	},
 	// Group Settings
 	"group/settings": {
@@ -333,7 +333,13 @@
 		"format-alt": "{icon}  {time}",
 		// "format-good": "", // An empty format will hide the module
 		// "format-full": "",
-		"format-icons": [" ", " ", " ", " ", " "]
+		"format-icons": [
+			" ",
+			" ",
+			" ",
+			" ",
+			" "
+		]
 	},
 	// Power Profiles Daemon
 	"power-profiles-daemon": {
@@ -350,7 +356,7 @@
 	// Pulseaudio
 	"pulseaudio": {
 		// "scroll-step": 1, // %, can be a float
-		"format": "{icon}  {volume}%",
+		"format": "{icon}   {volume}%",
 		"format-bluetooth": "{volume}% {icon} {format_source}",
 		"format-bluetooth-muted": " {icon} {format_source}",
 		"format-muted": " {format_source}",
@@ -363,7 +369,11 @@
 			"phone": " ",
 			"portable": " ",
 			"car": " ",
-			"default": ["", "", ""]
+			"default": [
+				"",
+				"",
+				""
+			]
 		},
 		"on-click": "~/.config/hypr/scripts/audio.sh",
 		"on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",

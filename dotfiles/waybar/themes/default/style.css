@@ -35,7 +35,7 @@ window#waybar {
 	background: @border_color;
 	margin: 2px 18px 3px 1px;
 	padding: 0px 2px;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	font-weight: bold;
 	font-style: normal;
 	color: @on_surface;
@@ -44,7 +44,7 @@ window#waybar {
 #workspaces button {
 	padding: 0px 6px;
 	margin: 3px 2px;
-	border-radius: 3px 3px 3px 3px;
+	border-radius: 3px;
 	color: @on_surface;
 	background-color: @background;
 	transition: all 0.1s linear;
@@ -53,7 +53,7 @@ window#waybar {
 #workspaces button.active {
 	color: @on_primary_container;
 	background: @primary_container;
-	border-radius: 3px 3px 3px 3px;
+	border-radius: 3px;
 	min-width: 30px;
 	transition: all 0.1s linear;
 }
@@ -61,7 +61,7 @@ window#waybar {
 #workspaces button:hover {
 	color: @on_primary_container;
 	background: @primary_container;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	box-shadow: none;
 	text-shadow: none;
 }
@@ -71,16 +71,21 @@ window#waybar {
  * ----------------------------------------------------- */
 
 tooltip {
-	background-color: #1e1e2e; /* Dark background */
+	background-color: #1e1e2e;
+	/* Dark background */
 	padding: 10px 15px;
 	margin: 0px;
-	border: 3px solid @border_color; /* Kept original border style for consistency */
-	border-radius: 5px; /* Rounded corners for consistency */
+	border: 3px solid @border_color;
+	/* Kept original border style for consistency */
+	border-radius: 5px;
+	/* Rounded corners for consistency */
 }
 
 tooltip label {
-	color: #cdd6f4; /* Light text for high contrast */
-	font-weight: bold; /* Make font bolder to appear clearer */
+	color: #cdd6f4;
+	/* Light text for high contrast */
+	font-weight: bold;
+	/* Make font bolder to appear clearer */
 }
 
 /* -----------------------------------------------------
@@ -90,7 +95,7 @@ tooltip label {
 #window {
 	margin: 3px 15px 3px 0px;
 	padding: 2px 10px 0px 10px;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	color: @icon_color;
 	font-size: 16px;
 	font-weight: normal;
@@ -105,19 +110,20 @@ window#waybar.empty #window {
  * ----------------------------------------------------- */
 
 #taskbar {
-	background: @primary;
+	background-color: @background;
 	margin: 3px 15px 3px 0px;
 	padding: 0px;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	font-weight: normal;
 	font-style: normal;
 	opacity: 1;
 	border: 3px solid @border_color;
+	color: @on_surface;
 }
 
 #taskbar button {
 	margin: 0;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 0px 5px 0px 5px;
 }
 
@@ -137,11 +143,11 @@ window#waybar.empty #window {
  * Modules
  * ----------------------------------------------------- */
 
-.modules-left > widget:first-child > #workspaces {
+.modules-left>widget:first-child>#workspaces {
 	margin-left: 0;
 }
 
-.modules-right > widget:last-child > #workspaces {
+.modules-right>widget:last-child>#workspaces {
 	margin-right: 0;
 }
 
@@ -315,7 +321,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	border: 3px solid @border_color;
@@ -386,7 +392,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	border: 3px solid @border_color;
@@ -396,7 +402,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	border: 3px solid @border_color;
@@ -410,7 +416,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	opacity: 1;
@@ -430,7 +436,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	border: 3px solid @border_color;
@@ -456,7 +462,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	border: 3px solid @border_color;
@@ -476,7 +482,7 @@ window#waybar.empty #window {
 	background-color: @background;
 	font-size: 16px;
 	color: @on_surface;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 15px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	opacity: 1;
@@ -514,11 +520,11 @@ window#waybar.empty #window {
 	padding: 0px 15px 0px 0px;
 }
 
-#tray > .passive {
+#tray>.passive {
 	-gtk-icon-effect: dim;
 }
 
-#tray > .needs-attention {
+#tray>.needs-attention {
 	-gtk-icon-effect: highlight;
 }
 
@@ -527,7 +533,7 @@ window#waybar.empty #window {
 	font-size: 16px;
 	font-weight: bold;
 	color: white;
-	border-radius: 5px 5px 5px 5px;
+	border-radius: 5px;
 	padding: 2px 10px 0px 10px;
 	margin: 3px 15px 3px 0px;
 	opacity: 1;
@@ -536,6 +542,8 @@ window#waybar.empty #window {
 
 #custom-waybar-music #icon {
 	color: @icon_color;
-	font-size: 18px; /* Slightly larger than text for emphasis */
-	margin-right: 5px; /* Add some spacing between icon and text */
+	font-size: 18px;
+	/* Slightly larger than text for emphasis */
+	margin-right: 5px;
+	/* Add some spacing between icon and text */
 }

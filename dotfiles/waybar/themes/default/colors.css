@@ -11,6 +11,7 @@
 @define-color inverse_primary #805611;
 @define-color inverse_surface #ede0d4;
 @define-color on_background #ede0d4;
+@define-color icon_color @subtext0;
 @define-color on_error #690005;
 @define-color on_error_container #ffdad6;
 @define-color on_primary #452b00;
@@ -53,4 +54,5 @@
 @define-color tertiary #b9cda0;
 @define-color tertiary_container #3b4c29;
 @define-color tertiary_fixed #d4eabb;
+@define-color tertiary_fixed_dim #b9cda0;
 @define-color tertiary_fixed_dim #b9cda0;

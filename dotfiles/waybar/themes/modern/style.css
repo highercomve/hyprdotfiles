@@ -1,0 +1,340 @@
+@import "../default/style.css";
+@import "./colors.css";
+
+/* -----------------------------------------------------
+ * General
+ * ----------------------------------------------------- */
+
+* {
+    font-family: "JetBrains Mono", "Font Awesome 6 Free", "Font Awesome 6 Brands", sans-serif;
+    border: none;
+    border-radius: 0;
+}
+
+
+
+window#waybar {
+    background-color: rgba(0, 0, 0, 0);
+    /* Transparent global background */
+    border-bottom: none;
+    color: @text;
+    transition: background-color .5s;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+/* -----------------------------------------------------
+ * Workspaces
+ * ----------------------------------------------------- */
+
+#workspaces {
+    background-color: @surface;
+    margin: 5px 5px;
+    padding: 2px 2px;
+    border: 1px solid @border_color;
+    border-radius: 20px;
+}
+
+#workspaces button {
+    padding: 0px 5px;
+    margin: 0px 3px;
+    background-color: transparent;
+    color: @subtext0;
+    transition: all 0.3s ease;
+    border-radius: 20px;
+}
+
+#workspaces button:hover {
+    background-color: @surface1;
+    color: @text;
+    box-shadow: none;
+    border-radius: 20px;
+}
+
+#workspaces button.active {
+    background-color: @primary;
+    color: @base;
+    min-width: 20px;
+    background-size: 400% 400%;
+    animation: gradient_f 20s ease-in-out infinite;
+    transition: all 0.3s cubic-bezier(.55, -0.68, .48, 1.682);
+    border-radius: 20px;
+}
+
+#workspaces button.urgent {
+    background-color: @error;
+    color: @base;
+}
+
+/* -----------------------------------------------------
+ * Tooltips
+ * ----------------------------------------------------- */
+
+tooltip {
+    background: @base;
+    border: 1px solid @border_color;
+    border-radius: 20px;
+}
+
+tooltip label {
+    color: @text;
+}
+
+/* -----------------------------------------------------
+ * Modules Common
+ * ----------------------------------------------------- */
+
+.modules-left>widget:first-child>#workspaces {
+    margin-left: 10px;
+}
+
+.modules-right>widget:last-child>#workspaces {
+    margin-right: 10px;
+}
+
+#clock,
+#battery,
+#cpu,
+#memory,
+#disk,
+#temperature,
+#backlight,
+#network,
+#bluetooth,
+#pulseaudio,
+#custom-media,
+#tray,
+#mode,
+#idle_inhibitor,
+#custom-expand,
+#custom-cycle_wall,
+#custom-ss,
+#custom-dashboard,
+#custom-updates,
+#custom-updates,
+#custom-notification,
+#custom-appmenu,
+#taskbar,
+#window,
+#custom-empty,
+#custom-waybar-music,
+#custom-backlight,
+#custom-recording-indicator,
+#links,
+#tools {
+    padding: 0 10px;
+    margin: 5px 5px;
+    background-color: @surface;
+    color: @text;
+    border: 1px solid @border_color;
+    border-radius: 20px;
+}
+
+
+#bluetooth,
+#bluetooth.on,
+#bluetooth.connected {
+    background-color: @background;
+    font-size: 16px;
+    color: @on_surface;
+    border-radius: 20px;
+    padding: 2px 10px 0px 10px;
+    margin: 3px 3px 3px 3px;
+    border: 3px solid @border_color;
+}
+
+#bluetooth.off {
+    background-color: transparent;
+    padding: 0px;
+    margin: 0px;
+}
+
+
+/* -----------------------------------------------------
+ * Taskbar
+ * ----------------------------------------------------- */
+
+#taskbar {
+    background-color: @background;
+    margin: 3px 15px 3px 0px;
+    padding: 2px 10px 0px 10px;
+    border-radius: 20px;
+    font-weight: normal;
+    font-style: normal;
+    opacity: 1;
+    border: 3px solid @border_color;
+    color: @on_surface;
+}
+
+#taskbar button {
+    margin: 0;
+    border-radius: 20px;
+    padding: 0px 5px 0px 5px;
+}
+
+#taskbar.empty {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+#taskbar button:hover {
+    color: @text;
+    background: @surface1;
+}
+
+
+/* -----------------------------------------------------
+ * Specific Modules
+ * ----------------------------------------------------- */
+
+#clock {
+    background-color: @surface;
+    color: @blue;
+    font-weight: bold;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: @green;
+    background-color: @surface;
+}
+
+#battery.critical:not(.charging) {
+    background-color: @error;
+    color: @base;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+@keyframes blink {
+    to {
+        background-color: @surface;
+        color: @error;
+    }
+}
+
+#cpu {
+    color: @sapphire;
+}
+
+#memory {
+    color: @mauve;
+}
+
+#disk {
+    color: @peach;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#network {
+    color: @teal;
+}
+
+#network.disconnected {
+    color: @error;
+}
+
+#pulseaudio {
+    color: @maroon;
+}
+
+#pulseaudio.muted {
+    color: @subtext0;
+}
+
+#custom-media {
+    background-color: @surface;
+    color: @lavender;
+    min-width: 100px;
+}
+
+#custom-media.custom-spotify {
+    background-color: @green;
+}
+
+#custom-media.custom-vlc {
+    background-color: @peach;
+}
+
+#tray {
+    padding: 0 10px;
+}
+
+#tray>.passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray>.needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @error;
+}
+
+#idle_inhibitor {
+    color: @blue;
+}
+
+#idle_inhibitor.activated {
+    color: @base;
+    background-color: @blue;
+}
+
+#custom-updates {
+    color: @flamingo;
+}
+
+#custom-notification {
+    font-family: "Material Icons";
+}
+
+/* -----------------------------------------------------
+ * Custom Quicklinks & Launchers
+ * ----------------------------------------------------- */
+/* These usually are just icons, so we might want them transparent or pill shaped too.
+   Let's make them pill shaped for consistency but maybe grouped?
+   For now, individual pills. */
+
+#custom-brave,
+#custom-browser,
+#custom-keybindings,
+#custom-outlook,
+#custom-filemanager,
+#custom-teams,
+#custom-chatgpt,
+#custom-calculator,
+#custom-windowsvm,
+#custom-cliphist,
+#custom-settings,
+#custom-wallpaper,
+#custom-system,
+#custom-hyprshade,
+#custom-hypridle,
+#custom-tools,
+#custom-sidepad {
+    margin-right: 10px;
+    padding: 0 10px;
+    background-color: transparent;
+    /* Keep these cleaner */
+    color: @icon_color;
+    font-size: 18px;
+    border-radius: 20px;
+}
+
+#custom-exit {
+    margin: 5px 15px 5px 0px;
+    padding: 0 10px 0 5px;
+    background-color: @error;
+    color: @base;
+    min-width: 30px;
+    /* Ensure circle/pill shape */
+    border-radius: 20px;
+}

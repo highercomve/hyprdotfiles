@@ -2,13 +2,13 @@
 
 # Ensure rofi and wl-copy are available
 if ! command -v rofi &>/dev/null; then
-    echo "Error: rofi is not installed. Please install it to use this script."
-    exit 1
+  echo "Error: rofi is not installed. Please install it to use this script."
+  exit 1
 fi
 
 if ! command -v wl-copy &>/dev/null; then
-    echo "Error: wl-copy is not installed. Please install it to use this script."
-    exit 1
+  echo "Error: wl-copy is not installed. Please install it to use this script."
+  exit 1
 fi
 
 # Get all available disk devices (type "disk", not partitions or loop devices).
@@ -16,7 +16,7 @@ fi
 # Format: MODEL (SIZE) - /dev/NAME
 # This formatted output is then piped to rofi for user selection.
 selected_disk_info=$(lsblk -o NAME,SIZE,TYPE,VENDOR,MODEL -d -e 7,11 --noheadings |
-    awk '
+  awk '
         $3 == "disk" {
             name = $1;
             size = $2;
@@ -49,52 +49,52 @@ selected_disk_info=$(lsblk -o NAME,SIZE,TYPE,VENDOR,MODEL -d -e 7,11 --noheading
 
 # Check if a disk was selected by the user (i.e., rofi was not closed without selection)
 if [ -n "$selected_disk_info" ]; then
-    # Extract the /dev/NAME part, which is consistently the last field in our formatted string.
-    dev_path=$(echo "$selected_disk_info" | awk '{print $NF}')
+  # Extract the /dev/NAME part, which is consistently the last field in our formatted string.
+  dev_path=$(echo "$selected_disk_info" | awk '{print $NF}')
 
-    # Ask for action
-    actions="Copy path\nFormat disk"
-    selected_action=$(echo -e "$actions" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Action for $dev_path")
+  # Ask for action
+  actions="Copy path\nFormat disk"
+  selected_action=$(echo -e "$actions" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Action for $dev_path")
 
-    case "$selected_action" in
-    "Copy path")
-        # Copy the /dev path to the Wayland clipboard using wl-copy.
-        if wl-copy "$dev_path"; then
-            # Optional: Send a desktop notification for user feedback.
-            if command -v notify-send &>/dev/null; then
-                notify-send "Disk /dev path copied" "Copied: $dev_path"
-            fi
-        else
-            echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
-            # Optional: Send an error notification.
-            if command -v notify-send &>/dev/null; then
-                notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
-            fi
-        fi
-        ;;
-    "Format disk")
-        # Get the path to the format script. Assuming it's in the user's config directory.
-        format_script_path="$HOME/.config/hypr/scripts/format_disk"
+  case "$selected_action" in
+  "Copy path")
+    # Copy the /dev path to the Wayland clipboard using wl-copy.
+    if wl-copy "$dev_path"; then
+      # Optional: Send a desktop notification for user feedback.
+      if command -v notify-send &>/dev/null; then
+        notify-send "Disk /dev path copied" "Copied: $dev_path"
+      fi
+    else
+      echo "Error: Failed to copy '$dev_path' to clipboard. wl-copy might have failed."
+      # Optional: Send an error notification.
+      if command -v notify-send &>/dev/null; then
+        notify-send -u critical "Clipboard Error" "Failed to copy '$dev_path' to clipboard."
+      fi
+    fi
+    ;;
+  "Format disk")
+    # Get the path to the format script. Assuming it's in the user's config directory.
+    format_script_path="$HOME/.config/hypr/scripts/format_disk"
 
-        if [ ! -f "$format_script_path" ]; then
-            echo "Error: Format script not found at $format_script_path"
-            if command -v notify-send &>/dev/null; then
-                notify-send -u critical "Script Error" "Format script not found."
-            fi
-            exit 1
-        fi
+    if [ ! -f "$format_script_path" ]; then
+      echo "Error: Format script not found at $format_script_path"
+      if command -v notify-send &>/dev/null; then
+        notify-send -u critical "Script Error" "Format script not found."
+      fi
+      exit 1
+    fi
 
-        # Get the terminal command
-        terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
-
-        # Execute the format script in a new terminal
-        $terminal_cmd --title "format-disk-applet" --class dotfiles-floating -e sudo "$format_script_path" "$dev_path"
-        ;;
-    *)
-        echo "No action selected. Operation cancelled."
-        ;;
-    esac
+    # Get the terminal command
+    terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
+    terminal_cmd=alacritty
+    # Execute the format script in a new terminal
+    $terminal_cmd --title "format-disk-applet" --class dotfiles-floating -e sudo "$format_script_path" "$dev_path"
+    ;;
+  *)
+    echo "No action selected. Operation cancelled."
+    ;;
+  esac
 else
-    # User closed rofi or did not make a selection.
-    echo "No disk selected. Operation cancelled."
+  # User closed rofi or did not make a selection.
+  echo "No disk selected. Operation cancelled."
 fi
