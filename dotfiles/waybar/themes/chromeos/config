@@ -13,7 +13,7 @@
     ],
     // Modules Left
     "modules-left": [
-        "custom/appmenu",
+        "custom/appmenuicon",
         "hyprland/workspaces",
         "wlr/taskbar",
         //"group/quicklinks",
@@ -21,25 +21,14 @@
         "custom/empty"
     ],
     // Modules Center
-    "modules-center": [
-        "clock",
-        "custom/empty"
-    ],
+    "modules-center": [],
     // Modules Right
     "modules-right": [
         "custom/waybar-music",
-        //"custom/mediaplayer",
-        "pulseaudio",
-        "backlight",
-        "bluetooth",
-        "network",
-        "battery",
-        "custom/backlight",
-        "group/cpu-memory",
         "group/tools",
         "tray",
-        "custom/recording-indicator",
         "custom/notification",
-        "custom/exit"
+        "group/chromeos-status",
+        "group/power-menu"
     ]
 }

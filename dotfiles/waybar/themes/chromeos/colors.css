@@ -1,0 +1,64 @@
+/*
+*
+* Chrome OS Dark Theme Colors
+*
+*/
+
+@define-color base #121212;
+@define-color mantle #1e1e1e;
+@define-color crust #11111b;
+
+@define-color text #e8eaed;
+@define-color subtext0 #a8aeb4;
+@define-color subtext1 #bdc1c6;
+
+@define-color surface0 #313244;
+@define-color surface1 #45475a;
+@define-color surface2 #585b70;
+
+@define-color overlay0 #6c7086;
+@define-color overlay1 #7f849c;
+@define-color overlay2 #9399b2;
+
+@define-color blue #8ab4f8;
+@define-color lavender #b4bcca;
+@define-color sapphire #74a0e8;
+@define-color sky #89b3f8;
+@define-color teal #94d2bd;
+@define-color green #81c995;
+@define-color yellow #fdd663;
+@define-color peach #fab1a0;
+@define-color maroon #eba0ac;
+@define-color red #f28b82;
+@define-color mauve #cba6f7;
+@define-color pink #f4b5b9;
+@define-color flamingo #f2cdcd;
+@define-color rosewater #f5e0dc;
+
+@define-color background #121212;
+@define-color on_background #e8eaed;
+@define-color surface #202124;
+@define-color on_surface #e8eaed;
+
+@define-color primary #8ab4f8;
+@define-color on_primary #202124;
+@define-color primary_container #1368f4;
+@define-color on_primary_container #e8eaed;
+
+@define-color secondary #a8c7fa;
+@define-color on_secondary #202124;
+@define-color secondary_container #004a77;
+@define-color on_secondary_container #c2e7ff;
+
+@define-color tertiary #a8eff2;
+@define-color on_tertiary #004f52;
+@define-color tertiary_container #004f52;
+@define-color on_tertiary_container #bce9eb;
+
+@define-color error #f28b82;
+@define-color on_error #601410;
+@define-color error_container #8c1d18;
+@define-color on_error_container #f9dedc;
+
+@define-color border_color #3c4043;
+@define-color icon_color #e8eaed;

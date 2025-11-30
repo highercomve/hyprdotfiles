@@ -137,6 +137,44 @@
 		"on-click-right": "hyprlock",
 		"tooltip-format": "Left: Power menu\nRight: Lock screen"
 	},
+	"group/power-menu": {
+		"orientation": "inherit",
+		"drawer": {
+			"transition-duration": 500,
+			"children-class": "not-power",
+			"transition-left-to-right": false
+		},
+		"modules": [
+			"custom/power",
+			"custom/reboot",
+			"custom/lock",
+			"custom/logout"
+		]
+	},
+	"custom/power": {
+		"format": "",
+		"tooltip": true,
+		"tooltip-format": "Power Off",
+		"on-click": "~/.config/hypr/scripts/confirm_action.sh \"shutdown now\" \"Shutdown?\""
+	},
+	"custom/reboot": {
+		"format": "",
+		"tooltip": true,
+		"tooltip-format": "Reboot",
+		"on-click": "~/.config/hypr/scripts/confirm_action.sh \"reboot\" \"Reboot?\""
+	},
+	"custom/lock": {
+		"format": "",
+		"tooltip": true,
+		"tooltip-format": "Lock Screen",
+		"on-click": "~/.config/hypr/scripts/confirm_action.sh \"hyprlock\" \"Lock?\""
+	},
+	"custom/logout": {
+		"format": "󰍃",
+		"tooltip": true,
+		"tooltip-format": "Log Out",
+		"on-click": "~/.config/hypr/scripts/confirm_action.sh \"hyprctl dispatch exit\" \"Logout?\""
+	},
 	// SwayNC
 	"custom/notification": {
 		"tooltip-format": "Left: Notifications\nRight: Do not disturb",
@@ -269,6 +307,25 @@
 			"hyprland/language"
 		]
 	},
+	// Group CPU and Memory
+	"group/cpu-memory": {
+		"orientation": "inherit",
+		"modules": [
+			"cpu",
+			"memory"
+		]
+	},
+	// Group ChromeOS Status
+	"group/chromeos-status": {
+		"orientation": "horizontal",
+		"modules": [
+			"network",
+			"bluetooth",
+			"pulseaudio",
+			"battery",
+			"clock"
+		]
+	},
 	// Group Tools
 	"group/tools": {
 		"orientation": "inherit",
@@ -308,7 +365,7 @@
 	// Network
 	"network": {
 		"format": "{ifname}",
-		"format-wifi": " {signalStrength}%",
+		"format-wifi": "   {signalStrength}%",
 		"format-ethernet": "  {ifname}",
 		"format-disconnected": "Disconnected ⚠",
 		"tooltip-format": " {ifname} via {gwaddri}",

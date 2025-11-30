@@ -14,8 +14,8 @@
 
 
 window#waybar {
-    background-color: rgba(0, 0, 0, 0);
-    /* Transparent global background */
+    background-color: @surface;
+    /* Opaque background for Chrome OS look */
     border-bottom: none;
     color: @text;
     transition: background-color .5s;
@@ -30,10 +30,10 @@ window#waybar.hidden {
  * ----------------------------------------------------- */
 
 #workspaces {
-    background-color: @surface;
-    margin: 5px 5px;
-    padding: 2px 2px;
-    border: 1px solid @border_color;
+    background-color: @surface1;
+    margin: 5px 10px;
+    padding: 0 15px;
+    border: none;
     border-radius: 20px;
 }
 
@@ -126,9 +126,9 @@ tooltip label {
 #tools {
     padding: 0 10px;
     margin: 5px 5px;
-    background-color: @surface;
+    background-color: transparent;
     color: @text;
-    border: 1px solid @border_color;
+    border: none;
     border-radius: 20px;
 }
 
@@ -157,21 +157,21 @@ tooltip label {
  * ----------------------------------------------------- */
 
 #taskbar {
-    background-color: @background;
+    background-color: transparent;
     margin: 3px 15px 3px 0px;
-    padding: 2px 10px 0px 10px;
-    border-radius: 20px;
+    padding: 2px 15px 0px 15px;
+    border-radius: 5px;
     font-weight: normal;
     font-style: normal;
     opacity: 1;
-    border: 3px solid @border_color;
+    border: none;
     color: @on_surface;
 }
 
 #taskbar button {
     margin: 0;
     border-radius: 20px;
-    padding: 0px 5px 0px 5px;
+    padding: 0px 10px 0px 10px;
 }
 
 #taskbar.empty {
@@ -232,21 +232,34 @@ tooltip label {
     color: @peach;
 }
 
-#cpu-memory {
-    background-color: @surface;
-    border: 1px solid @border_color;
+#chromeos-status {
+    background-color: @surface1;
     border-radius: 20px;
-    padding: 0 10px;
-    margin: 5px 5px;
+    padding: 0 15px;
+    margin: 5px 10px;
 }
 
-#cpu-memory #cpu,
-#cpu-memory #memory {
+#chromeos-status #clock,
+#chromeos-status #battery,
+#chromeos-status #network,
+#chromeos-status #bluetooth,
+#chromeos-status #pulseaudio {
     background-color: transparent;
+    color: @text;
     border: none;
     margin: 0;
     padding: 0 5px;
     border-radius: 0;
+}
+
+#custom-appmenuicon {
+    background-color: @surface1;
+    color: @text;
+    border-radius: 20px;
+    padding: 0 10px 0 5px;
+    margin: 5px 10px;
+    min-width: 30px;
+    min-height: 30px;
 }
 
 #backlight {
@@ -354,4 +367,43 @@ tooltip label {
     min-width: 30px;
     /* Ensure circle/pill shape */
     border-radius: 20px;
+}
+
+/* Power Menu */
+/* Power Menu */
+#power-menu {
+    background-color: @surface1;
+    border-radius: 20px;
+    padding: 5px 5px;
+    margin: 5px 10px;
+}
+
+#power-menu.not-power {
+    background-color: transparent;
+}
+
+#power-menu #custom-power {
+    background-color: transparent;
+    color: @text;
+    margin: 0 5px;
+    padding: 0 5px;
+    border-radius: 20px;
+}
+
+#power-menu #custom-reboot,
+#power-menu #custom-lock,
+#power-menu #custom-logout {
+    background-color: transparent;
+    color: @text;
+    margin: 0 5px;
+    padding: 0 5px;
+    border-radius: 20px;
+}
+
+#power-menu #custom-power:hover,
+#power-menu #custom-reboot:hover,
+#power-menu #custom-lock:hover,
+#power-menu #custom-logout:hover {
+    background-color: @surface0;
+    color: @text;
 }
