@@ -38,6 +38,7 @@
         "custom/backlight",
         "cpu",
 		"memory",
+		"temperature",
         "group/tools",
         "tray",
         "custom/recording-indicator",

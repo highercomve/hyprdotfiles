@@ -18,7 +18,7 @@
 }
 
 window#waybar {
-	background-color: @background; /* Transparent/Blurry Base */
+	background-color: @main_background;
 	border-bottom: 1px solid rgba(148, 226, 213, 0.1); /* Very subtle teal edge */
 	color: @text;
 	transition: background-color 0.5s;

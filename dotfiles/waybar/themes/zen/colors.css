@@ -59,3 +59,4 @@
 @define-color border_color rgba(148, 226, 213, 0.1);
 /* Very subtle Teal hint or transparent */
 @define-color icon_color @subtext0;
+@define-color main_background rgba(30, 30, 46, 0.5);

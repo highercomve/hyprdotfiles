@@ -273,12 +273,15 @@
 	},
 	// Memory
 	"memory": {
-		"format": " {used}G  ",
+		"format": " {used}G",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	"temperature": {
-		"thermal-zone": 0,
-		"format": " {temperatureC}°C ",
+		"module": "temperature",
+		"hwmon-path": "/sys/class/hwmon/hwmon4/temp1_input",
+		"critical-threshold": 80,
+		"format": "{icon} {temperatureC}°C",
+		"format-icons": ["", "", ""],
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},
 	// Harddisc space used

@@ -30,7 +30,7 @@
     "group/future-hardware": {
         "orientation": "horizontal",
         "modules": [
-            "disk",
+            "temperature",
             "memory",
             "cpu"
         ],

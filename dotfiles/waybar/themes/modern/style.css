@@ -15,7 +15,7 @@
 }
 
 window#waybar {
-	background-color: @background;
+	background-color: @main_background;
 	/* Transparent global background */
 	border-bottom: none;
 	color: @text;
