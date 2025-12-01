@@ -1,2 +1,8 @@
 @import "../themes/default/style.css";
 @import "./colors.css";
+
+window#waybar {
+	background-color: @main_background;
+	transition-property: background-color;
+	transition-duration: 0.5s;
+}

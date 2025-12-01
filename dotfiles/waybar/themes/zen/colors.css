@@ -35,7 +35,7 @@
 @define-color rosewater #f5e0dc;
 
 /* Waybar Specific Overrides for Zen Theme */
-@define-color background rgba(30, 30, 46, 0.8);
+@define-color background #1e1e2e;
 /* Base with opacity, slightly more opaque for calmness */
 @define-color on_background @text;
 
@@ -52,7 +52,7 @@
 @define-color error @red;
 @define-color on_error @base;
 
-@define-color surface rgba(49, 50, 68, 0.4);
+@define-color surface #313244;
 /* Softer surface */
 @define-color on_surface @text;
 

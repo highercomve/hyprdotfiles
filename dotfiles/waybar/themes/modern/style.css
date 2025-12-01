@@ -15,7 +15,7 @@
 }
 
 window#waybar {
-	background-color: rgba(0, 0, 0, 0);
+	background-color: @background;
 	/* Transparent global background */
 	border-bottom: none;
 	color: @text;
@@ -23,7 +23,7 @@ window#waybar {
 }
 
 window#waybar.hidden {
-	opacity: 0.2;
+	opacity: 1;
 }
 
 .modules-left {

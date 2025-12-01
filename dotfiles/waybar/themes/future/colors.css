@@ -6,7 +6,7 @@
 @define-color base #050a14;
 @define-color mantle #0a1424;
 @define-color surface #0f1c2e;
-@define-color surface-alpha rgba(15, 28, 46, 0.85);
+@define-color surface-alpha #0f1c2e;
 
 @define-color text #e0f0ff;
 @define-color subtext #7a8ca0;

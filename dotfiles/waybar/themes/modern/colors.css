@@ -35,7 +35,7 @@
 @define-color rosewater #f5e0dc;
 
 /* Waybar Specific Overrides */
-@define-color background rgba(30, 30, 46, 0.7);
+@define-color background #1e1e2e;
 /* Base with opacity */
 @define-color on_background @text;
 
@@ -51,7 +51,7 @@
 @define-color error @red;
 @define-color on_error @base;
 
-@define-color surface rgba(49, 50, 68, 0.5);
+@define-color surface #313244;
 /* Surface0 with opacity */
 @define-color on_surface @text;
 

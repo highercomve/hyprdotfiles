@@ -22,7 +22,7 @@ window#waybar {
 }
 
 window#waybar.hidden {
-	opacity: 0.2;
+	opacity: 1;
 }
 
 .modules-left {
