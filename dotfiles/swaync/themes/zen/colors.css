@@ -1,0 +1,12 @@
+@define-color foreground #cdd6f4;
+@define-color background rgba(30, 30, 46, 0.9);
+@define-color cursor #cdd6f4;
+
+@define-color color0 #1e1e2e;
+@define-color color1 #45475a;
+@define-color color2 #eba0ac; /* Urgent (Maroon) */
+@define-color color3 #94e2d5; /* Selected (Teal) */
+@define-color color4 #89b4fa; /* Blue */
+@define-color color5 #a6e3a1; /* Hover (Green) */
+@define-color color6 #89dceb; /* Sky */
+@define-color color7 #cdd6f4;

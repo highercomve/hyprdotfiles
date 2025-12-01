@@ -19,6 +19,18 @@ window#waybar.hidden {
 	opacity: 0.2;
 }
 
+.modules-left {
+	margin: 8px 0px 8px 10px;
+}
+
+.modules-right {
+	margin: 8px 10px 8px 0px;
+}
+
+.modules-center {
+	margin: 8px 0px 8px 0px;
+}
+
 /* -----------------------------------------------------
  * Workspaces
  * ----------------------------------------------------- */

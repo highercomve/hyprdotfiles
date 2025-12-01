@@ -1,0 +1,195 @@
+/* Zen SwayNC Theme - Floating & Rounded */
+
+@define-color text            @foreground;
+@define-color border          rgba(186, 194, 222, 0.0); /* No border */
+@define-color background-alt  rgba(49, 50, 68, 0.4);
+@define-color selected        @color3;
+@define-color hover           @color5;
+@define-color urgent          @color2;
+
+* {
+	color: @text;
+	all: unset;
+	font-size: 14px;
+	font-family: "JetBrains Mono", "Font Awesome 6 Free", sans-serif;
+	transition: 200ms;
+}
+
+.blank-window {
+	background: transparent;
+}
+
+.control-center {
+	background: alpha(@background, 0.9); /* Slight transparency */
+	border-radius: 14px; /* Very rounded */
+	border: 1px solid rgba(255, 255, 255, 0.05);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5); /* Deep shadow for floating effect */
+	margin: 20px;
+	padding: 20px;
+}
+
+/* Notifications */
+.control-center .notification-row .notification-background,
+.control-center
+	.notification-row
+	.notification-background
+	.notification.critical {
+	background-color: @background-alt;
+	border: none;
+	border-radius: 14px;
+	margin: 8px 0px;
+	padding: 4px;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.control-center
+	.notification-row
+	.notification-background
+	.notification.critical {
+	color: @urgent;
+	background-color: alpha(@urgent, 0.1);
+}
+
+.control-center
+	.notification-row
+	.notification-background
+	.notification
+	.notification-content {
+	margin: 6px;
+	padding: 8px 34px 2px 2px;
+}
+
+.control-center
+	.notification-row
+	.notification-background
+	.notification
+	> *:last-child
+	> *
+	.notification-action {
+	background: alpha(@selected, 0.2);
+	color: @text;
+	border-radius: 16px;
+	margin: 6px;
+}
+
+.control-center
+	.notification-row
+	.notification-background
+	.notification
+	> *:last-child
+	> *
+	.notification-action:hover {
+	background: @selected;
+	color: @color0;
+}
+
+.control-center .notification-row .notification-background .close-button {
+	background: transparent;
+	border-radius: 50%;
+	color: @text;
+	margin: 0px;
+	padding: 6px;
+}
+
+.control-center .notification-row .notification-background .close-button:hover {
+	background-color: @selected;
+	color: @color0;
+}
+
+progressbar,
+progress {
+	border-radius: 10px;
+	background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Widgets */
+.widget-dnd {
+	margin: 10px;
+	font-size: 1.2rem;
+}
+
+.widget-dnd > switch {
+	background: alpha(@background-alt, 0.5);
+	border-radius: 14px;
+}
+
+.widget-dnd > switch slider {
+	background: @selected;
+	border-radius: 14px;
+}
+
+.widget-buttons-grid {
+	padding: 8px;
+	margin: 10px 0px 20px 0px;
+	border-radius: 14px;
+	background: @background-alt;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+	margin: 4px;
+	padding: 14px 18px;
+	background: transparent;
+	border-radius: 14px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+	background: @selected;
+	color: @color0;
+}
+
+.widget-mpris {
+	border-radius: 14px;
+	margin-bottom: 10px;
+	background-color: @background-alt;
+}
+
+/* Volume and Backlight */
+trough {
+	border-radius: 10px;
+	background: transparent;
+}
+
+trough highlight {
+	padding: 6px; /* Thicker slider */
+	background: @selected;
+	border-radius: 10px;
+}
+
+.widget-volume {
+	background-color: @background-alt;
+	padding: 12px;
+	margin: 4px 0;
+	border-radius: 14px;
+}
+
+.widget-volume trough {
+	padding: 4px;
+	background: alpha(@background, 0.3);
+}
+
+.widget-volume trough slider {
+	min-height: 1.5rem;
+	background: transparent;
+}
+
+.widget-backlight {
+	background-color: @background-alt;
+	padding: 12px;
+	margin: 4px 0;
+	border-radius: 14px;
+}
+
+.widget-backlight trough {
+	padding: 4px;
+	background: alpha(@background, 0.3);
+}
+
+.widget-backlight trough slider {
+	min-height: 1.5rem;
+	background: transparent;
+}
+
+.mpris-background {
+	opacity: 0.2;
+	background-color: @background-alt;
+}

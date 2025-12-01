@@ -284,7 +284,7 @@
 	// Harddisc space used
 	"disk": {
 		"interval": 30,
-		"format": " {percentage_used}% ",
+		"format": "   {percentage_used}% ",
 		"path": "/",
 		"on-click": "~/.config/hypr/user_settings/system-monitor.sh"
 	},

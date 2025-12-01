@@ -22,19 +22,12 @@ killall waybar || true
 pkill waybar || true
 sleep 0.5
 
-# -----------------------------------------------------
-# Default theme: /THEMEFOLDER;/VARIATION
-# -----------------------------------------------------
-
-config_file="config"
-style_file="style.css"
-
 # Check if waybar-disabled file exists
 if [ ! -f "$HOME"/.config/hypr/user_settings/waybar-disabled ]; then
     HYPRLAND_SIGNATURE=$(hyprctl instances -j | jq -r '.[0].instance')
     # Launch waybar and redirect all output to a log file
-    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/current/"$config_file" -s ~/.config/waybar/current/"$style_file" &>~/.cache/waybar.log &
-    # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes/current/$config_file -s ~/.config/waybar/themes/current/$style_file &
+    HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/current/config -s ~/.config/waybar/current/style.css &>~/.cache/waybar.log &
+    # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes/current/config -s ~/.config/waybar/themes/current/style.css &
 else
     echo ":: Waybar disabled"
 fi

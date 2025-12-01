@@ -1,0 +1,178 @@
+//
+// Theme : Zen (Minimalist & Compact)
+// Adapted by : @GeodeArc
+//
+
+configuration { font: "FiraCode Nerd Font 10"; } /* Reduced font size */
+
+// DEFAULT PROPERTIES
+* {
+    // Zen Colors
+    background:                  rgba(30, 30, 46, 0.85);
+    background-alt:              rgba(49, 50, 68, 0.4); 
+    foreground:                  #cdd6f4;
+    selected:                    #94e2d5;
+    active:                      #a6e3a1;
+    urgent:                      #eba0ac;
+
+    // Explicitly define variables used by other configs
+    on-surface:                  #cdd6f4;
+    primary:                     #94e2d5;
+    on-primary-fixed:            #1e1e2e;
+
+    lines:                       10;
+    columns:                     1;
+    cycle:                       false;
+    border-width: 1px;
+    border-radius: 12px;
+}
+
+
+// DEFAULT WINDOW
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       600px;
+    x-offset:                    0px;
+    y-offset:                    0px;
+
+    enabled:                     true;
+    border:                      @border-width;
+    border-radius:               @border-radius;
+    border-color:                @primary;
+    background-color:            @background;
+    padding:                     0;
+}
+
+// DEFAULT MAINBOX
+mainbox {
+    enabled:                     true;
+    spacing:                     0px;
+    background-color:            transparent;
+    orientation:                 vertical;
+    children:                    [ "inputbar", "listbox" ];
+}
+
+// DEFAULT LISTBOX
+listbox {
+    spacing:                     10px;
+    padding:                     15px;
+    background-color:            transparent;
+    orientation:                 vertical;
+    children:                    [ "listview" ];
+}
+
+// DEFAULT TOP BAR
+inputbar {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     20px 20px 10px;
+    background-color:            transparent;
+    text-color:                  @foreground;
+    orientation:                 horizontal;
+    children:                    [ "textbox-prompt-colon", "entry" ];
+}
+
+textbox-prompt-colon {
+    enabled:                     true;
+    expand:                      false;
+    str:                         " ";
+    padding:                     10px 14px;
+    border-radius:               100%;
+    text-color:                  @primary;
+    background-color:            @background-alt;
+}
+
+entry {
+    enabled:                     true;
+    expand:                      true;
+    padding:                     10px 14px;
+    border-radius:               100%;
+    text-color:                  inherit;
+    background-color:            @background-alt;
+    cursor:                      text;
+    placeholder:                 "Search...";
+    placeholder-color:           inherit;
+}
+
+// DEFAULT LIST
+listview {
+    enabled:                      true;
+    columns:                      @columns;
+    lines:                        @lines;
+    cycle:                        @cycle;
+    dynamic:                      true;
+    scrollbar:                    false;
+    layout:                       vertical;
+    reverse:                      false;
+    fixed-height:                 true;
+    fixed-columns:                true;
+
+    padding:                      5px;
+    background-color:             transparent;
+    text-color:                   @foreground;
+    border:                       0px;
+    cursor:                       "default";
+    spacing:                      5px;
+}
+
+// ELEMENTS
+element {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     8px 12px;
+    border-radius:               10px;
+    background-color:            transparent;
+    text-color:                  @foreground;
+    cursor:                      pointer;
+    orientation:                 horizontal;
+}
+
+element normal.normal {
+    background-color:            transparent;
+    text-color:                  @foreground;
+}
+
+element selected.normal {
+    background-color:            @background-alt;
+    text-color:                  @primary;
+    border:                      1px;
+    border-color:                @primary;
+}
+
+element normal.urgent {
+    background-color:            inherit;
+    text-color:                  @urgent;
+}
+
+element normal.active {
+    background-color:            inherit;
+    text-color:                  @active;
+}
+
+element selected.urgent {
+    background-color:            @urgent;
+    text-color:                  @on-primary-fixed;
+}
+
+element selected.active {
+    background-color:            @active;
+    text-color:                  @on-primary-fixed;
+}
+
+element-icon {
+    size:                        1.5em; /* Smaller icons */
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+}
+
+element-text {
+    vertical-align:              0.5;
+    horizontal-align:            0.0;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+}

@@ -24,6 +24,11 @@
 			"waybar": "future",
 			"swaync": "future",
 			"rofi": "highercomve-future.rasi"
+		},
+		"Zen": {
+			"waybar": "zen",
+			"swaync": "zen",
+			"rofi": "highercomve-zen.rasi"
 		}
 	}
 }

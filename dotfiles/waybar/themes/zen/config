@@ -1,0 +1,87 @@
+{
+    // General Settings
+    "layer": "top",
+    "margin-top": 0,
+    "margin-bottom": 0,
+    "margin-left": 0,
+    "margin-right": 0,
+    "spacing": 0,
+    "include": [
+        "~/.config/hypr/user_settings/waybar-quicklinks.json",
+        "~/.config/waybar/modules.json"
+    ],
+    // Modules Left
+    "modules-left": [
+        "custom/appmenu",
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+    // Modules Center
+    "modules-center": [
+        "clock"
+    ],
+    // Modules Right
+    "modules-right": [
+        "group/future-media",
+        "group/future-hardware",
+        "group/future-connectivity",
+        "group/future-system"
+    ],
+    "group/future-hardware": {
+        "orientation": "horizontal",
+        "modules": [
+            "disk",
+            "memory",
+            "cpu"
+        ],
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "not-memory",
+            "transition-left-to-right": false
+        }
+    },
+    "group/future-media": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/waybar-music",
+            "pulseaudio",
+            "backlight"
+        ]
+    },
+    "group/future-connectivity": {
+        "orientation": "horizontal",
+        "modules": [
+            "network",
+            "bluetooth"
+        ]
+    },
+    "group/future-system": {
+        "orientation": "horizontal",
+        "modules": [
+            "battery",
+            "tray",
+            "custom/notification",
+            "custom/exit"
+        ]
+    },
+    "custom/notification": {
+        "tooltip-format": "Left: Notifications\nRight: Do not disturb",
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "",
+            "none": "",
+            "dnd-notification": "",
+            "dnd-none": "",
+            "inhibited-notification": "",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    }
+}

@@ -1,0 +1,248 @@
+/*@import "../themes/default/style.css";*/
+/*@import "../default/style.css";*/
+@import "./colors.css";
+
+/* -----------------------------------------------------
+ * General
+ * ----------------------------------------------------- */
+
+* {
+	font-family:
+		"JetBrains Mono", "Font Awesome 6 Free", "Font Awesome 6 Brands",
+		sans-serif;
+	border: none;
+	border-radius: 0;
+	font-size: 13px; /* Smaller, sharper font */
+	font-weight: 600;
+	min-height: 0; /* Reset min-height */
+}
+
+window#waybar {
+	background-color: rgba(30, 30, 46, 0.6); /* Transparent/Blurry Base */
+	border-bottom: 1px solid rgba(148, 226, 213, 0.1); /* Very subtle teal edge */
+	color: @text;
+	transition: background-color 0.5s;
+	margin: 15px 20px; /* More air */
+	border-radius: 16px; /* Rounded bar */
+}
+
+window#waybar.hidden {
+	opacity: 0.2;
+}
+
+.modules-left {
+	margin: 8px 0px 8px 10px;
+}
+
+.modules-right {
+	margin: 8px 10px 8px 0px;
+}
+
+.modules-center {
+	margin: 8px 0px 8px 0px;
+}
+
+/* -----------------------------------------------------
+ * Workspaces
+ * ----------------------------------------------------- */
+
+#workspaces {
+	background-color: transparent;
+	margin: 2px 8px; /* More air */
+	padding: 0px 5px;
+	border: none;
+	border-radius: 16px;
+}
+
+#workspaces button {
+	padding: 0px 10px; /* More air */
+	margin: 3px 2px;
+	background-color: transparent;
+	color: @subtext0;
+	transition: all 0.2s ease;
+	border-radius: 16px;
+	min-width: 20px;
+}
+
+#workspaces button:hover {
+	background-color: @surface1;
+	color: @text;
+}
+
+#workspaces button.active {
+	background-color: @primary; /* Teal */
+	color: @base;
+	min-width: 24px;
+}
+
+#workspaces button.urgent {
+	background-color: @error;
+	color: @base;
+}
+
+/* -----------------------------------------------------
+ * Tooltips
+ * ----------------------------------------------------- */
+
+tooltip {
+	background: @base;
+	border-radius: 10px; /* No border */
+}
+
+tooltip label {
+	color: @text;
+}
+
+/* -----------------------------------------------------
+ * Modules Common
+ * ----------------------------------------------------- */
+
+#clock,
+#tray,
+#custom-notification,
+#custom-media,
+#custom-appmenu,
+#window,
+#custom-empty,
+#custom-backlight,
+#custom-exit {
+	padding: 0 12px; /* More air */
+	margin: 3px 5px; /* More air */
+	background-color: transparent;
+	color: @text;
+	border-radius: 16px;
+}
+
+/* Window Title */
+#window {
+	background-color: @surface;
+	color: @text;
+	padding: 0 15px;
+	margin: 3px 5px;
+	border-radius: 16px;
+}
+
+window#waybar.empty #window {
+	background-color: transparent;
+}
+
+/* -----------------------------------------------------
+ * Groups (The "Beautiful" Logic)
+ * ----------------------------------------------------- */
+
+#future-hardware,
+#future-media,
+#future-connectivity,
+#future-system {
+	background-color: @surface; /* Solid pill background */
+	margin: 3px 5px; /* More air */
+	padding: 0px 5px; /* Tight padding */
+	border-radius: 20px; /* Full pill */
+	border: none; /* No border for groups */
+}
+
+/* Modules inside groups - Reset */
+#future-hardware #disk,
+#future-hardware #memory,
+#future-hardware #cpu,
+#future-media #custom-waybar-music,
+#future-media #pulseaudio,
+#future-media #backlight,
+#future-connectivity #network,
+#future-connectivity #bluetooth,
+#future-system #battery,
+#future-system #tray,
+#future-system #custom-notification,
+#future-system #custom-exit {
+	background-color: transparent;
+	margin: 0px;
+	padding: 0px 8px; /* Consistent inner padding */
+	border-radius: 0;
+}
+
+/* Separators - Removed */
+/* All border-right rules removed */
+
+/* -----------------------------------------------------
+ * Specific Styling
+ * ----------------------------------------------------- */
+
+/* Connectivity - Bluetooth & Network */
+#future-connectivity #network {
+	color: @sky;
+}
+#future-connectivity #network.disconnected {
+	color: @error;
+}
+
+#future-connectivity #bluetooth {
+	color: @blue;
+}
+#future-connectivity #bluetooth.off {
+	color: @subtext0; /* Dim when off */
+}
+
+/* Hardware */
+#future-hardware #cpu {
+	color: @sapphire;
+}
+#future-hardware #memory {
+	color: @mauve;
+}
+#future-hardware #disk {
+	color: @peach;
+}
+
+/* Media */
+#future-media #custom-waybar-music {
+	color: @teal;
+	font-weight: bold;
+	padding-right: 12px;
+}
+#future-media #pulseaudio {
+	color: @primary;
+}
+#future-media #pulseaudio.muted {
+	color: @subtext0;
+}
+#future-media #backlight {
+	color: @yellow;
+}
+
+/* System */
+#future-system #battery {
+	color: @green;
+}
+#future-system #battery.critical:not(.charging) {
+	color: @error;
+	animation: blink 0.5s linear infinite alternate;
+}
+#future-system #custom-exit {
+	color: @red;
+	padding-left: 10px;
+}
+
+/* Clock */
+#clock {
+	background-color: @surface; /* Pill for clock */
+	color: @blue;
+	font-weight: bold;
+	border: none; /* No border */
+}
+
+/* App Menu */
+#custom-appmenu {
+	background-color: @surface;
+	color: @primary;
+	font-size: 18px;
+	padding: 0 12px;
+	border: none; /* No border */
+}
+
+/* Animations */
+@keyframes blink {
+	to {
+		color: @base;
+		background-color: @error;
+	}
+}
