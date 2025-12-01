@@ -307,6 +307,11 @@ tooltip label {
 
 #tray {
 	padding: 0 10px;
+	border: none;
+}
+
+#tray > * {
+	border: none;
 }
 
 #tray > .passive {

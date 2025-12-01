@@ -210,7 +210,12 @@ window#waybar.empty #window {
  * ----------------------------------------------------- */
 
 #tray {
-	padding: 0px 10px;
+	padding: 0 10px;
+	border: none;
+}
+
+#tray > * {
+	border: none;
 }
 
 #tray > .passive {

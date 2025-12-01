@@ -12,7 +12,7 @@
 		sans-serif;
 	border: none;
 	border-radius: 0;
-	font-size: 13px; /* Smaller, sharper font */
+	font-size: 16px; /* Increased font size */
 	font-weight: 600;
 	min-height: 0; /* Reset min-height */
 }
@@ -55,13 +55,13 @@ window#waybar.hidden {
 }
 
 #workspaces button {
-	padding: 0px 10px; /* More air */
+	padding: 0px 12px; /* Increased padding */
 	margin: 3px 2px;
 	background-color: transparent;
 	color: @subtext0;
 	transition: all 0.2s ease;
 	border-radius: 16px;
-	min-width: 20px;
+	min-width: 26px; /* Increased min-width */
 }
 
 #workspaces button:hover {
@@ -72,7 +72,7 @@ window#waybar.hidden {
 #workspaces button.active {
 	background-color: @primary; /* Teal */
 	color: @base;
-	min-width: 24px;
+	min-width: 32px; /* Increased min-width */
 }
 
 #workspaces button.urgent {
@@ -106,8 +106,8 @@ tooltip label {
 #custom-empty,
 #custom-backlight,
 #custom-exit {
-	padding: 0 12px; /* More air */
-	margin: 3px 5px; /* More air */
+	padding: 0 15px; /* Increased padding */
+	margin: 4px 6px; /* Increased margin */
 	background-color: transparent;
 	color: @text;
 	border-radius: 16px;
@@ -117,8 +117,8 @@ tooltip label {
 #window {
 	background-color: @surface;
 	color: @text;
-	padding: 0 15px;
-	margin: 3px 5px;
+	padding: 0 20px; /* Increased padding */
+	margin: 4px 6px;
 	border-radius: 16px;
 }
 
@@ -135,8 +135,8 @@ window#waybar.empty #window {
 #future-connectivity,
 #future-system {
 	background-color: @surface; /* Solid pill background */
-	margin: 3px 5px; /* More air */
-	padding: 0px 5px; /* Tight padding */
+	margin: 4px 6px; /* Increased margin */
+	padding: 0px 8px; /* Increased padding */
 	border-radius: 20px; /* Full pill */
 	border: none; /* No border for groups */
 }
@@ -156,7 +156,7 @@ window#waybar.empty #window {
 #future-system #custom-exit {
 	background-color: transparent;
 	margin: 0px;
-	padding: 0px 8px; /* Consistent inner padding */
+	padding: 0px 10px; /* Increased inner padding */
 	border-radius: 0;
 }
 
@@ -197,7 +197,7 @@ window#waybar.empty #window {
 #future-media #custom-waybar-music {
 	color: @teal;
 	font-weight: bold;
-	padding-right: 12px;
+	padding-right: 15px; /* Increased padding */
 }
 #future-media #pulseaudio {
 	color: @primary;
@@ -219,7 +219,7 @@ window#waybar.empty #window {
 }
 #future-system #custom-exit {
 	color: @red;
-	padding-left: 10px;
+	padding-left: 12px; /* Increased padding */
 }
 
 /* Clock */
@@ -234,8 +234,8 @@ window#waybar.empty #window {
 #custom-appmenu {
 	background-color: @surface;
 	color: @primary;
-	font-size: 18px;
-	padding: 0 12px;
+	font-size: 22px; /* Increased font size */
+	padding: 0 15px;
 	border: none; /* No border */
 }
 

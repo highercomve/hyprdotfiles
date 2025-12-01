@@ -1,0 +1,6 @@
+/* Light Theme Colors */
+@define-color background #FFFFFF;
+@define-color foreground #000000;
+@define-color primary #c49627;
+@define-color on_primary #FFFFFF;
+@define-color shadow #000000;

@@ -24,6 +24,10 @@
         "clock",
         "custom/empty"
     ],
+    "tray": {
+        "icon-size": 18,
+        "spacing": 5
+    },
     // Modules Right
     "modules-right": [
         "group/future-media",
