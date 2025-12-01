@@ -23,6 +23,7 @@ start_recording() {
     # wf-recorder -f "$REC_DIR/$REC_FILE" --pixel-format yuv420p &
     gpu-screen-recorder -w screen -o "$REC_DIR/$REC_FILE" &
     echo $! >"$PID_FILE"
+    pkill -RTMIN+12 waybar
 }
 
 # Function to start recording a selected area
@@ -51,6 +52,7 @@ start_recording_area() {
     notify-send "🔴 Recording started"
     gpu-screen-recorder -w region -region "$(echo "$region" | sed 's/\([0-9]*\),\([0-9]*\) \([0-9x]*\)/\3+\1+\2/')" -o "$REC_DIR/$REC_FILE" &
     echo $! >"$PID_FILE"
+    pkill -RTMIN+12 waybar
 }
 
 # Function to stop recording
@@ -69,6 +71,7 @@ stop_recording() {
     done
 
     rm "$PID_FILE"
+    pkill -RTMIN+12 waybar
     notify-send "✅ Recording stopped" "The recording has been saved in $REC_DIR"
 
     # Open the recording directory using the filemanager script

@@ -29,6 +29,8 @@ if [[ "$1" == "rofi" ]]; then
         else
             notify-send "Changing Hyprshade to $choice" "Toggle shader with SUPER+SHIFT+H"
         fi
+        # Update waybar
+        pkill -RTMIN+11 waybar
     fi
 
 else
@@ -59,5 +61,8 @@ else
         hyprshade off
         echo ":: hyprshade turned off"
     fi
+    
+    # Update waybar
+    pkill -RTMIN+11 waybar
 
 fi

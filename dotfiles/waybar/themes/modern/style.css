@@ -164,6 +164,11 @@ tooltip label {
 #custom-recording-indicator,
 #links,
 #tools,
+#custom-cliphist,
+#custom-hypridle,
+#custom-hyprsunset,
+#power-profiles-daemon,
+#custom-record,
 #custom-exit {
 	background-color: transparent;
 	border: none;
@@ -173,6 +178,7 @@ tooltip label {
 }
 
 /* Group container styling */
+#tools,
 #future-hardware,
 #future-media,
 #future-connectivity,
@@ -349,7 +355,7 @@ tooltip label {
 #custom-settings,
 #custom-wallpaper,
 #custom-system,
-#custom-hyprshade,
+#custom-hyprsunset,
 #custom-hypridle,
 #custom-tools,
 #custom-sidepad {
@@ -414,6 +420,32 @@ tooltip label {
 }
 #future-system #custom-exit {
 	color: @red;
+}
+
+/* Tools Group Colors */
+#tools #power-profiles-daemon {
+	color: @yellow;
+}
+#tools #custom-cliphist {
+	color: @blue;
+}
+#tools #custom-hypridle.active {
+	color: @mauve;
+}
+#tools #custom-hypridle.notactive {
+	color: @subtext0;
+}
+#tools #custom-hyprsunset.active {
+	color: @sapphire;
+}
+#tools #custom-hyprsunset.notactive {
+	color: @subtext0;
+}
+#tools #custom-record.recording {
+	color: @red;
+}
+#tools #custom-record.not-recording {
+	color: @subtext0;
 }
 
 /* -----------------------------------------------------

@@ -196,12 +196,18 @@
 		"on-click-right": "swaync-client -d -sw",
 		"escape": true
 	},
-	// Hyprshade
-	"custom/hyprshade": {
-		"format": "󰔎",
-		"tooltip-format": "Toggle Screen Shader",
-		"on-click": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh",
-		"on-click-right": "sleep 0.5; ~/.config/hypr/scripts/hyprshade.sh rofi"
+	// Hyprsunset
+	"custom/hyprsunset": {
+		"format": "{icon}",
+		"format-icons": {
+			"active": "󰌵",
+			"deactivated": "󰃚"
+		},
+		"return-type": "json",
+		"exec": "~/.config/hypr/scripts/hyprsunset.sh status",
+		"interval": 1,
+		"on-click": "~/.config/hypr/scripts/hyprsunset.sh toggle",
+		"tooltip": true
 	},
 	// Hypridle inhibitor
 	"custom/hypridle": {
@@ -332,7 +338,7 @@
 			"custom/tools",
 			"custom/cliphist",
 			"custom/hypridle",
-			"custom/hyprshade",
+			"custom/hyprsunset",
 			"power-profiles-daemon",
 			"custom/record"
 		]

@@ -130,6 +130,7 @@ window#waybar.empty #window {
  * Groups (The "Beautiful" Logic)
  * ----------------------------------------------------- */
 
+#tools,
 #future-hardware,
 #future-media,
 #future-connectivity,
@@ -157,6 +158,18 @@ window#waybar.empty #window {
 	background-color: transparent;
 	margin: 0px;
 	padding: 0px 10px; /* Increased inner padding */
+	border-radius: 0;
+}
+
+#tools #custom-tools,
+#tools #custom-cliphist,
+#tools #custom-hypridle,
+#tools #custom-hyprsunset,
+#tools #power-profiles-daemon,
+#tools #custom-record {
+	background-color: transparent;
+	margin: 0px;
+	padding: 0px 10px;
 	border-radius: 0;
 }
 
@@ -220,6 +233,32 @@ window#waybar.empty #window {
 #future-system #custom-exit {
 	color: @red;
 	padding-left: 12px; /* Increased padding */
+}
+
+/* Tools Group Colors */
+#tools #power-profiles-daemon {
+	color: @yellow;
+}
+#tools #custom-cliphist {
+	color: @blue;
+}
+#tools #custom-hypridle.active {
+	color: @mauve;
+}
+#tools #custom-hypridle.notactive {
+	color: @subtext0;
+}
+#tools #custom-hyprsunset.active {
+	color: @sapphire;
+}
+#tools #custom-hyprsunset.notactive {
+	color: @subtext0;
+}
+#tools #custom-record.recording {
+	color: @red;
+}
+#tools #custom-record.not-recording {
+	color: @subtext0;
 }
 
 /* Clock */

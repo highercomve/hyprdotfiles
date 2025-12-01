@@ -123,6 +123,7 @@ window#waybar.empty #window {
  * Groups
  * ----------------------------------------------------- */
 
+#tools,
 #future-hardware,
 #future-media,
 #future-connectivity,
@@ -135,6 +136,12 @@ window#waybar.empty #window {
 }
 
 /* Modules inside groups */
+#custom-tools,
+#custom-cliphist,
+#custom-hypridle,
+#custom-hyprsunset,
+#power-profiles-daemon,
+#custom-record,
 #disk,
 #memory,
 #cpu,
@@ -172,6 +179,30 @@ window#waybar.empty #window {
 	color: @error;
 }
 
+#custom-hypridle.active {
+	color: @accent;
+}
+
+#custom-hypridle.notactive {
+	color: @subtext;
+}
+
+#custom-hyprsunset.active {
+	color: @accent;
+}
+
+#custom-hyprsunset.notactive {
+	color: @subtext;
+}
+
+#custom-record.recording {
+	color: @error;
+}
+
+#custom-record.not-recording {
+	color: @subtext;
+}
+
 #custom-waybar-music {
 	color: @secondary;
 }
@@ -198,6 +229,7 @@ window#waybar.empty #window {
 }
 
 /* Hover effects for the groups */
+#tools:hover,
 #future-hardware:hover,
 #future-media:hover,
 #future-connectivity:hover,

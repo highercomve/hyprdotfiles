@@ -33,6 +33,7 @@
         "group/future-media",
         "group/future-hardware",
         "group/future-connectivity",
+        "group/tools",
         "group/future-system"
     ],
     "group/future-hardware": {

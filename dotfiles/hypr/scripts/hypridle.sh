@@ -25,11 +25,15 @@ case "$1" in
     toggle)
         if pgrep -x "$SERVICE" >/dev/null ; then
             killall "$SERVICE"
+            # Wait for the process to stop
+            while pgrep -x "$SERVICE" >/dev/null; do
+                sleep 0.1
+            done
         else
             "$SERVICE" &
         fi
-        # Give it a moment to start/stop before checking again
-        sleep 0.2
+        # Send signal to waybar to update the module
+        pkill -RTMIN+10 waybar
         print_status
         ;;
     *)
