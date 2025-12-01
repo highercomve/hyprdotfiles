@@ -58,4 +58,4 @@
 @define-color border_color rgba(186, 194, 222, 0.2);
 /* Subtext1 with opacity */
 @define-color icon_color @subtext0;
-@define-color main_background rgba(30, 30, 46, 0.5);
+@define-color main_background rgba(30, 30, 46, 0.3);
