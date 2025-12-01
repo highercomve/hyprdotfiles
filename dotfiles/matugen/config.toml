@@ -1,5 +1,7 @@
 # Matugen configuration file
 
+[config]
+
 [colors]
 # Define your base colors here, or let matugen generate them
 # primary = "#FF0000"
