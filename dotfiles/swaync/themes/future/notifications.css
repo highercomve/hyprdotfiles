@@ -1,0 +1,104 @@
+/* Future SwayNC Notifications */
+
+@define-color text @foreground;
+@define-color border @color3;
+@define-color background-alt @color1;
+@define-color selected @color3;
+@define-color hover @color5;
+@define-color urgent @color2;
+
+* {
+	all: unset;
+	font-size: 14px;
+	font-family: "JetBrains Mono", "FiraCode Nerd Font", sans-serif;
+	transition: 200ms;
+}
+
+.notification-row {
+	outline: none;
+	margin: 0;
+	padding: 0px;
+}
+
+.floating-notifications.background .notification-row .notification-background {
+	background: alpha(@background, 0.9);
+	border: 1px solid @border;
+	border-radius: 12px;
+	margin: 8px;
+	padding: 0;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification {
+	padding: 12px;
+	border-radius: 12px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification.critical {
+	box-shadow: inset 0 0 0 1px @urgent;
+    border-color: @urgent;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content {
+	margin: 0;
+    padding-right: 34px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* {
+	min-height: 3.4em;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action {
+	border-radius: 6px;
+	background-color: alpha(@selected, 0.1);
+	color: @selected;
+	margin: 6px;
+	border: 1px solid @selected;
+	padding: 4px 12px;
+    font-weight: bold;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action:hover {
+	background-color: @selected;
+	color: @background;
+}
+
+.image {
+	margin: 0 12px 0 0;
+	border-radius: 6px;
+    border: 1px solid alpha(@border, 0.5);
+}
+
+.summary {
+	font-weight: 800;
+	font-size: 1rem;
+	color: @selected;
+    text-shadow: none; /* Removed text-shadow */
+}
+
+.body {
+	font-size: 0.9rem;
+	color: alpha(@text, 0.9);
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button {
+	margin: 6px;
+	padding: 2px;
+	border-radius: 50%;
+	background-color: transparent;
+	border: 1px solid transparent;
+	color: alpha(@text, 0.5);
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button:hover {
+	background-color: alpha(@selected, 0.2);
+	color: @selected;
+}
+
+.notification.critical progress {
+	background-color: @urgent;
+}
+
+.notification.low progress,
+.notification.normal progress {
+	background-color: @selected;
+}

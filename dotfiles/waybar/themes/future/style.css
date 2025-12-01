@@ -1,0 +1,211 @@
+@import "./colors.css";
+
+* {
+	font-family:
+		"JetBrains Mono", "FiraCode Nerd Font", "Font Awesome 6 Free",
+		sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+window#waybar {
+	background-color: transparent;
+	color: @text;
+	transition-property: background-color;
+	transition-duration: 0.5s;
+}
+
+window#waybar.hidden {
+	opacity: 0.2;
+}
+
+/* -----------------------------------------------------
+ * Workspaces
+ * ----------------------------------------------------- */
+
+#workspaces {
+	background-color: @surface-alpha;
+	margin: 5px 0px 5px 10px;
+	padding: 0px 5px;
+	border-radius: 8px;
+	border: 1px solid alpha(@accent, 0.3);
+}
+
+#workspaces button {
+	padding: 0px 8px;
+	margin: 4px 3px;
+	border-radius: 4px;
+	color: @subtext;
+	transition: all 0.3s ease;
+}
+
+#workspaces button:hover {
+	color: @accent;
+	background-color: rgba(0, 240, 255, 0.1);
+}
+
+#workspaces button.active {
+	color: @base;
+	background-color: @accent;
+	min-width: 30px;
+}
+
+#workspaces button.urgent {
+	color: @base;
+	background-color: @error;
+}
+
+/* -----------------------------------------------------
+ * App Menu Icon
+ * ----------------------------------------------------- */
+
+#custom-appmenuicon {
+	background-color: @surface-alpha;
+	color: @accent;
+	font-size: 20px;
+	margin: 5px 10px;
+	padding: 0px 12px;
+	border-radius: 8px;
+	border: 1px solid alpha(@accent, 0.3);
+	transition: all 0.3s ease;
+}
+
+#custom-appmenuicon:hover {
+	background-color: @accent;
+	color: @base;
+}
+
+/* -----------------------------------------------------
+ * Window Title
+ * ----------------------------------------------------- */
+
+#window {
+	background-color: @surface-alpha;
+	color: @text;
+	margin: 5px 10px;
+	padding: 0px 15px;
+	border-radius: 8px;
+	border: 1px solid alpha(@accent, 0.1);
+}
+
+window#waybar.empty #window {
+	background-color: transparent;
+	border: none;
+}
+
+/* -----------------------------------------------------
+ * Clock (Center)
+ * ----------------------------------------------------- */
+
+#clock {
+	background-color: @surface-alpha;
+	color: @text;
+	margin: 5px 4px;
+	padding: 0px 12px;
+	border-radius: 8px;
+	border: 1px solid alpha(@accent, 0.1);
+	font-size: 16px;
+}
+
+/* -----------------------------------------------------
+ * Groups
+ * ----------------------------------------------------- */
+
+#future-hardware,
+#future-media,
+#future-connectivity,
+#future-system {
+	background-color: @surface-alpha;
+	margin: 5px 4px;
+	padding: 0px 5px;
+	border-radius: 8px;
+	border: 1px solid alpha(@accent, 0.1);
+}
+
+/* Modules inside groups */
+#disk,
+#memory,
+#cpu,
+#custom-waybar-music,
+#pulseaudio,
+#backlight,
+#network,
+#bluetooth,
+#battery,
+#tray,
+#custom-notification,
+#custom-exit {
+	background-color: transparent;
+	color: @text;
+	margin: 0px;
+	padding: 0px 10px;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+/* Add separators or spacing between modules inside groups if needed */
+#disk,
+#memory,
+#custom-waybar-music,
+#pulseaudio,
+#network,
+#battery,
+#tray,
+#custom-notification {
+	border-right: 1px solid alpha(@subtext, 0.1);
+}
+
+#custom-exit {
+	color: @error;
+}
+
+#custom-waybar-music {
+	color: @secondary;
+}
+
+#battery.charging {
+	color: @accent;
+}
+
+#battery.critical:not(.charging) {
+	color: @error;
+	animation-name: blink;
+	animation-duration: 0.5s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+	animation-direction: alternate;
+}
+
+@keyframes blink {
+	to {
+		color: @base;
+		background-color: @error;
+		border-radius: 4px;
+	}
+}
+
+/* Hover effects for the groups */
+#future-hardware:hover,
+#future-media:hover,
+#future-connectivity:hover,
+#future-system:hover {
+	border: 1px solid @accent;
+}
+
+/* -----------------------------------------------------
+ * Tray
+ * ----------------------------------------------------- */
+
+#tray {
+	padding: 0px 10px;
+}
+
+#tray > .passive {
+	-gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+	-gtk-icon-effect: highlight;
+	background-color: @error;
+}

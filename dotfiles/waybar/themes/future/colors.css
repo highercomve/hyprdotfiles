@@ -1,0 +1,23 @@
+/* 
+ * Future Theme Colors
+ * Aesthetic: Cyberpunk / Sci-Fi Interface
+ */
+
+@define-color base #050a14;
+@define-color mantle #0a1424;
+@define-color surface #0f1c2e;
+@define-color surface-alpha rgba(15, 28, 46, 0.85);
+
+@define-color text #e0f0ff;
+@define-color subtext #7a8ca0;
+
+@define-color accent #00f0ff;
+@define-color accent-glow rgba(0, 240, 255, 0.4);
+
+@define-color secondary #ff007f;
+@define-color warning #ffcc00;
+@define-color error #ff0055;
+
+@define-color border-color #00f0ff;
+@define-color background @base;
+@define-color on_surface @text;

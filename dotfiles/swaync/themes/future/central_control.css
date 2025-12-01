@@ -1,0 +1,184 @@
+/* Future SwayNC Theme */
+
+@define-color text            @foreground;
+@define-color border          @color3;
+@define-color background-alt  @color1;
+@define-color selected        @color3;
+@define-color hover           @color5;
+@define-color urgent          @color2;
+
+* {
+	color: @text;
+	all: unset;
+	font-size: 14px;
+	font-family: "JetBrains Mono", "FiraCode Nerd Font", sans-serif;
+	transition: 200ms;
+}
+
+.blank-window {
+	background: transparent;
+}
+
+.control-center {
+	background: alpha(@background, 0.95);
+	border-radius: 12px;
+	border: 2px solid @border;
+	margin: 10px;
+	padding: 12px;
+}
+
+/* Notifications */
+.control-center .notification-row .notification-background,
+.control-center .notification-row .notification-background .notification.critical {
+	background-color: @background-alt;
+	border: 1px solid alpha(@border, 0.5);
+	border-radius: 8px;
+	margin: 4px 0px;
+	padding: 4px;
+}
+
+.control-center .notification-row .notification-background .notification.critical {
+	color: @urgent;
+    border-color: @urgent;
+}
+
+.control-center .notification-row .notification-background .notification .notification-content {
+	margin: 6px;
+	padding: 8px 34px 2px 2px;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action {
+	background: alpha(@selected, 0.1);
+	color: @selected;
+	border: 1px solid @selected;
+	border-radius: 6px;
+	margin: 6px;
+    font-weight: bold;
+}
+
+.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+	background: @selected;
+    color: @background;
+}
+
+.control-center .notification-row .notification-background .close-button {
+	background: transparent;
+	border-radius: 6px;
+	color: @text;
+	margin: 0px;
+	padding: 4px;
+}
+
+.control-center .notification-row .notification-background .close-button:hover {
+	background-color: @selected;
+    color: @background;
+}
+
+progressbar, progress {
+	border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Widgets */
+.widget-dnd {
+	margin: 10px;
+	font-size: 1.2rem;
+}
+
+.widget-dnd > switch {
+	background: alpha(@background-alt, 0.8);
+	border-radius: 6px;
+    border: 1px solid alpha(@border, 0.3);
+}
+
+.widget-dnd > switch:checked {
+    background: @background-alt;
+    border: 1px solid @selected;
+}
+
+.widget-dnd > switch slider {
+	background: @selected;
+	border-radius: 6px;
+}
+
+.widget-buttons-grid {
+	padding: 4px 2px;
+	margin: 0px 10px 20px 10px;
+	border-radius: 12px;
+	background: @background-alt;
+    border: 1px solid alpha(@border, 0.2);
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+	margin: 2px 5px;
+	padding: 14px 18px;
+	background: transparent;
+	border-radius: 8px;
+    border: 1px solid transparent;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+	background: alpha(@selected, 0.1);
+    border: 1px solid @selected;
+    color: @selected;
+}
+
+.widget-mpris {
+	border-radius: 12px;
+	margin-bottom: 10px;
+    background-color: @background-alt;
+    border: 1px solid alpha(@border, 0.2);
+}
+
+/* Volume and Backlight */
+trough {
+	border-radius: 6px;
+	background: transparent;
+}
+
+trough highlight {
+	padding: 5px;
+	background: @selected;
+	border-radius: 6px;
+}
+
+.widget-volume {
+	background-color: @background-alt;
+	padding: 8px;
+	margin: 0px 2px;
+	border-radius: 12px;
+    border: 1px solid alpha(@border, 0.2);
+}
+
+.widget-volume trough {
+	padding: 3px;
+	background: alpha(@background, 0.3);
+}
+
+.widget-volume trough slider {
+	min-height: 1.25rem;
+    background: transparent;
+}
+
+.widget-backlight {
+	background-color: @background-alt;
+	padding: 8px;
+	margin: 0px 1px;
+	border-radius: 12px;
+    border: 1px solid alpha(@border, 0.2);
+}
+
+.widget-backlight trough {
+    padding: 3px;
+    background: alpha(@background, 0.3);
+}
+
+.widget-backlight trough slider {
+    min-height: 1.25rem;
+    background: transparent;
+}
+
+.mpris-background {
+	opacity: 0.2;
+    background-color: @background-alt;
+}

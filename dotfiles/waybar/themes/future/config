@@ -1,0 +1,84 @@
+{
+    "layer": "top",
+    "position": "top",
+    "mod": "dock",
+    "exclusive": true,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "height": 44,
+    "modules-left": [
+        "custom/appmenuicon",
+        "hyprland/workspaces",
+        "hyprland/window"
+    ],
+    "modules-center": [
+        "clock"
+    ],
+    "modules-right": [
+        "group/future-media",
+        "group/future-hardware",
+        "group/future-connectivity",
+        "group/future-system"
+    ],
+    "include": [
+        "~/.config/hypr/user_settings/waybar-quicklinks.json",
+        "~/.config/waybar/modules.json"
+    ],
+    "custom/notification": {
+        "tooltip-format": "Left: Notifications\nRight: Do not disturb",
+        "format": "{icon}",
+        "format-icons": {
+            "notification": "<span foreground='red'><sup></sup></span>",
+            "none": "",
+            "dnd-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-none": "",
+            "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "inhibited-none": "",
+            "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+            "dnd-inhibited-none": ""
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
+    },
+    "group/future-hardware": {
+        "orientation": "horizontal",
+        "modules": [
+            "disk",
+            "memory",
+            "cpu"
+        ],
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "not-memory",
+            "transition-left-to-right": false
+        }
+    },
+    "group/future-media": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/waybar-music",
+            "pulseaudio",
+            "backlight"
+        ]
+    },
+    "group/future-connectivity": {
+        "orientation": "horizontal",
+        "modules": [
+            "network",
+            "bluetooth"
+        ]
+    },
+    "group/future-system": {
+        "orientation": "horizontal",
+        "modules": [
+            "battery",
+            "tray",
+            "custom/notification",
+            "custom/exit"
+        ]
+    }
+}

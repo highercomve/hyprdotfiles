@@ -33,15 +33,7 @@
 			"app-name": "Youtube Music"
 		}
 	},
-	"widgets": [
-		"label",
-		"buttons-grid",
-		"mpris",
-		"backlight",
-		"volume",
-		"dnd",
-		"notifications"
-	],
+	"widgets": ["mpris", "backlight", "volume", "dnd", "notifications"],
 	"widget-config": {
 		"dnd": {
 			"text": "Do not disturb"

@@ -1,76 +1,36 @@
-//
-// Theme : black
-// Original Author : Sergio Marin (highercomve)
-// Original Github : @highercomve
-// Adapted by : @GeodeArc
-//
+/*
+ * Theme : Future
+ * Original Author : Sergio Marin (highercomve)
+ * Original Github : @highercomve
+ * Adapted by : @GeodeArc
+ */
 
-// DEFAULT PROPERTIES
 configuration { font: "FiraCode Nerd Font 10"; }
 
+/* DEFAULT PROPERTIES */
 * {
-    background:                  #010101;
-    background-alt:              #141414;
-	foreground: 	#f3ded2;
- 	selected:                    #202020;
-    alternate-normal-background: #141414;
-    border:     	#f3ded2CC;
-	accent: 		#B06AA5;
-	accentlow:  	#B06AA566;
-    primary: #f5bc6f;
-    primary-fixed: #ffddb4;
-    primary-fixed-dim: #f5bc6f;
-    on-primary: #452b00;
-    on-primary-fixed: #291800;
-    on-primary-fixed-variant: #633f00;
-    primary-container: #633f00;
-    on-primary-container: #ffddb4;
-    secondary: #dec2a1;
-    secondary-fixed: #fbdebc;
-    secondary-fixed-dim: #dec2a1;
-    on-secondary: #3e2d16;
-    on-secondary-fixed: #271904;
-    on-secondary-fixed-variant: #56432b;
-    secondary-container: #56432b;
-    on-secondary-container: #fbdebc;
-    tertiary: #b9cda0;
-    tertiary-fixed: #d4eabb;
-    tertiary-fixed-dim: #b9cda0;
-    on-tertiary: #253515;
-    on-tertiary-fixed: #101f03;
-    on-tertiary-fixed-variant: #3b4c29;
-    tertiary-container: #3b4c29;
-    on-tertiary-container: #d4eabb;
-    error: #ffb4ab;
-    on-error: #690005;
-    error-container: #93000a;
-    on-error-container: #ffdad6;
-    surface: #18120b;
-    on-surface: #ede0d4;
-    on-surface-variant: #d3c4b4;
-    outline: #9c8f80;
-    outline-variant: #4f4539;
-    shadow: #000000;
-    scrim: #000000;
-    inverse-surface: #ede0d4;
-    inverse-on-surface: #362f27;
-    inverse-primary: #805611;
-    surface-dim: #18120b;
-    surface-bright: #3f3830;
-    surface-container-lowest: #130d07;
-    surface-container-low: #211b13;
-    surface-container: #251f17;
-    surface-container-high: #302921;
-    surface-container-highest: #3b342b;
+    /* Future Theme Colors */
+    background:                  #050a14;
+    background-alt:              #0f1c2e;
+    foreground:                  #e0f0ff;
+    selected:                    #00f0ff;
+    active:                      #00f0ff;
+    urgent:                      #ff0055;
+
+    /* Mapping */
+    on-surface:                  #e0f0ff;
+    primary:                     #00f0ff;
+    on-primary-fixed:            #050a14;
+
     lines:                       10;
     columns:                     1;
     cycle:                       false;
-    border-width: 1px;
+    border-width: 2px;
     border-radius: 10px;
 }
 
 
-// DEFAULT WINDOW
+/* DEFAULT WINDOW */
 window {
     transparency:                "real";
     location:                    center;
@@ -80,16 +40,16 @@ window {
     x-offset:                    0px;
     y-offset:                    0px;
 
-    // FOR ALL WIDGETS
+    /* FOR ALL WIDGETS */
     enabled:                     true;
-    border:                      1px solid;
+    border:                      @border-width;
     border-radius:               @border-radius;
-    border-color:                #c49627;
+    border-color:                @selected;
     background-color:            @background;
     padding:                     0;
 }
 
-// DEFAULT MAINBOX
+/* DEFAULT MAINBOX */
 mainbox {
     enabled:                     true;
     spacing:                     0px;
@@ -98,7 +58,7 @@ mainbox {
     children:                    [ "inputbar", "listbox" ];
 }
 
-// DEFAULT LISTBOX
+/* DEFAULT LISTBOX */
 listbox {
     spacing:                     20px;
     padding:                     20px;
@@ -113,7 +73,7 @@ message {
     horizontal-align: 0.5;
 }
 
-// DEFAULT TOP BAR
+/* DEFAULT TOP BAR */
 inputbar {
     enabled:                     true;
     spacing:                     10px;
@@ -132,6 +92,8 @@ textbox-prompt-colon {
     border-radius:               100%;
     text-color:                  inherit;
     background-color:            @background-alt;
+    border:                      1px solid;
+    border-color:                #00f0ff66;
 }
 
 entry {
@@ -145,9 +107,11 @@ entry {
     cursor:                      text;
     placeholder:                 "Search";
     placeholder-color:           inherit;
+    border:                      1px solid;
+    border-color:                #00f0ff66;
 }
 
-// DEFAULT LIST
+/* DEFAULT LIST */
 listview {
     enabled:                      true;
     columns:                      @columns;
@@ -163,12 +127,13 @@ listview {
     padding:                      10px;
     background-color:             @background-alt;
     text-color:                   @foreground;
-    border:                       0px;
+    border:                       1px solid;
+    border-color:                 #00f0ff33;
     border-radius:                10px;
     cursor:                       "default";
 }
 
-// ELEMENTS
+/* ELEMENTS */
 element {
     enabled:                     true;
     spacing:                     5px;
@@ -187,6 +152,7 @@ element normal.normal {
 
 element selected.normal {
     background-color:            @selected;
+    text-color:                  @background;
 }
 
 element normal.urgent {

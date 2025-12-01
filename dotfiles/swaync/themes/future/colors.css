@@ -1,0 +1,14 @@
+/* Future Theme Colors */
+
+@define-color foreground #e0f0ff;
+@define-color background #050a14;
+@define-color cursor #e0f0ff;
+
+@define-color color0 #050a14;
+@define-color color1 #0f1c2e;
+@define-color color2 #ff0055; /* Error */
+@define-color color3 #00f0ff; /* Accent */
+@define-color color4 #00f0ff; /* Accent */
+@define-color color5 #009099; /* Hover */
+@define-color color6 #00f0ff; /* Accent */
+@define-color color7 #e0f0ff;

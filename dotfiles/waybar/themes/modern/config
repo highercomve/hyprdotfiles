@@ -6,7 +6,6 @@
     "margin-left": 0,
     "margin-right": 0,
     "spacing": 0,
-    // Load Modules
     "include": [
         "~/.config/hypr/user_settings/waybar-quicklinks.json",
         "~/.config/waybar/modules.json"
@@ -27,19 +26,46 @@
     ],
     // Modules Right
     "modules-right": [
-        "custom/waybar-music",
-        //"custom/mediaplayer",
-        "pulseaudio",
-        "backlight",
-        "bluetooth",
-        "network",
-        "battery",
-        "custom/backlight",
-        "group/cpu-memory",
-        "group/tools",
-        "tray",
-        "custom/recording-indicator",
-        "custom/notification",
-        "custom/exit"
-    ]
+        "group/future-media",
+        "group/future-hardware",
+        "group/future-connectivity",
+        "group/future-system"
+    ],
+    "group/future-hardware": {
+        "orientation": "horizontal",
+        "modules": [
+            "disk",
+            "memory",
+            "cpu"
+        ],
+        "drawer": {
+            "transition-duration": 500,
+            "children-class": "not-memory",
+            "transition-left-to-right": false
+        }
+    },
+    "group/future-media": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/waybar-music",
+            "pulseaudio",
+            "backlight"
+        ]
+    },
+    "group/future-connectivity": {
+        "orientation": "horizontal",
+        "modules": [
+            "network",
+            "bluetooth"
+        ]
+    },
+    "group/future-system": {
+        "orientation": "horizontal",
+        "modules": [
+            "battery",
+            "tray",
+            "custom/notification",
+            "custom/exit"
+        ]
+    }
 }

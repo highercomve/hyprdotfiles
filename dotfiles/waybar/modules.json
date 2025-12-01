@@ -125,7 +125,7 @@
 	},
 	// Rofi Application Launcher
 	"custom/appmenuicon": {
-		"format": "",
+		"format": " ",
 		"on-click": "sleep 0.2;rofi -show drun -replace",
 		"on-click-right": "~/.config/hypr/scripts/keybindings.sh",
 		"tooltip-format": "Left: Open the application launcher\nRight: Show all keybindings"
@@ -259,7 +259,7 @@
 		// "timezone": "America/New_York",
 		"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
 		"format": "{:%I:%M %p - %b %e}",
-		"on-click": "~/.config/hypr/scripts/calendar.sh",
+		"on-click": "~/.config/hypr/scripts/calendar.sh"
 	},
 	// System
 	"custom/system": {
@@ -310,21 +310,12 @@
 	// Group CPU and Memory
 	"group/cpu-memory": {
 		"orientation": "inherit",
-		"modules": [
-			"cpu",
-			"memory"
-		]
+		"modules": ["cpu", "memory"]
 	},
 	// Group ChromeOS Status
 	"group/chromeos-status": {
 		"orientation": "horizontal",
-		"modules": [
-			"network",
-			"bluetooth",
-			"pulseaudio",
-			"battery",
-			"clock"
-		]
+		"modules": ["network", "bluetooth", "pulseaudio", "battery", "clock"]
 	},
 	// Group Tools
 	"group/tools": {
@@ -390,13 +381,7 @@
 		"format-alt": "{icon}  {time}",
 		// "format-good": "", // An empty format will hide the module
 		// "format-full": "",
-		"format-icons": [
-			" ",
-			" ",
-			" ",
-			" ",
-			" "
-		]
+		"format-icons": [" ", " ", " ", " ", " "]
 	},
 	// Power Profiles Daemon
 	"power-profiles-daemon": {
@@ -426,11 +411,7 @@
 			"phone": " ",
 			"portable": " ",
 			"car": " ",
-			"default": [
-				"",
-				"",
-				""
-			]
+			"default": ["", "", ""]
 		},
 		"on-click": "~/.config/hypr/scripts/audio.sh",
 		"on-click-right": "pactl set-sink-mute @DEFAULT_SINK@ toggle",

@@ -1,0 +1,29 @@
+{
+	"themes": {
+		"Default": {
+			"waybar": "default",
+			"swaync": "default",
+			"rofi": "highercomve-black.rasi"
+		},
+		"ChromeOS": {
+			"waybar": "chromeos",
+			"swaync": "chromeos",
+			"rofi": "highercomve-chromeos.rasi"
+		},
+		"Light": {
+			"waybar": "light",
+			"swaync": "light",
+			"rofi": "highercomve-black.rasi"
+		},
+		"Modern": {
+			"waybar": "modern",
+			"swaync": "modern",
+			"rofi": "highercomve-modern.rasi"
+		},
+		"Future": {
+			"waybar": "future",
+			"swaync": "future",
+			"rofi": "highercomve-future.rasi"
+		}
+	}
+}

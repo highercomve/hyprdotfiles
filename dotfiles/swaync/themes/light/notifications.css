@@ -1,0 +1,101 @@
+/* Light SwayNC Notifications (Gnome Shell Style) */
+
+@define-color text @foreground;
+@define-color border rgba(255, 255, 255, 0.1);
+@define-color background-alt #303030;
+@define-color selected @color3;
+@define-color hover @color5;
+@define-color urgent @color2;
+
+* {
+	all: unset;
+	font-size: 14px;
+	font-family: "Fira Sans Semibold", "Font Awesome 6 Free", sans-serif;
+	transition: 200ms;
+}
+
+.notification-row {
+	outline: none;
+	margin: 0;
+	padding: 0px;
+}
+
+.floating-notifications.background .notification-row .notification-background {
+	background: @background;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	border: 1px solid @border;
+	border-radius: 12px;
+	margin: 8px;
+	padding: 0;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification {
+	padding: 12px;
+	border-radius: 12px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification.critical {
+	box-shadow: inset 0 0 0 1px @urgent;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification .notification-content {
+	margin: 0;
+    padding-right: 34px; /* Padding for close button */
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* {
+	min-height: 3.4em;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action {
+	border-radius: 8px;
+	background-color: alpha(@selected, 0.2);
+	color: @text;
+	margin: 6px;
+	border: 1px solid transparent;
+	padding: 4px 12px;
+}
+
+.floating-notifications.background .notification-row .notification-background .notification>*:last-child>* .notification-action:hover {
+	background-color: @selected;
+	color: @text;
+}
+
+.image {
+	margin: 0 12px 0 0;
+	border-radius: 6px;
+}
+
+.summary {
+	font-weight: 800;
+	font-size: 1rem;
+	color: @text;
+}
+
+.body {
+	font-size: 0.9rem;
+	color: alpha(@text, 0.8);
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button {
+	margin: 6px;
+	padding: 2px;
+	border-radius: 50%;
+	background-color: transparent;
+	border: 1px solid transparent;
+	color: alpha(@text, 0.5);
+}
+
+.floating-notifications.background .notification-row .notification-background .close-button:hover {
+	background-color: alpha(@selected, 0.2);
+	color: @text;
+}
+
+.notification.critical progress {
+	background-color: @urgent;
+}
+
+.notification.low progress,
+.notification.normal progress {
+	background-color: @selected;
+}

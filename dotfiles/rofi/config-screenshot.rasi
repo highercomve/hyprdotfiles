@@ -28,7 +28,7 @@ configuration {
 
 }
 
-@theme "~/.config/rofi/themes/highercomve-black.rasi"
+@theme "~/.config/rofi/current.rasi"
 
 
 /* ---- Map colors ---- */

@@ -1,0 +1,12 @@
+@define-color foreground #ffffff;
+@define-color background #242424;
+@define-color cursor #ffffff;
+
+@define-color color0 #242424;
+@define-color color1 #303030;
+@define-color color2 #c01c28;
+@define-color color3 #c49627;
+@define-color color4 #c49627;
+@define-color color5 #d3a948; /* Slightly lighter shade for hover */
+@define-color color6 #c49627;
+@define-color color7 #ffffff;
