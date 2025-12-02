@@ -4,7 +4,7 @@ IMAGE="$1"
 DEVICE="$2"
 
 # Check if bmaptool is available
-if command -v bmaptool &> /dev/null; then
+if command -v bmaptool &>/dev/null; then
     USE_BMAPTOOL=true
     echo "Using bmaptool for flashing."
 else
@@ -58,13 +58,9 @@ echo "Step 2: Flashing image..."
 START_TIME=$(date +%s)
 
 if [ "$USE_BMAPTOOL" = true ]; then
-    if [[ "$IMAGE" == *.gz ]]; then
-        echo "  - Detected gzip compressed image. Using bmaptool with stdin."
-        gunzip -c "$IMAGE" | bmaptool copy - "$DEVICE" --nobmap
-    else
-        echo "  - Using bmaptool to copy image."
-        bmaptool copy "$IMAGE" "$DEVICE" --nobmap
-    fi
+    echo "  - Using bmaptool to copy image."
+
+    bmaptool copy "$IMAGE" "$DEVICE" --nobmap
 else
     if [[ "$IMAGE" == *.gz ]]; then
         echo "  - Detected gzip compressed image. Using dd."
