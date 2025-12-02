@@ -53,7 +53,7 @@ if [ -n "$selected_disk_info" ]; then
   dev_path=$(echo "$selected_disk_info" | awk '{print $NF}')
 
   # Ask for action
-  actions="Copy path\nFormat disk"
+  actions="Copy path\nFormat disk\nFlash image"
   selected_action=$(echo -e "$actions" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Action for $dev_path")
 
   case "$selected_action" in
@@ -89,6 +89,17 @@ if [ -n "$selected_disk_info" ]; then
     terminal_cmd=alacritty
     # Execute the format script in a new terminal
     $terminal_cmd --title "format-disk-applet" --class dotfiles-floating -e sudo "$format_script_path" "$dev_path"
+    ;;
+  "Flash image")
+    flash_script="$HOME/.config/hypr/scripts/flash-usb.sh"
+    if [ ! -f "$flash_script" ]; then
+      echo "Error: Flash script not found at $flash_script"
+      if command -v notify-send &>/dev/null; then
+        notify-send -u critical "Script Error" "Flash script not found."
+      fi
+      exit 1
+    fi
+    "$flash_script" "$dev_path"
     ;;
   *)
     echo "No action selected. Operation cancelled."
