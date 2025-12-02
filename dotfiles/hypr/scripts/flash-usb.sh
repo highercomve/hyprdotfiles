@@ -20,7 +20,7 @@ for cmd in rofi fd lsblk awk; do
 done
 
 # 1. Select Image
-# Use fd to find .img and .img.gz files in $HOME
+# Use fd to find .img and .img.gz files in /home
 # -t f: files only
 # --regex: match extension
 # --exclude: ignore specified directories to avoid irrelevant files from development/cache folders
@@ -44,10 +44,10 @@ for pattern in "${EXCLUDE_PATTERNS[@]}"; do
     FD_EXCLUDE_ARGS+=('--exclude' "$pattern")
 done
 
-IMAGES=$(fd --type f --regex '\.img(\.gz)?$' "$HOME" "${FD_EXCLUDE_ARGS[@]}" 2>/dev/null)
+IMAGES=$(fd --type f --regex '\.img(\.gz)?$' "/home" "${FD_EXCLUDE_ARGS[@]}" 2>/dev/null)
 
 if [ -z "$IMAGES" ]; then
-    notify "No .img or .img.gz files found in $HOME"
+    notify "No .img or .img.gz files found in /home"
     exit 0
 fi
 
