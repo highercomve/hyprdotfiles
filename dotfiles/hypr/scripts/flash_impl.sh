@@ -3,6 +3,15 @@
 IMAGE="$1"
 DEVICE="$2"
 
+# Check if bmaptool is available
+if command -v bmaptool &> /dev/null; then
+    USE_BMAPTOOL=true
+    echo "Using bmaptool for flashing."
+else
+    USE_BMAPTOOL=false
+    echo "bmaptool not found, falling back to dd."
+fi
+
 # Basic validation
 if [ -z "$IMAGE" ] || [ -z "$DEVICE" ]; then
     echo "Usage: $0 <image_path> <device_path>"
@@ -48,11 +57,22 @@ done
 echo "Step 2: Flashing image..."
 START_TIME=$(date +%s)
 
-if [[ "$IMAGE" == *.gz ]]; then
-    echo "  - Detected gzip compressed image."
-    gunzip -c "$IMAGE" | dd of="$DEVICE" bs=4M status=progress conv=fsync
+if [ "$USE_BMAPTOOL" = true ]; then
+    if [[ "$IMAGE" == *.gz ]]; then
+        echo "  - Detected gzip compressed image. Using bmaptool with stdin."
+        gunzip -c "$IMAGE" | bmaptool copy - "$DEVICE" --nobmap
+    else
+        echo "  - Using bmaptool to copy image."
+        bmaptool copy "$IMAGE" "$DEVICE" --nobmap
+    fi
 else
-    dd if="$IMAGE" of="$DEVICE" bs=4M status=progress conv=fsync
+    if [[ "$IMAGE" == *.gz ]]; then
+        echo "  - Detected gzip compressed image. Using dd."
+        gunzip -c "$IMAGE" | dd of="$DEVICE" bs=4M status=progress conv=fsync
+    else
+        echo "  - Using dd to copy image."
+        dd if="$IMAGE" of="$DEVICE" bs=4M status=progress conv=fsync
+    fi
 fi
 
 # Sync
