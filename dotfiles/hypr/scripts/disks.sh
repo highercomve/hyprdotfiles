@@ -85,7 +85,6 @@ if [ -n "$selected_disk_info" ]; then
     fi
 
     # Get the terminal command
-    terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
     terminal_cmd=alacritty
     # Execute the format script in a new terminal
     $terminal_cmd --title "format-disk-applet" --class dotfiles-floating -e sudo "$format_script_path" "$dev_path"

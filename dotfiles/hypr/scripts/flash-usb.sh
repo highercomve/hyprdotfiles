@@ -129,4 +129,4 @@ TERMINAL_CMD="alacritty"
 # Execute in terminal
 # We use 'sudo' to run the implementation script as root.
 # The terminal window title is set to "Flash USB".
-$TERMINAL_CMD --title "Flash USB" -e sudo "$IMPL_SCRIPT" "$SELECTED_IMAGE" "$DEVICE"
+$TERMINAL_CMD --title "Flash USB" --class dotfiles-floating -e sudo "$IMPL_SCRIPT" "$SELECTED_IMAGE" "$DEVICE"
