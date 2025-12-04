@@ -1,0 +1,7 @@
+* {
+    lines:                       10;
+    columns:                     1;
+    cycle:                       false;
+    border-width: 1px;
+    border-radius: 10px;
+}

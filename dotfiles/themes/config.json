@@ -1,46 +1,53 @@
 {
-	"themes": {
-		"Default": {
-			"waybar": "default",
-			"swaync": "default",
-			"rofi": "highercomve-black.rasi",
-			"wlogout": "default",
-			"waypaper": "default"
-		},
-		"ChromeOS": {
-			"waybar": "chromeos",
-			"swaync": "chromeos",
-			"rofi": "highercomve-chromeos.rasi",
-			"wlogout": "chromeos",
-			"waypaper": "chromeos"
-		},
-		"Light": {
-			"waybar": "light",
-			"swaync": "light",
-			"rofi": "highercomve-black.rasi",
-			"wlogout": "light",
-			"waypaper": "light"
-		},
-		"Modern": {
-			"waybar": "modern",
-			"swaync": "modern",
-			"rofi": "highercomve-modern.rasi",
-			"wlogout": "modern",
-			"waypaper": "modern"
-		},
-		"Future": {
-			"waybar": "future",
-			"swaync": "future",
-			"rofi": "highercomve-future.rasi",
-			"wlogout": "future",
-			"waypaper": "future"
-		},
-		"Zen": {
-			"waybar": "zen",
-			"swaync": "zen",
-			"rofi": "highercomve-zen.rasi",
-			"wlogout": "zen",
-			"waypaper": "zen"
-		}
-	}
+  "themes": {
+    "Default": {
+      "waybar": "default",
+      "swaync": "default",
+      "rofi": "highercomve-black.rasi",
+      "wlogout": "default",
+      "waypaper": "default"
+    },
+    "ChromeOS": {
+      "waybar": "chromeos",
+      "swaync": "chromeos",
+      "rofi": "highercomve-chromeos.rasi",
+      "wlogout": "chromeos",
+      "waypaper": "chromeos"
+    },
+    "Light": {
+      "waybar": "light",
+      "swaync": "light",
+      "rofi": "highercomve-black.rasi",
+      "wlogout": "light",
+      "waypaper": "light"
+    },
+    "Modern": {
+      "waybar": "modern",
+      "swaync": "modern",
+      "rofi": "highercomve-modern.rasi",
+      "wlogout": "modern",
+      "waypaper": "modern"
+    },
+    "Future": {
+      "waybar": "future",
+      "swaync": "future",
+      "rofi": "highercomve-future.rasi",
+      "wlogout": "future",
+      "waypaper": "future"
+    },
+    "Zen": {
+      "waybar": "zen",
+      "swaync": "zen",
+      "rofi": "highercomve-zen.rasi",
+      "wlogout": "zen",
+      "waypaper": "zen"
+    },
+    "Personalize": {
+      "waybar": "personalize",
+      "swaync": "personalize",
+      "rofi": "personalize.rasi",
+      "wlogout": "personalize",
+      "waypaper": "personalize"
+    }
+  }
 }

@@ -34,7 +34,10 @@ if [ "$selected" == "Use wallpaper color scheme" ]; then
     # Run personalize script
     SCRIPT_DIR=$(dirname "$0")
     if [ -f "$SCRIPT_DIR/personalize.sh" ]; then
+        rofi -e "Generating theme for background... Please wait." -config ~/.config/rofi/config-compact.rasi &
+        ROFI_PID=$!
         "$SCRIPT_DIR/personalize.sh"
+        kill $ROFI_PID 2>/dev/null
         # Reload config to ensure Personalize theme is available (though it should be already if added by script)
         selected="Personalize"
     else
