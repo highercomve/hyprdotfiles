@@ -27,8 +27,8 @@
         "custom/waybar-music",
         "group/tools",
         "tray",
-        "custom/notification",
         "group/chromeos-status",
-        "group/power-menu"
+        "group/power-menu",
+        "custom/notification",
     ]
 }

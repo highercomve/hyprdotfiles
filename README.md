@@ -17,9 +17,29 @@ This repository contains a comprehensive set of personal dotfiles for the Hyprla
 
 ## Screenshots
 
-![Screenshot 1](assets/screenshot_07112025_172521.jpg)
-![Screenshot 2](assets/screenshot_07112025_172444.jpg)
-![Screenshot 2](assets/screenshot_07112025_172511.jpg)
+### Themes
+
+| ChromeOS | Future |
+| :---: | :---: |
+| ![ChromeOS Theme](assets/themes/chromeos.png) | ![Future Theme](assets/themes/future.png) |
+
+| Light | Modern |
+| :---: | :---: |
+| ![Light Theme](assets/themes/light.png) | ![Modern Theme](assets/themes/moderrn.png) |
+
+| Zen | |
+| :---: | :---: |
+| ![Zen Theme](assets/themes/zen.png) | |
+
+### Functionality
+
+| App Launcher | Bluetooth Manager |
+| :---: | :---: |
+| ![App Launcher](assets/app_launcher.png) | ![Bluetooth Manager](assets/rofi-bluetooh.png) |
+
+| Network Manager | Image Flasher |
+| :---: | :---: |
+| ![Network Manager](assets/rofi-nm.png) | ![Image Flasher](assets/image_flasher.png) |
 
 ## Dotfile Structure
 
@@ -143,13 +163,30 @@ A utility for managing `ttyUSB` serial devices, which is bound to `Super + Shift
 
 ## Theming
 
-Theming is managed through a combination of tools:
+The system features a robust theming engine that allows you to switch between different visual styles instantly.
+
+**Theme Switcher**:
+A unified theme switcher script (`themes/themeswitcher.sh`) is included to toggle between configurations for:
+- **Waybar**: Status bar styles.
+- **SwayNC**: Notification center styling.
+- **Rofi**: Application launcher and menu themes.
+- **Wlogout**: Power menu layouts.
+- **Waypaper**: Wallpaper management.
+
+**Supported Themes**:
+- **Default**: The standard look.
+- **ChromeOS**: A clean, ChromeOS-inspired interface.
+- **Light**: A bright, legible theme.
+- **Modern**: A sleek, contemporary dark theme.
+- **Future**: A futuristic, high-contrast style.
+- **Zen**: A minimal, distraction-free layout.
+
+Theming is further enhanced by:
 - **`matugen`**: Dynamically generates color schemes from the current wallpaper.
 - **`nwg-look`**: A GUI tool for setting GTK themes and icons.
 - **`qt6ct`**: For applying themes to Qt-based applications.
-- **Custom Scripts**: Scripts are used to apply themes to Waybar, rofi, and other components.
 
 ## TODO
 
-- add support to themes
-- add theme switcher rofi interface
+- [x] add support to themes
+- [x] add theme switcher rofi interface

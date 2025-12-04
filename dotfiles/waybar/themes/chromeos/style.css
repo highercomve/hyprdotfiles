@@ -137,7 +137,7 @@ tooltip label {
 #links,
 #tools {
 	padding: 0 10px;
-	margin: 5px 5px;
+	margin: 0 5px;
 	background-color: transparent;
 	color: @text;
 	border: none;
@@ -160,6 +160,41 @@ tooltip label {
 	background-color: transparent;
 	padding: 0px;
 	margin: 0px;
+}
+
+/* Tools Group Colors */
+#tools #power-profiles-daemon,
+#tools #custom-cliphist,
+#tools #custom-hypridle,
+#tools #custom-hyprsunset,
+#tools #custom-record {
+	padding: 5px;
+	margin: 5px;
+}
+
+#tools #power-profiles-daemon {
+	color: @yellow;
+}
+#tools #custom-cliphist {
+	color: @blue;
+}
+#tools #custom-hypridle.active {
+	color: @mauve;
+}
+#tools #custom-hypridle.notactive {
+	color: @subtext0;
+}
+#tools #custom-hyprsunset.active {
+	color: @sapphire;
+}
+#tools #custom-hyprsunset.notactive {
+	color: @subtext0;
+}
+#tools #custom-record.recording {
+	color: @red;
+}
+#tools #custom-record.not-recording {
+	color: @subtext0;
 }
 
 /* -----------------------------------------------------
@@ -383,8 +418,9 @@ tooltip label {
 #power-menu {
 	background-color: @surface1;
 	border-radius: 20px;
-	padding: 5px 5px;
+	padding: 0 5px;
 	margin: 5px 10px;
+	min-width: 20px;
 }
 
 #power-menu.not-power {
