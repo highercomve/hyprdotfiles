@@ -19,12 +19,31 @@ fi
 # Assuming dotfiles/themes is symlinked to ~/.config/themes
 options=$(jq -r '.themes | keys | .[]' "$CONFIG_FILE")
 
+# Add "Use wallpaper color scheme" option
+options="Use wallpaper color scheme\n$options"
+
 # Rofi dmenu
 selected=$(echo -e "$options" | rofi -config ~/.config/rofi/config-compact.rasi -dmenu -p "Select Theme")
 
 if [ -z "$selected" ];
 then
     exit 0
+fi
+
+if [ "$selected" == "Use wallpaper color scheme" ]; then
+    # Run personalize script
+    SCRIPT_DIR=$(dirname "$0")
+    if [ -f "$SCRIPT_DIR/personalize.sh" ]; then
+        "$SCRIPT_DIR/personalize.sh"
+        # Reload config to ensure Personalize theme is available (though it should be already if added by script)
+        selected="Personalize"
+    else
+        echo "Error: personalize.sh not found in $SCRIPT_DIR"
+        if command -v notify-send &>/dev/null; then
+            notify-send "Error" "personalize.sh not found"
+        fi
+        exit 1
+    fi
 fi
 
 # Read theme configuration from JSON
