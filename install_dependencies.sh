@@ -19,103 +19,25 @@ if [ -f /etc/arch-release ]; then
         rm -rf /tmp/yay
     fi
 
-    yay -S --noconfirm \
-        automake \
-        fakeroot
+    yay -S --noconfirm automake fakeroot
 
-    # Install core dependencies
-    yay -S --noconfirm \
-        rofi \
-        ttf-jetbrains-mono-nerd \
-        ttf-nerd-fonts-symbols \
-        stow \
-        gnome-calendar \
-        hyprland \
-        hypridle \
-        hyprlock \
-        hyprpaper \
-        xdg-desktop-portal-hyprland \
-        polkit-gnome \
-        alacritty \
-        rofi \
-        go \
-        waybar \
-        pamixer \
-        brightnessctl \
-        playerctl \
-        swaync \
-        grim \
-        slurp \
-        cliphist \
-        nwg-look \
-        neovim \
-        lazygit \
-        zed \
-        zellij \
-        starship \
-        gum \
-        hyprpicker \
-        jq \
-        eza \
-        matugen \
-        wlogout \
-        wl-clipboard \
-        network-manager-applet \
-        procps-ng \
-        pinta \
-        wireplumber \
-        pipewire \
-        pipewire-pulse \
-        gnome-themes-extra \
-        qogir-icon-theme \
-        libnotify \
-        imagemagick \
-        nwg-dock-hyprland \
-        figlet \
-        pavucontrol \
-        fastfetch \
-        gnome-calculator \
-        nautilus \
-        evolution \
-        pinta \
-        htop \
-        bluez \
-        networkmanager \
-        bluez-utils \
-        wf-recorder \
-        gpu-screen-recorder-git \
-        bluetoothctl \
-        gnome-bluetooth-3.0
+    # Install packages from lists
+    if [ -f "pkglist-repo.txt" ]; then
+        echo "Installing repo packages..."
+        yay -S --noconfirm --needed - <pkglist-repo.txt
+    else
+        echo "Warning: pkglist-repo.txt not found."
+    fi
+
+    if [ -f "pkglist-aur.txt" ]; then
+        echo "Installing AUR packages..."
+        yay -S --noconfirm --needed - <pkglist-aur.txt
+    else
+        echo "Warning: pkglist-aur.txt not found."
+    fi
 
 else
-    echo "Unsupported distribution. Please install the following packages manually:"
-    echo "  - ttf-jetbrains-mono-nerd"
-    echo "  - stow"
-    echo "  - hyprland"
-    echo "  - wl-clipboard"
-    echo "  - polkit-gnome"
-    echo "  - network-manager-applet"
-    echo "  - procps-ng"
-    echo "  - wireplumber"
-    echo "  - pipewire"
-    echo "  - pipewire-pulse"
-    echo "  - gnome-themes-extra"
-    echo "  - qogir-icon-theme"
-    echo "  - libnotify"
-    echo "  - imagemagick"
-    echo "  - nwg-dock-hyprland"
-    echo "  - figlet"
-    echo "  - pavucontrol"
-    echo "  - fastfetch"
-    echo "  - gnome-calculator"
-    echo "  - nautilus"
-    echo "  - evolution"
-    echo "  - pinta"
-    echo "  - htop"
-    echo "  - nmtui"
-    echo "  - bluez"
-    echo "  - bluez-utils"
-    echo "  - gnome-bluetooth-3.0"
+    echo "Unsupported distribution. Please manually install packages listed in pkglist-repo.txt and pkglist-aur.txt"
 fi
 
 git clone https://github.com/LazyVim/starter dotfiles/nvim
