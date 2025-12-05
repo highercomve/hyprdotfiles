@@ -59,13 +59,6 @@ window#waybar.hidden {
 	border-radius: 10px;
 }
 
-#workspaces button:hover {
-	background-color: @surface1;
-	color: @text;
-	box-shadow: none;
-	border-radius: 10px;
-}
-
 #workspaces button.active {
 	background-color: @primary;
 	color: @base;
@@ -74,6 +67,23 @@ window#waybar.hidden {
 	animation: gradient_f 20s ease-in-out infinite;
 	transition: all 0.3s cubic-bezier(0.55, -0.68, 0.48, 1.682);
 	border-radius: 10px;
+}
+
+#workspaces button:hover {
+	background-color: @surface1;
+	color: @text;
+	box-shadow: none;
+	border-radius: 10px;
+}
+
+#workspaces button.active:hover {
+	background-color: @primary;
+	color: @base;
+	min-width: 20px;
+	background-size: 400% 400%;
+	animation: gradient_f 20s ease-in-out infinite;
+	border-radius: 10px;
+	box-shadow: none;
 }
 
 #workspaces button.urgent {
