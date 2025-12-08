@@ -1,5 +1,4 @@
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
+# shellcheck shell=bash
 
 # --- General Configuration ---
 
@@ -17,31 +16,31 @@ function parse_git_dirty {
 }
 
 function parse_git_branch {
-  git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e "s/* (.*)/[\1$(parse_git_dirty)]/"
+  git branch --no-color 2>/dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/[\1$(parse_git_dirty)]/"
 }
 
 function alias_pg_server() {
-  pg_ctl -D /usr/local/var/postgres -l "$HOME/pg_log" $1
+  pg_ctl -D /usr/local/var/postgres -l "$HOME/pg_log" "$1"
 }
 
 function pvrpush() {
   if command -v pvr &>/dev/null; then
     pvr add .
     pvr commit
-    pvr post $@
+    pvr post "$@"
   else
     echo "pvr command not found"
   fi
 }
 
 function curso {
-  setsid cursor $1 >/dev/null 2>&1 &
+  setsid cursor "$1" >/dev/null 2>&1 &
 }
 
 function serve {
   local port=${1:-9898}
   if command -v python3 &>/dev/null; then
-    python3 -m http.server $port
+    python3 -m http.server "$port"
   else
     echo "python3 not found"
   fi
@@ -49,33 +48,33 @@ function serve {
 
 _open_files_for_editing() {
   if [ -x /usr/bin/exo-open ]; then
-    echo "exo-open $@" >&2
+    printf 'exo-open %q ' "$@" >&2
     setsid exo-open "$@" >&/dev/null
     return
   fi
   if [ -x /usr/bin/xdg-open ]; then
     for file in "$@"; do
-      echo "xdg-open $file" >&2
+      printf 'xdg-open %q ' "$file" >&2
       setsid xdg-open "$file" >&/dev/null
     done
     return
   fi
-  echo "$FUNCNAME: package 'xdg-utils' or 'exo' is required." >&2
+  echo "${FUNCNAME[0]}: package 'xdg-utils' or 'exo' is required." >&2
 }
 
 neovim() {
   if command -v alacritty &>/dev/null; then
-    alacritty -e nvim $@ 2>&1 &
+    alacritty -e nvim "$@" 2>&1 &
   else
-    nvim $@
+    nvim "$@"
   fi
 }
 
 disk_usage() {
   if command -v baobab &>/dev/null; then
-    baobab $@ >/dev/null 2>&1 &
+    baobab "$@" >/dev/null 2>&1 &
   else
-    du -h --max-depth=1 $@
+    du -h --max-depth=1 "$@"
   fi
 }
 
@@ -121,7 +120,8 @@ _setup_ps1() {
 
   # Live user handling (EndeavourOS specific)
   if [ "$(whoami)" = "liveuser" ]; then
-    local iso_version="$(grep ^VERSION= /usr/lib/endeavouros-release 2>/dev/null | cut -d '=' -f 2)"
+    local iso_version
+    iso_version="$(grep ^VERSION= /usr/lib/endeavouros-release 2>/dev/null | cut -d '=' -f 2)"
     if [ -n "$iso_version" ]; then
       local prefix="eos-"
       local iso_info="$prefix$iso_version"
@@ -153,14 +153,14 @@ alias ll='ls -lavh --ignore=..'
 alias l='ls -lav --ignore=.?*'
 
 # Navigation
-alias pantacor="cd $HOME/projects/pantacor"
+alias pantacor="cd \$HOME/projects/pantacor"
 
 if [ -d "$HOME/projects/" ]; then
-  alias projects="cd $HOME/projects/"
+  alias projects="cd \$HOME/projects/"
 fi
 
 if [ -d "$HOME/Proyectos/" ]; then
-  alias proyectos="cd $HOME/Proyectos/"
+  alias proyectos="cd \$HOME/Proyectos/"
 fi
 
 if [ -d "/home/projects/" ]; then

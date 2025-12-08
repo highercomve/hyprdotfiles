@@ -1,8 +1,5 @@
 7zip
 nwg-displays
-aarch64-linux-gnu-binutils
-aarch64-linux-gnu-gcc
-aarch64-linux-gnu-glibc
 accountsservice
 adwaita-icon-theme
 alacritty
@@ -186,8 +183,6 @@ linux-firmware
 linux-headers
 linux-lts
 linux-lts-headers
-linux-zen
-linux-zen-headers
 localsend
 logrotate
 loupe
@@ -197,6 +192,8 @@ lsscsi
 luarocks
 lvm2
 man-db
+stow
+starship
 man-pages
 mate-polkit
 matugen

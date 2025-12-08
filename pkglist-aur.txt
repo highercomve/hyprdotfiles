@@ -9,7 +9,6 @@ dms-shell-bin
 dms-shell-bin-debug
 flutter-material-fonts-google-bin
 flutter-sky-engine-google-bin
-gcc13-libs
 gnu-netcat
 grub-esp
 insomnia-bin
@@ -23,7 +22,6 @@ mkdocs-redirects
 nautilus-admin-gtk4
 nautilus-sendto
 nautilus-sendto-debug
-opa-debug
 pyinstaller
 pyinstaller-debug
 pyinstaller-hooks-contrib
