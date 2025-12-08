@@ -1,6 +1,7 @@
 7zip
 nwg-displays
 accountsservice
+ttf-material-icons
 adwaita-icon-theme
 alacritty
 alsa-firmware
