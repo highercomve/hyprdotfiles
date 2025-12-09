@@ -522,7 +522,7 @@
     "on-click": "waybar-music toggle",
     "on-click-right": "waybar-music player-next",
     "on-scroll-up": "waybar-music next",
-    "on-scroll-down": "waybar-music prev"
+    "on-scroll-down": "waybar-music previous"
   },
   "custom/mediaplayer": {
     "return-type": "json",
