@@ -33,6 +33,7 @@ pkill gjs
 pkill ags
 killall waybar
 pkill waybar
+pkill waybar-music
 
 if [ "$choice" == "Waybar" ]; then
     echo "Setting waybar as statusbar"

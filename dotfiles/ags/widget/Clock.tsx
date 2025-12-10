@@ -1,7 +1,7 @@
 import { createPoll } from "ags/time"
 import GLib from "gi://GLib"
 
-export default function Clock({ format = "%H:%M - %a %d %b" }) {
+export default function Clock({ format = "%I:%M %p - %d %b" }) {
 	const time = createPoll(
 		"",
 		1000,

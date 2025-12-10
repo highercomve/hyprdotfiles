@@ -16,13 +16,13 @@ import SystemMonitor from "./SystemMonitor"
 
 function QuickSettings() {
 	const audio = Audio.get_default()?.audio.defaultSpeaker
-	const wifi = Network.get_default()?.wifi
-	const bt = Bluetooth.get_default()
+	// const wifi = Network.get_default()?.wifi
+	// const bt = Bluetooth.get_default()
 
 	// Bindings might be null if service not available
 	const volumeIcon = audio && createBinding(audio, "volumeIcon")
-	const wifiIcon = wifi && createBinding(wifi, "iconName")
-	const btPowered = bt && createBinding(bt, "isPowered")
+	// const wifiIcon = wifi && createBinding(wifi, "iconName")
+	// const btPowered = bt && createBinding(bt, "isPowered")
 
 	return (
 		<button
@@ -32,14 +32,14 @@ function QuickSettings() {
 		>
 			<box spacing={8}>
 				{volumeIcon && <Gtk.Image iconName={volumeIcon} />}
-				{wifiIcon && <Gtk.Image iconName={wifiIcon} />}
+				{/*{wifiIcon && <Gtk.Image iconName={wifiIcon} />}
 				{btPowered && (
 					<Gtk.Image
 						iconName={btPowered((p) =>
 							p ? "bluetooth-active-symbolic" : "bluetooth-disabled-symbolic",
 						)}
 					/>
-				)}
+				)}*/}
 			</box>
 		</button>
 	)
