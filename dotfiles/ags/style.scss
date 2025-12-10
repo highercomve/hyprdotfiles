@@ -1,0 +1,547 @@
+// Waybar Modern Theme Port
+// Colors from colors.css (Catppuccin Mocha)
+$base: #1e1e2e;
+$mantle: #181825;
+$crust: #11111b;
+
+$text: #cdd6f4;
+$subtext0: #a6adc8;
+$subtext1: #bac2de;
+
+$surface0: #313244;
+$surface1: #45475a;
+$surface2: #585b70;
+
+$overlay0: #6c7086;
+
+$blue: #89b4fa;
+$lavender: #b4befe;
+$sapphire: #74c7ec;
+$sky: #89dceb;
+$teal: #94e2d5;
+$green: #a6e3a1;
+$yellow: #f9e2af;
+$peach: #fab387;
+$maroon: #eba0ac;
+$red: #f38ba8;
+$mauve: #cba6f7;
+$pink: #f5c2e7;
+$flamingo: #f2cdcd;
+$rosewater: #f5e0dc;
+
+// Opacity variants
+$main-background: rgba(30, 30, 46, 0.3);
+$border-color: rgba(186, 194, 222, 0.2);
+
+// Global Reset
+* {
+	all: unset;
+	font-family: "JetBrains Mono", "Font Awesome 6 Free", "Sans";
+}
+
+// Variables for Typescript
+window {
+	--surface0: #{$surface0};
+	--surface1: #{$surface1};
+	--subtext0: #{$subtext0};
+	--accent: #{$blue};
+	--text: #{$text};
+}
+
+// Tooltips
+tooltip {
+	background-color: $base;
+	border: 1px solid $border-color;
+	border-radius: 10px;
+	padding: 8px;
+	color: $text;
+}
+
+// Bar Window
+window.Bar {
+	background-color: $main-background;
+	color: $text;
+	border-bottom: none;
+}
+
+// Bar Center Box (Container)
+.BarCenterBox {
+	padding: 0 10px;
+}
+
+// Module Groups General
+.module-group {
+	background-color: $surface0;
+	margin: 4px 4px;
+	padding: 0 5px;
+	border-radius: 10px;
+	border: 1px solid $border-color;
+	color: $text;
+}
+
+// Special case for groups that should be transparent (Taskbar/Empty areas in waybar config?)
+// Actually most groups have surface background in this theme.
+
+// Workspaces
+.workspaces {
+	background-color: $surface0;
+	margin: 5px 5px;
+	padding: 2px 2px;
+	border: 1px solid $border-color;
+	border-radius: 10px;
+
+	button {
+		padding: 0 5px;
+		margin: 0 3px;
+		background-color: transparent;
+		color: $subtext0;
+		border-radius: 10px;
+		transition: all 0.3s ease;
+
+		&:hover {
+			background-color: $surface1;
+			color: $text;
+		}
+
+		&.active {
+			background-color: $mauve; // Waybar uses primary -> mauve
+			color: $base;
+			min-width: 20px;
+		}
+	}
+}
+
+// Clock
+.clock {
+	color: $blue;
+	font-weight: bold;
+	padding: 0 10px;
+	margin: 5px 5px;
+	border: none;
+	border-radius: 10px;
+}
+
+// Client Title
+.client-title {
+	padding: 0 10px;
+	margin: 5px 5px;
+	background-color: $surface0;
+	color: $text;
+	border: 1px solid $border-color;
+	border-radius: 10px;
+}
+
+// Unified Quick Settings Group (Simulating "Future System")
+.group-system {
+	@extend .module-group;
+
+	// Items inside group
+	button,
+	label {
+		background-color: transparent;
+		border: none;
+		margin: 0;
+		padding: 0 2px;
+		border-radius: 0;
+		/* border-right: 1px solid rgba(186, 194, 222, 0.3); // subtext1 alpha 0.3 */
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+}
+
+// Media Group (Simulating "Future Media")
+.group-media {
+	@extend .module-group;
+
+	button,
+	label {
+		padding: 0 10px;
+		border-right: 1px solid rgba(186, 194, 222, 0.3);
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	// Colors
+	.music {
+		color: $lavender;
+	}
+
+	.volume {
+		color: $mauve;
+	}
+}
+
+// QuickSettings/Power Styling Overrides inside group
+.quicksettings {
+	color: $blue;
+}
+
+.powermenu {
+	color: $red;
+}
+
+.systray {
+	padding: 0 5px;
+}
+
+// --- Control Panel Styles (Retaining Catppuccin from previous step) ---
+.control-panel {
+	background-color: $base;
+	color: $text;
+	border: 1px solid $surface1;
+	border-radius: 16px;
+	padding: 16px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+	min-width: 400px;
+}
+
+.toggle-pill {
+	background-color: $surface0;
+	border-radius: 20px;
+	transition: background-color 0.2s;
+
+	&.active {
+		background-color: $blue;
+		color: $base;
+
+		image {
+			color: $base;
+		}
+	}
+
+	button {
+		background-color: transparent;
+		padding: 12px;
+
+		&:hover {
+			background-color: rgba(255, 255, 255, 0.1);
+		}
+	}
+
+	.toggle-icon {
+		border-top-left-radius: 20px;
+		border-bottom-left-radius: 20px;
+	}
+
+	.toggle-arrow {
+		border-top-right-radius: 20px;
+		border-bottom-right-radius: 20px;
+		padding-left: 8px;
+		padding-right: 12px;
+	}
+}
+
+// Widget Cards
+.audio-widget,
+.network-widget,
+.bluetooth-widget {
+	background-color: $mantle;
+	border-radius: 12px;
+	padding: 12px;
+	margin-bottom: 8px;
+}
+
+// Sliders
+scale {
+	min-height: 20px;
+	margin: 0 6px;
+
+	trough {
+		min-height: 6px;
+		border-radius: 12px;
+		background-color: $surface0;
+
+		highlight {
+			min-height: 6px;
+			border-radius: 12px;
+			background-color: $blue;
+		}
+
+		slider {
+			min-height: 16px;
+			min-width: 16px;
+			margin: -5px;
+			border-radius: 50%;
+			background-color: $text;
+		}
+	}
+}
+
+switch {
+	border-radius: 14px;
+	background-color: $surface0;
+	min-height: 24px;
+	min-width: 44px;
+
+	slider {
+		min-width: 20px;
+		min-height: 20px;
+		margin: 2px;
+		border-radius: 50%;
+		background-color: $text;
+	}
+
+	&:checked {
+		background-color: $blue;
+
+		slider {
+			background-color: $base;
+		}
+	}
+}
+
+// Media Player Window (The Popup Content)
+.media-player-window {
+	// Inherit Control Panel Base
+	background-color: $base;
+	color: $text;
+	border: 1px solid $surface1;
+	border-radius: 16px;
+	padding: 24px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+	margin-bottom: 8px; // Separation if multiple
+
+	.cover-art {
+		min-width: 240px;
+		min-height: 240px;
+		background-size: cover;
+		background-position: center;
+		border-radius: 12px;
+		background-color: $surface0; // Placeholder
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+		&.fallback {
+			color: $subtext0;
+			// Centering handled by widget alignment
+		}
+	}
+
+	.title {
+		font-size: 1.25em;
+		font-weight: 800;
+		color: $text;
+	}
+
+	.artist {
+		font-size: 0.9em;
+		font-weight: 500;
+		color: $subtext0;
+	}
+
+	.controls {
+		margin-top: 8px;
+
+		button.control-button {
+			padding: 8px;
+			border-radius: 50%;
+			background-color: transparent;
+			color: $text;
+			transition: all 0.2s;
+
+			&:hover {
+				background-color: $surface1;
+				color: $blue;
+			}
+		}
+
+		button.play-button {
+			padding: 12px;
+			border-radius: 50%;
+			background-color: $surface0; // Highlight play button
+			color: $blue;
+			transition: all 0.2s;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+			&:hover {
+				background-color: $blue;
+				color: $base;
+				transform: scale(1.05); // dynamic feel
+			}
+		}
+	}
+
+	// closes .controls
+}
+
+// closes .media-player-window
+
+// Tools Group
+.group-tools {
+	@extend .module-group;
+	padding: 0;
+
+	button {
+		background-color: transparent;
+		border: none;
+		box-shadow: none;
+		padding: 0 10px;
+		margin: 0;
+		min-height: 24px;
+		border-radius: 0;
+
+		// Separator logic
+		border-right: 1px solid rgba(186, 194, 222, 0.3);
+
+		&:last-child {
+			border-right: none;
+		}
+	}
+
+	.tools-toggle {
+		color: $sapphire;
+		font-weight: bold;
+	}
+
+	.tools-container {
+		padding: 0;
+		margin: 0;
+
+		button:last-child {
+			border-right: none;
+		}
+	}
+
+	.tool-button {
+		color: $text;
+		transition: all 0.2s;
+
+		&:hover {
+			background-color: $surface1;
+			color: $sky;
+		}
+
+		&.active {
+			color: $blue; // Active state color
+
+			// Optional: specific colors for specific tools can be added if we add specific classes
+		}
+	}
+}
+
+// System Monitor
+.system-monitor {
+	label {
+		padding: 0 2px;
+	}
+}
+
+// Center Popup
+.center-popup-window {
+	background-color: rgba($base, 0.95); // Slightly transparent
+	border: 1px solid $surface1;
+	border-radius: 20px;
+	box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+	padding: 0;
+
+	// Layout containers
+	.calendar-container {
+		padding: 10px;
+	}
+
+	.media-container {
+		// Inherit media styles but adjust if needed
+		.media-player-window {
+			background-color: transparent; // Remove nested background
+			border: none;
+			box-shadow: none;
+			padding: 0;
+		}
+	}
+
+	calendar {
+		background-color: transparent;
+		color: $text;
+		border: none;
+		padding: 5px;
+		font-family: inherit;
+
+		&:selected {
+			background-color: $blue;
+			color: $base;
+			border-radius: 6px;
+			font-weight: bold;
+		}
+
+		.header {
+			color: $sapphire;
+			font-weight: 800;
+			font-size: 1.1em;
+			padding-bottom: 10px;
+		}
+
+		.button {
+			color: $subtext0;
+			padding: 4px;
+			border-radius: 8px;
+
+			&:hover {
+				background-color: $surface1;
+				color: $text;
+			}
+		}
+
+		.highlight {
+			background-color: rgba($surface0, 0.5);
+			color: $subtext1;
+		}
+
+		// Day names
+		font-size: 1.1em;
+	}
+}
+
+.group-center {
+	@extend .module-group;
+	padding: 0 12px;
+
+	&:hover {
+		background-color: $surface1;
+	}
+
+	label {
+		font-weight: bold;
+	}
+}
+
+// OSD
+.osd-window {
+	background-color: rgba($base, 0.9);
+	border: 1px solid $surface1;
+	border-radius: 99px; // Pill shape
+	padding: 16px 24px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	margin-bottom: 30px;
+
+	levelbar {
+		trough {
+			min-height: 8px;
+			border-radius: 99px;
+			background-color: $surface0;
+
+			block.filled {
+				border-radius: 99px;
+				background-color: $blue;
+			}
+
+			block.empty {
+				background-color: transparent;
+			}
+		}
+	}
+}
+
+// Notification Icon
+.notification-icon {
+	@extend .module-group;
+	padding: 0 12px;
+
+	&:hover {
+		background-color: $surface1;
+		color: $yellow;
+	}
+}

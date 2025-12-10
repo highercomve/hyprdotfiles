@@ -1,11 +1,11 @@
 /* Modern SwayNC Theme */
 
-@define-color text            @foreground;
-@define-color border          rgba(186, 194, 222, 0.2);
-@define-color background-alt  rgba(49, 50, 68, 0.5);
-@define-color selected        @color3;
-@define-color hover           @color5;
-@define-color urgent          @color2;
+@define-color text @foreground;
+@define-color border rgba(186, 194, 222, 0.2);
+@define-color background-alt rgba(49, 50, 68, 0.5);
+@define-color selected @color3;
+@define-color hover @color5;
+@define-color urgent @color2;
 
 * {
 	color: @text;
@@ -40,24 +40,25 @@
 
 .control-center .notification-row .notification-background .notification.critical {
 	color: @urgent;
-    border-color: @urgent;
+	border-color: @urgent;
 }
 
 .control-center .notification-row .notification-background .notification .notification-content {
 	margin: 6px;
-	padding: 8px 34px 2px 2px; /* Padding for close button */
+	padding: 8px 34px 2px 2px;
+	/* Padding for close button */
 }
 
-.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action {
+.control-center .notification-row .notification-background .notification>*:last-child>* .notification-action {
 	background: alpha(@selected, 0.2);
 	color: @text;
 	border-radius: 20px;
 	margin: 6px;
 }
 
-.control-center .notification-row .notification-background .notification > *:last-child > * .notification-action:hover {
+.control-center .notification-row .notification-background .notification>*:last-child>* .notification-action:hover {
 	background: @selected;
-    color: @color0;
+	color: @color0;
 }
 
 .control-center .notification-row .notification-background .close-button {
@@ -70,12 +71,13 @@
 
 .control-center .notification-row .notification-background .close-button:hover {
 	background-color: @selected;
-    color: @color0;
+	color: @color0;
 }
 
-progressbar, progress {
+progressbar,
+progress {
 	border-radius: 20px;
-    background-color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Widgets */
@@ -84,12 +86,12 @@ progressbar, progress {
 	font-size: 1.2rem;
 }
 
-.widget-dnd > switch {
+.widget-dnd>switch {
 	background: alpha(@background-alt, 0.5);
 	border-radius: 20px;
 }
 
-.widget-dnd > switch slider {
+.widget-dnd>switch slider {
 	background: @selected;
 	border-radius: 20px;
 }
@@ -101,23 +103,25 @@ progressbar, progress {
 	background: @background-alt;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button {
+.widget-buttons-grid>flowbox>flowboxchild>button {
 	margin: 2px 5px;
 	padding: 14px 18px;
 	background: transparent;
 	border-radius: 20px;
 }
 
-.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+.widget-buttons-grid>flowbox>flowboxchild>button:hover {
 	background: @selected;
-    color: @color0;
+	color: @color0;
 }
 
 .widget-mpris {
 	border-radius: 20px;
 	margin-bottom: 10px;
-    background-color: @background-alt;
+	background-color: @background-alt;
 }
+
+
 
 /* Volume and Backlight */
 trough {
@@ -134,7 +138,7 @@ trough highlight {
 .widget-volume {
 	background-color: @background-alt;
 	padding: 8px;
-	margin: 0px 2px;
+	margin: 10px 2px;
 	border-radius: 20px;
 }
 
@@ -145,27 +149,27 @@ trough highlight {
 
 .widget-volume trough slider {
 	min-height: 1.25rem;
-    background: transparent;
+	background: transparent;
 }
 
 .widget-backlight {
 	background-color: @background-alt;
 	padding: 8px;
-	margin: 0px 1px;
+	margin: 10px 1px;
 	border-radius: 20px;
 }
 
 .widget-backlight trough {
-    padding: 3px;
-    background: alpha(@background, 0.2);
+	padding: 3px;
+	background: alpha(@background, 0.2);
 }
 
 .widget-backlight trough slider {
-    min-height: 1.25rem;
-    background: transparent;
+	min-height: 1.25rem;
+	background: transparent;
 }
 
 .mpris-background {
 	opacity: 0.2;
-    background-color: @background-alt;
+	background-color: @background-alt;
 }
