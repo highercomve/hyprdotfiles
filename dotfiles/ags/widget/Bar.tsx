@@ -13,6 +13,7 @@ import Bluetooth from "gi://AstalBluetooth"
 import { createBinding } from "ags"
 import ToolsRow from "./ToolsWidget"
 import SystemMonitor from "./SystemMonitor"
+import Taskbar from "./Taskbar"
 
 function QuickSettings() {
 	const audio = Audio.get_default()?.audio.defaultSpeaker
@@ -61,6 +62,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 			<Gtk.CenterBox class="BarCenterBox">
 				<Gtk.Box hexpand halign={Gtk.Align.START} spacing={4} $type="start">
 					<Workspaces />
+					<Taskbar />
 					<ClientTitle />
 				</Gtk.Box>
 				<Gtk.Box $type="center">
@@ -79,15 +81,17 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 				<Gtk.Box hexpand halign={Gtk.Align.END} spacing={4} $type="end">
 					<SystemMonitor />
 					<ToolsRow />
-					<button
-						class="notification-icon"
-						onClicked={() => GLib.spawn_command_line_async("swaync-client -t")}
-						tooltipText="Notifications"
-					>
-						<Gtk.Image iconName="preferences-system-notifications-symbolic" />
-					</button>
 					{/* Add here a notification icon that open the swaync window */}
 					<Gtk.Box class="group-system">
+						<button
+							class="notification-icon"
+							onClicked={() =>
+								GLib.spawn_command_line_async("swaync-client -t")
+							}
+							tooltipText="Notifications"
+						>
+							<Gtk.Image iconName="preferences-system-notifications-symbolic" />
+						</button>
 						<SysTray />
 						<QuickSettings />
 						<PowerMenu />

@@ -7,7 +7,7 @@ const SCRIPTS_DIR = GLib.get_home_dir() + "/.config/hypr/user_settings"
 @register({ GTypeName: "SystemState" })
 class SystemState extends GObject.Object {
 	@property(Number) cpu = 0
-	@property(Number) memory = 0
+	@property(String) memory = ""
 	@property(Number) temp = 0
 
 	private prevCpu = { total: 0, idle: 0 }
@@ -36,7 +36,7 @@ class SystemState extends GObject.Object {
 			if (!cpuLine) return
 
 			const parts = cpuLine
-				.split(/\s+/)
+				.split(/\s+/) // Use regex for splitting by whitespace
 				.filter((p) => p !== "")
 				.slice(1)
 				.map(Number)
@@ -69,7 +69,9 @@ class SystemState extends GObject.Object {
 			if (totalMatch && availableMatch) {
 				const total = parseInt(totalMatch[1])
 				const available = parseInt(availableMatch[1])
-				this.memory = Math.round(((total - available) / total) * 100)
+				const used = total - available
+				// Convert to GB (1 GB = 1024 * 1024 KB)
+				this.memory = (used / 1048576).toFixed(1)
 			}
 		} catch (e) {
 			console.error(e)
@@ -107,7 +109,7 @@ export default function SystemMonitor() {
 					tooltipText="CPU Usage"
 				/>
 				<label
-					label={createBinding(systemState, "memory").as((v) => ` ${v}%`)}
+					label={createBinding(systemState, "memory").as((v) => ` ${v}G`)}
 					tooltipText="Memory Usage"
 				/>
 				<label

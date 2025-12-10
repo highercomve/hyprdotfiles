@@ -11,6 +11,7 @@ export default function ClientTitle() {
 			class="client-title"
 			ellipsize={Pango.EllipsizeMode.END}
 			label={focusedClient((c) => (c ? c.title : ""))}
+			visible={focusedClient((c) => c !== null)}
 		/>
 	)
 }
