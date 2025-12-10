@@ -29,7 +29,7 @@
 	"theme": {
 		"mode": "system",
 		"light": "CodeSandbox",
-		"dark": "CodeSandbox"
+		"dark": "VSCode Dark Modern"
 	},
 	"languages": {
 		"HTML": {
