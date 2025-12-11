@@ -180,10 +180,17 @@ window.Bar {
 		}
 
 		&.active {
-			background-color: $mauve; // Waybar uses primary -> mauve
+			background-color: $mauve;
 			color: $base;
 			min-width: 20px;
+			background-size: 400% 400%;
+			// animation: gradient_f 20s ease-in-out infinite; // Keyframes not defined yet, stick to solid for now or define keyframes
 		}
+
+        &.urgent {
+            background-color: $red;
+            color: $base;
+        }
 	}
 }
 
@@ -520,6 +527,8 @@ switch {
 	.tool-button {
 		color: $text;
 		transition: all 0.2s;
+        padding: 0 4px;
+        border-radius: 4px;
 
 		&:hover {
 			background-color: $surface1;
@@ -528,9 +537,33 @@ switch {
 
 		&.active {
 			color: $blue; // Active state color
-
-			// Optional: specific colors for specific tools can be added if we add specific classes
 		}
+
+        &.cliphist {
+            color: $blue;
+        }
+        
+        &.hypridle {
+            &.active {
+                color: $mauve;
+            }
+        }
+        
+        &.hyprsunset {
+             &.active {
+                color: $sapphire;
+            }
+        }
+        
+        &.record {
+            &.active {
+                color: $red;
+            }
+        }
+
+        &.power-profile {
+             color: $yellow;
+        }
 	}
 }
 
@@ -539,6 +572,29 @@ switch {
 	label {
 		padding: 0 2px;
 	}
+    
+    .cpu {
+        color: $sapphire;
+    }
+    .memory {
+        color: $mauve;
+    }
+    .temp {
+        color: $peach;
+    }
+}
+
+// Battery
+.battery-level {
+    color: $green;
+    
+    &.charging {
+        color: $green;
+    }
+    
+    &.critical { // Need to ensure logic applies this class in TSX if used, or just rely on icon color if mostly icon
+        color: $red;
+    }
 }
 
 // Center Popup

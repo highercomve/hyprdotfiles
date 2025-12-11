@@ -51,7 +51,7 @@ class ToolsState extends GObject.Object {
 				const val = json.class || json.alt || json.text || ""
 
 				if ((this as any)[prop] !== val) (this as any)[prop] = val
-			} catch (e) {}
+			} catch (e) { }
 		} catch (e) {
 			console.error(e)
 		}
@@ -64,14 +64,16 @@ function ToolButton({
 	icon,
 	command,
 	tooltip,
+	className,
 }: {
 	icon: string
 	command: string
 	tooltip?: string
+	className?: string
 }) {
 	return (
 		<button
-			class="tool-button"
+			class={`tool-button ${className || ""}`}
 			tooltipText={tooltip}
 			onClicked={() => {
 				try {
@@ -101,19 +103,19 @@ function PowerProfileButton() {
 
 	return (
 		<button
-			class="tool-button"
+			class="tool-button power-profile"
 			onClicked={() => {
 				const current = pp.active_profile
 				const index = profiles.indexOf(current)
 				const next = profiles[(index + 1) % profiles.length]
 				pp.set_active_profile(next)
 			}}
-			tooltipText={createBinding(pp, "active-profile").as(
+			tooltipText={createBinding(pp, "activeProfile").as(
 				(p) => prettyNames[p] || p,
 			)}
 		>
 			<Gtk.Image
-				iconName={createBinding(pp, "active-profile").as(
+				iconName={createBinding(pp, "activeProfile").as(
 					(p) => icons[p] || "power-profile-balanced-symbolic",
 				)}
 			/>
@@ -134,10 +136,11 @@ export default function ToolsRow() {
 						icon="edit-copy-symbolic"
 						command={`${SCRIPTS_DIR}/cliphist.sh`}
 						tooltip="Clipboard Manager"
+						className="cliphist"
 					/>
 					<button
 						class={createBinding(toolsState, "idle").as(
-							(s) => `tool-button ${s === "active" ? "active" : ""}`,
+							(s) => `tool-button hypridle ${s === "active" ? "active" : ""}`,
 						)}
 						tooltipText="Idle Inhibitor"
 						onClicked={() => {
@@ -165,7 +168,7 @@ export default function ToolsRow() {
 
 					<button
 						class={createBinding(toolsState, "sunset").as(
-							(s) => `tool-button ${s === "active" ? "active" : ""}`,
+							(s) => `tool-button hyprsunset ${s === "active" ? "active" : ""}`,
 						)}
 						tooltipText="Night Light"
 						onClicked={() => {
@@ -187,7 +190,7 @@ export default function ToolsRow() {
 
 					<button
 						class={createBinding(toolsState, "record").as(
-							(s) => `tool-button ${s === "recording" ? "active" : ""}`,
+							(s) => `tool-button record ${s === "recording" ? "active" : ""}`,
 						)}
 						tooltipText="Screen Record"
 						onClicked={() => {

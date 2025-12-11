@@ -105,14 +105,17 @@ export default function SystemMonitor() {
 		>
 			<box spacing={8}>
 				<label
+					class="cpu"
 					label={createBinding(systemState, "cpu").as((v) => `  ${v}%`)}
 					tooltipText="CPU Usage"
 				/>
 				<label
+					class="memory"
 					label={createBinding(systemState, "memory").as((v) => ` ${v}G`)}
 					tooltipText="Memory Usage"
 				/>
 				<label
+					class="temp"
 					label={createBinding(systemState, "temp").as((v) => ` ${v}°C`)}
 					tooltipText="CPU Temperature"
 				/>
