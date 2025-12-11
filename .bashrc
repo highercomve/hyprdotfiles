@@ -153,18 +153,19 @@ alias ll='ls -lavh --ignore=..'
 alias l='ls -lav --ignore=.?*'
 
 # Navigation
-alias pantacor="cd ~/projects/pantacor"
-
 if [ -d "$HOME/projects/" ]; then
     alias projects="cd ~/projects/"
+    alias pantacor="cd ~/projects/pantacor"
 fi
 
 if [ -d "$HOME/Proyectos/" ]; then
     alias proyectos="cd ~/Proyectos/"
+    alias pantacor="cd ~/Proyectos/pantacor"
 fi
 
 if [ -d "/home/projects/" ]; then
     alias projects="cd /home/projects"
+    alias pantacor="cd /home/projects/pantacor"
 fi
 
 # Git
