@@ -5,6 +5,7 @@ import ControlPanel from "./widget/ControlPanel"
 
 import CenterPopup from "./widget/CenterPopup"
 import OSD from "./widget/OSD"
+import NotificationPopups from "./widget/NotificationPopups"
 
 app.start({
 	css: style,
@@ -12,6 +13,7 @@ app.start({
 		const monitors = app.get_monitors()
 		monitors.map(Bar)
 		monitors.map(OSD)
+		monitors.map(NotificationPopups)
 		ControlPanel()
 		CenterPopup()
 	},

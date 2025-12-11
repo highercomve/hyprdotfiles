@@ -1,12 +1,14 @@
 import nav from "./ControlPanelNav"
 import { Astal, Gtk } from "ags/gtk4"
 import App from "ags/gtk4/app"
+import { createBinding } from "ags"
 import AudioWidget, { DeviceList } from "./AudioWidget"
 import NetworkWidget from "./NetworkWidget"
 import BluetoothWidget from "./BluetoothWidget"
 import NotificationList, { DNDSwitch } from "./NotificationWidget"
 import PopupWindow from "./PopupWindow"
 import Notifd from "gi://AstalNotifd"
+import BrightnessService from "./BrightnessService"
 
 function PageHeader({ label, onBack }: { label: string; onBack: () => void }) {
 	return (
@@ -59,56 +61,101 @@ function TogglePill({
 	)
 }
 
-export default function ControlPanel() {
-	const notifd = Notifd.get_default()
+function BrightnessSlider() {
+	return (
+		<box
+			visible={createBinding(BrightnessService, "available")}
+			class="brightness-slider-container"
+			css="padding: 0 4px; margin-bottom: 8px;"
+		>
+			<Gtk.Image iconName="display-brightness-symbolic" />
+			<Gtk.Scale
+				hexpand
+				adjustment={
+					new Gtk.Adjustment({
+						lower: 0,
+						upper: 1,
+						stepIncrement: 0.05,
+						pageIncrement: 0.1,
+					})
+				}
+				onChangeValue={(self, _, value) => {
+					BrightnessService.screen_value = value
+				}}
+				$={(self) => {
+					self.adjustment.value = BrightnessService.screen
+					const id = BrightnessService.connect("notify::screen", () => {
+						self.adjustment.value = BrightnessService.screen
+					})
+					self.connect("destroy", () => BrightnessService.disconnect(id))
+				}}
+			/>
+		</box>
+	)
+}
 
-	const mainPage = (
+function ConnectivityToggles() {
+	return (
+		<box spacing={4} homogeneous>
+			<TogglePill
+				icon="network-wireless-symbolic"
+				label="Wi-Fi"
+				active={true} // TODO: actual state
+				onDetail={() => (nav.page = "network")}
+			/>
+			<TogglePill
+				icon="bluetooth-active-symbolic"
+				label="Bluetooth"
+				active={true}
+				onDetail={() => (nav.page = "bluetooth")}
+			/>
+		</box>
+	)
+}
+
+function NotificationSection() {
+	return (
+		<box orientation={Gtk.Orientation.VERTICAL} spacing={8} css="margin-top: 12px;">
+			<box css="min-height: 1px; background-color: rgba(255,255,255,0.1); margin: 4px 0;" />
+			<DNDSwitch />
+			<Gtk.ScrolledWindow vexpand css="min-height: 200px;">
+				<NotificationList />
+			</Gtk.ScrolledWindow>
+		</box>
+	)
+}
+
+function MainPage() {
+	return (
 		<box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
-			{/* Toggles Grid */}
-			<box spacing={4} homogeneous>
-				<TogglePill
-					icon="network-wireless-symbolic"
-					label="Wi-Fi"
-					active={true} // TODO: actual state
-					onDetail={() => (nav.page = "network")}
-				/>
-				<TogglePill
-					icon="bluetooth-active-symbolic"
-					label="Bluetooth"
-					active={true}
-					onDetail={() => (nav.page = "bluetooth")}
-				/>
-			</box>
-
-			{/* Media moved to separate popup */}
-
+			<BrightnessSlider />
+			<ConnectivityToggles />
 			<AudioWidget />
-
-			{/* <box css="min-height: 1px; background-color: rgba(255,255,255,0.1); margin: 8px 0;" /> */}
-
-			{/* <DNDSwitch />
-
-            <Gtk.ScrolledWindow vexpand css="min-height: 200px;">
-                <NotificationList />
-            </Gtk.ScrolledWindow> */}
+			<NotificationSection />
 		</box>
 	) as Gtk.Box
+}
 
-	const networkPage = (
+function NetworkPage() {
+	return (
 		<box orientation={Gtk.Orientation.VERTICAL}>
 			<PageHeader label="Wi-Fi" onBack={() => (nav.page = "main")} />
 			<NetworkWidget />
 		</box>
 	) as Gtk.Box
+}
 
-	const bluetoothPage = (
+function BluetoothPage() {
+	return (
 		<box orientation={Gtk.Orientation.VERTICAL}>
 			<PageHeader label="Bluetooth" onBack={() => (nav.page = "main")} />
 			<BluetoothWidget />
 		</box>
 	) as Gtk.Box
+}
 
-	const audioPage = (
+function AudioPage() {
+	return (
 		<box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
 			<PageHeader label="Audio Devices" onBack={() => (nav.page = "main")} />
 
@@ -131,29 +178,33 @@ export default function ControlPanel() {
 			</Gtk.ScrolledWindow>
 		</box>
 	) as Gtk.Box
+}
+
+export default function ControlPanel() {
+	const notifd = Notifd.get_default()
 
 	return (
 		<PopupWindow
 			name="control-panel"
 			application={App}
 			widthRequest={400} // Slightly wider
-			heightRequest={400}
-			marginRight={12}
+			heightRequest={800}
+			marginRight={5}
 			marginTop={40}
 			halign={Gtk.Align.END}
 			valign={Gtk.Align.START}
 			layer={Astal.Layer.OVERLAY}
 			keymode={Astal.Keymode.ON_DEMAND}
 		>
-			<box class="control-panel" css="padding: 16px;">
+			<box class="control-panel" css="padding: 30px 16px;">
 				<Gtk.Stack
 					transitionType={Gtk.StackTransitionType.SLIDE_LEFT_RIGHT}
 					interpolateSize
 					$={(self) => {
-						self.add_named(mainPage, "main")
-						self.add_named(networkPage, "network")
-						self.add_named(bluetoothPage, "bluetooth")
-						self.add_named(audioPage, "audio")
+						self.add_named(<MainPage />, "main")
+						self.add_named(<NetworkPage />, "network")
+						self.add_named(<BluetoothPage />, "bluetooth")
+						self.add_named(<AudioPage />, "audio")
 
 						// Standard GObject connection
 						const id = nav.connect("notify::page", () => {

@@ -307,7 +307,7 @@ window.Bar {
 	color: $text;
 	border: 1px solid $surface1;
 	border-radius: 16px;
-	padding: 16px;
+	padding: 30px 16px 16px 16px;
 	box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 	min-width: 400px;
 }
@@ -557,6 +557,7 @@ switch {
 	}
 
 	.media-container {
+
 		// Inherit media styles but adjust if needed
 		.media-player-window {
 			background-color: transparent; // Remove nested background
@@ -656,5 +657,31 @@ switch {
 	&:hover {
 		background-color: $surface1;
 		color: $yellow;
+	}
+}
+
+// Notification Popups
+.NotificationPopups {
+	background-color: transparent;
+}
+
+.notification-card {
+	background-color: $base;
+	color: $text;
+	border: 1px solid $surface1;
+	border-radius: 12px;
+	padding: 12px;
+	margin-bottom: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+	image {
+		margin-right: 4px;
+	}
+
+	button {
+		&:hover {
+			color: $red;
+			background-color: transparent;
+		}
 	}
 }

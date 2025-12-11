@@ -8,12 +8,36 @@ import { MediaBar } from "./Media"
 import SysTray from "./SysTray"
 import PowerMenu from "./PowerMenu"
 import Audio from "gi://AstalWp"
+import Battery from "gi://AstalBattery"
 import Network from "gi://AstalNetwork"
 import Bluetooth from "gi://AstalBluetooth"
 import { createBinding } from "ags"
 import ToolsRow from "./ToolsWidget"
 import SystemMonitor from "./SystemMonitor"
 import Taskbar from "./Taskbar"
+
+function BatteryLevel() {
+	const bat = Battery.get_default()
+
+	return (
+		<box visible={createBinding(bat, "isPresent")} class="battery-level" spacing={4}>
+			<label
+				class="battery-percentage"
+				label={createBinding(bat, "percentage").as((p) =>
+					Math.round(p * 100).toString() + "%",
+				)}
+			/>
+			<Gtk.Image
+				iconName={createBinding(bat, "iconName")}
+				tooltipText={createBinding(bat, "state").as(
+					(s) => `Battery: ${Math.round(bat.percentage * 100)}% [${s}]`,
+				)}
+			/>
+		</box>
+	)
+}
+
+import Notifd from "gi://AstalNotifd"
 
 function QuickSettings() {
 	const audio = Audio.get_default()?.audio.defaultSpeaker
@@ -32,6 +56,7 @@ function QuickSettings() {
 			tooltipText="Quick Settings"
 		>
 			<box spacing={8}>
+				<Gtk.Image iconName="preferences-system-notifications-symbolic" />
 				{volumeIcon && <Gtk.Image iconName={volumeIcon} />}
 				{/*{wifiIcon && <Gtk.Image iconName={wifiIcon} />}
 				{btPowered && (
@@ -83,15 +108,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 					<ToolsRow />
 					{/* Add here a notification icon that open the swaync window */}
 					<Gtk.Box class="group-system">
-						<button
-							class="notification-icon"
-							onClicked={() =>
-								GLib.spawn_command_line_async("swaync-client -t")
-							}
-							tooltipText="Notifications"
-						>
-							<Gtk.Image iconName="preferences-system-notifications-symbolic" />
-						</button>
+						<BatteryLevel />
 						<SysTray />
 						<QuickSettings />
 						<PowerMenu />
@@ -100,4 +117,18 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 			</Gtk.CenterBox>
 		</Astal.Window>
 	)
+}
+
+function NotificationButton() {
+	return (
+		<button
+			class="notification-icon"
+			onClicked={() =>
+				GLib.spawn_command_line_async("swaync-client -t")
+			}
+			tooltipText="Notifications"
+		>
+			<Gtk.Image iconName="preferences-system-notifications-symbolic" />
+		</button>
+	) as Gtk.Button
 }
