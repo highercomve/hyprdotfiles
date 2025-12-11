@@ -1,4 +1,5 @@
 import { createBinding, For } from "ags"
+import GObject, { register, property } from "ags/gobject"
 import { Gtk } from "ags/gtk4"
 import Network from "gi://AstalNetwork"
 import NM from "gi://NM"
@@ -14,8 +15,8 @@ function runCmd(cmd: string) {
 }
 
 // Helper to deduplicate APs
-function deduplicateAPs(aps: any[]) {
-	const map = new Map<string, any>()
+function deduplicateAPs(aps: Network.AccessPoint[]) {
+	const map = new Map<string, Network.AccessPoint>()
 	aps.forEach((ap) => {
 		if (!ap.ssid) return // Ignore hidden/unknown SSIDs for cleanliness, or handle nicely
 		const existing = map.get(ap.ssid)
@@ -24,6 +25,182 @@ function deduplicateAPs(aps: any[]) {
 		}
 	})
 	return Array.from(map.values()).sort((a, b) => b.strength - a.strength)
+}
+
+@register({ GTypeName: "NetworkViewState" })
+class NetworkViewState extends GObject.Object {
+	@property(String)
+	view: string = "main"
+
+	@property(String)
+	confirming_uuid: string = ""
+}
+
+const viewState = new NetworkViewState()
+
+function APItem({ ap, wifi, client }: { ap: Network.AccessPoint, wifi: Network.Wifi, client: NM.Client }) {
+	const ssid = createBinding(ap, "ssid")
+	const iconName = createBinding(ap, "iconName")
+	const isActive = createBinding(wifi, "activeAccessPoint").as(
+		(aap) => aap === ap,
+	)
+	const flags = createBinding(ap, "flags")
+
+	// Check if this AP is a known connection
+	const isKnown = createBinding(client, "connections").as((list) =>
+		Boolean(
+			list.find(
+				(c) =>
+					c.get_id() === ap.ssid &&
+					c.get_connection_type() === "802-11-wireless",
+			),
+		),
+	)
+
+	const isConfirming = createBinding(viewState, "confirming_uuid").as(uuid => {
+		// Find the connection UUID for this SSID to compare
+		const conn = client.connections.find(
+			(c) =>
+				c.get_id() === ap.ssid &&
+				c.get_connection_type() === "802-11-wireless",
+		)
+		return conn?.get_uuid() === uuid
+	})
+
+	return (
+		<box spacing={4}>
+			<button
+				hexpand
+				class={isActive((a) => (a ? "active-network" : ""))}
+				onClicked={() => {
+					if (wifi.activeAccessPoint !== ap) {
+						// @ts-ignore
+						ap.activate(null, null)
+					}
+				}}
+			>
+				<box spacing={8}>
+					<Gtk.Image
+						iconName={iconName.as(
+							(i) =>
+								i || "network-wireless-signal-unknown-symbolic",
+						)}
+					/>
+					<Gtk.Label
+						label={ssid((s: string) => s || "Unknown")}
+						xalign={0}
+						hexpand
+						ellipsize={3}
+					/>
+				</box>
+			</button>
+			<button
+				tooltipText="Forget Network"
+				visible={isKnown.as(k => k && viewState.confirming_uuid === "")}
+				onClicked={() => {
+					const conn = client.connections.find(
+						(c) =>
+							c.get_id() === ap.ssid &&
+							c.get_connection_type() === "802-11-wireless",
+					)
+					if (conn) viewState.confirming_uuid = conn.get_uuid() || ""
+				}}
+				css="padding: 2px 8px;"
+			>
+				<Gtk.Image iconName="user-trash-symbolic" css="color: var(--red);" />
+			</button>
+
+			<button
+				tooltipText="Confirm Delete"
+				visible={isConfirming}
+				onClicked={() => {
+					const conn = client.connections.find(
+						(c) =>
+							c.get_id() === ap.ssid &&
+							c.get_connection_type() === "802-11-wireless",
+					)
+					if (conn) {
+						conn.delete_async(null, null)
+						viewState.confirming_uuid = ""
+					}
+				}}
+				css="padding: 2px 8px; border: 1px solid var(--red); margin-right: 4px;"
+			>
+				<Gtk.Image iconName="object-select-symbolic" css="color: var(--red);" />
+			</button>
+
+			<button
+				tooltipText="Cancel"
+				visible={isConfirming}
+				onClicked={() => {
+					viewState.confirming_uuid = ""
+				}}
+				css="padding: 2px 8px;"
+			>
+				<Gtk.Image iconName="process-stop-symbolic" />
+			</button>
+			<Gtk.Image
+				iconName="object-select-symbolic"
+				visible={isActive((a) => !!a)}
+			/>
+			<Gtk.Image
+				iconName="channel-secure-symbolic"
+				css="font-size: 12px; color: var(--subtext0);"
+				visible={flags((f) =>
+					Boolean(f & (NM as any)["80211ApFlags"].PRIVACY),
+				)}
+			/>
+		</box>
+	)
+}
+
+function SavedNetworkItem({ connection }: { connection: NM.RemoteConnection }) {
+	const isConfirming = createBinding(viewState, "confirming_uuid").as(uuid => uuid === connection.get_uuid())
+
+	return (
+		<box spacing={8} css="padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+			<Gtk.Image iconName="network-wireless-symbolic" css="color: var(--subtext0);" />
+			<label
+				label={connection.get_id() || "Unknown"}
+				hexpand
+				xalign={0}
+				ellipsize={3}
+			/>
+			<button
+				tooltipText="Forget Network"
+				visible={isConfirming.as(c => !c)}
+				onClicked={() => {
+					viewState.confirming_uuid = connection.get_uuid() || ""
+				}}
+				css="padding: 4px 8px;"
+			>
+				<Gtk.Image iconName="user-trash-symbolic" css="color: var(--red);" />
+			</button>
+
+			<button
+				tooltipText="Confirm Delete"
+				visible={isConfirming}
+				onClicked={() => {
+					connection.delete_async(null, null)
+					viewState.confirming_uuid = ""
+				}}
+				css="padding: 4px 8px; border: 1px solid var(--red); margin-right: 4px;"
+			>
+				<Gtk.Image iconName="object-select-symbolic" css="color: var(--red);" />
+			</button>
+
+			<button
+				tooltipText="Cancel"
+				visible={isConfirming}
+				onClicked={() => {
+					viewState.confirming_uuid = ""
+				}}
+				css="padding: 4px 8px;"
+			>
+				<Gtk.Image iconName="process-stop-symbolic" />
+			</button>
+		</box>
+	)
 }
 
 export default function NetworkWidget() {
@@ -53,7 +230,7 @@ export default function NetworkWidget() {
 	// Sort and Dedupe APs
 	const sortedAPs = wifi
 		? createBinding(wifi, "accessPoints").as(deduplicateAPs)
-		: []
+		: undefined
 
 	return (
 		<box
@@ -91,94 +268,94 @@ export default function NetworkWidget() {
 				<box css="min-height: 1px; background-color: rgba(255,255,255,0.1); margin-bottom: 8px;" />
 			)}
 
-			{wifi && (
+			{/* Main View */}
+			<box visible={createBinding(viewState, "view").as((v) => v === "main")} orientation={Gtk.Orientation.VERTICAL} spacing={8}>
+				{wifi && (
+					<box spacing={8}>
+						<label
+							label="Wi-Fi"
+							hexpand
+							xalign={0}
+							css="font-weight: bold; font-size: 1.1em;"
+						/>
+
+						{/* Scan Button */}
+						<button tooltipText="Scan Networks" onClicked={() => wifi.scan()}>
+							<Gtk.Image iconName="system-search-symbolic" />
+						</button>
+
+						<switch
+							active={createBinding(wifi, "enabled")}
+							onActivate={({ active }) => {
+								wifi.enabled = active
+							}}
+						/>
+					</box>
+				)}
+
+				{wifi && (
+					<Gtk.ScrolledWindow
+						hscrollbarPolicy={Gtk.PolicyType.NEVER}
+						vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
+						vexpand={true}
+						minContentHeight={200}
+					>
+						<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
+							<For each={sortedAPs!}>
+								{(ap: Network.AccessPoint) => (
+									<APItem ap={ap} wifi={wifi} client={net.client} />
+								)}
+							</For>
+						</box>
+					</Gtk.ScrolledWindow>
+				)}
+
+				{!wifi && <label label="Wi-Fi Unavailable" />}
+
+				{/* Button to Saved Networks Page */}
+				<button
+					onClicked={() => (viewState.view = "saved")}
+					css="padding: 8px;"
+				>
+					<box spacing={8} halign={Gtk.Align.CENTER}>
+						<label label="Manage Saved Networks" css="font-weight: bold;" />
+						<Gtk.Image iconName="go-next-symbolic" />
+					</box>
+				</button>
+			</box>
+
+			{/* Saved Networks View */}
+			<box visible={createBinding(viewState, "view").as((v) => v === "saved")} orientation={Gtk.Orientation.VERTICAL} spacing={8}>
 				<box spacing={8}>
-					<label
-						label="Wi-Fi"
-						hexpand
-						xalign={0}
-						css="font-weight: bold; font-size: 1.1em;"
-					/>
-
-					{/* Scan Button */}
-					<button tooltipText="Scan Networks" onClicked={() => wifi.scan()}>
-						<Gtk.Image iconName="system-search-symbolic" />
+					<button onClicked={() => (viewState.view = "main")}>
+						<Gtk.Image iconName="go-previous-symbolic" />
 					</button>
-
-					<switch
-						active={createBinding(wifi, "enabled")}
-						onActivate={({ active }) => {
-							wifi.enabled = active
-						}}
-					/>
+					<label label="Saved Networks" css="font-weight: bold; font-size: 1.2em;" />
 				</box>
-			)}
 
-			{wifi && (
 				<Gtk.ScrolledWindow
 					hscrollbarPolicy={Gtk.PolicyType.NEVER}
 					vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}
 					vexpand={true}
 				>
 					<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-						<For each={sortedAPs}>
-							{(ap: any) => {
-								const ssid = createBinding(ap, "ssid")
-								// ... existing binding logic ...
-								const iconName = createBinding(ap, "iconName")
-								const isActive = createBinding(wifi, "activeAccessPoint").as(
-									(aap) => aap === ap,
-								)
-								const flags = createBinding(ap, "flags")
-
-								return (
-									<button
-										class={isActive((a) => (a ? "active-network" : ""))}
-										onClicked={() => {
-											if (wifi.activeAccessPoint !== ap) {
-												// Astal/NM AccessPoint.activate requires connection and specific object usually.
-												// Passing null, null seems to be what GJS expects if not using a specific connection profile.
-												// @ts-ignore
-												ap.activate(null, null)
-											}
-										}}
-									>
-										<box spacing={8}>
-											<Gtk.Image
-												iconName={iconName.as(
-													(i) =>
-														i || "network-wireless-signal-unknown-symbolic",
-												)}
-											/>
-											<Gtk.Label
-												label={ssid((s: string) => s || "Unknown")}
-												xalign={0}
-												hexpand
-												ellipsize={3}
-											/>
-
-											<Gtk.Image
-												iconName="channel-secure-symbolic"
-												css="font-size: 12px; color: var(--subtext0);"
-												visible={flags((f) =>
-													Boolean(f & (NM as any)["80211ApFlags"].PRIVACY),
-												)}
-											/>
-
-											<Gtk.Image
-												iconName="object-select-symbolic"
-												visible={isActive((a) => !!a)}
-											/>
-										</box>
-									</button>
-								)
-							}}
+						<For
+							each={createBinding(
+								net?.client!,
+								"connections",
+							).as((connections) =>
+								connections
+									.filter((c) => c.get_connection_type() === "802-11-wireless")
+									.sort((a, b) => (a.get_id() || "").localeCompare(b.get_id() || ""))
+							)}
+						>
+							{(connection: NM.RemoteConnection) => (
+								<SavedNetworkItem connection={connection} />
+							)}
 						</For>
 					</box>
 				</Gtk.ScrolledWindow>
-			)}
-
-			{!wifi && <label label="Wi-Fi Unavailable" />}
+			</box>
 		</box>
 	)
 }
