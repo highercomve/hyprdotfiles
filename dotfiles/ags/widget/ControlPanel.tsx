@@ -218,7 +218,6 @@ export default function ControlPanel() {
 						self.add_named(<MainPage />, "main")
 						self.add_named(<NetworkPage />, "network")
 						self.add_named(<BluetoothPage />, "bluetooth")
-						self.add_named(<AudioPage />, "audio")
 
 						// Standard GObject connection
 						const id = nav.connect("notify::page", () => {

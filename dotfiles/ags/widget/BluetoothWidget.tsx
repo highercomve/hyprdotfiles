@@ -95,6 +95,29 @@ export default function BluetoothWidget() {
 											hexpand
 											ellipsize={Pango.EllipsizeMode.END}
 										/>
+										<Gtk.Label
+											visible={createBinding(dev, "batteryPercentage").as((p) => p > 0)}
+											label={createBinding(dev, "batteryPercentage").as((p) => `${Math.round(p * 100)}%`)}
+											class="battery-level"
+											css="color: var(--subtext0); font-size: 0.8em;"
+										/>
+										<Gtk.Image
+											visible={createBinding(dev, "batteryPercentage").as((p) => p > 0)}
+											iconName={createBinding(dev, "batteryPercentage").as((p) => {
+												const val = Math.round(p * 100)
+												if (val <= 10) return "battery-level-10-symbolic"
+												if (val <= 20) return "battery-level-20-symbolic"
+												if (val <= 30) return "battery-level-30-symbolic"
+												if (val <= 40) return "battery-level-40-symbolic"
+												if (val <= 50) return "battery-level-50-symbolic"
+												if (val <= 60) return "battery-level-60-symbolic"
+												if (val <= 70) return "battery-level-70-symbolic"
+												if (val <= 80) return "battery-level-80-symbolic"
+												if (val <= 90) return "battery-level-90-symbolic"
+												return "battery-level-100-symbolic"
+											})}
+											css="color: var(--subtext0); margin-left: 2px;"
+										/>
 										<Gtk.Image
 											iconName="object-select-symbolic"
 											visible={connected((c) => c)}

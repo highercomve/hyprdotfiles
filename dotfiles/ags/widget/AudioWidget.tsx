@@ -5,6 +5,14 @@ import Pango from "gi://Pango"
 
 import nav from "./ControlPanelNav"
 
+import GObject, { register, property } from "ags/gobject"
+
+@register({ GTypeName: "AudioWidgetState" })
+class AudioWidgetState extends GObject.Object {
+	@property(Boolean) showSpeaker = false
+	@property(Boolean) showMic = false
+}
+
 export function DeviceList({
 	type,
 }: {
@@ -31,6 +39,7 @@ export function DeviceList({
 						<button
 							onClicked={() => dev.set_is_default(true)}
 							class={isDefault((d) => (d ? "active-device" : ""))}
+							css="padding: 8px 0;"
 						>
 							<box>
 								<Gtk.Label
@@ -69,6 +78,10 @@ export default function AudioWidget() {
 	const micIcon = createBinding(mic, "volumeIcon")
 	const micDesc = createBinding(mic, "description")
 
+	const state = new AudioWidgetState()
+	const showSpeaker = createBinding(state, "showSpeaker")
+	const showMic = createBinding(state, "showMic")
+
 	return (
 		<box
 			orientation={Gtk.Orientation.VERTICAL}
@@ -83,45 +96,77 @@ export default function AudioWidget() {
 			/>
 
 			{/* Speaker */}
-			<box spacing={8}>
-				<button onClicked={() => (speaker.mute = !speaker.mute)}>
-					<Gtk.Image iconName={speakerIcon} />
-				</button>
-				<slider
-					hexpand
-					value={speakerVolume}
-					onChangeValue={(_, __, value) => {
-						speaker.volume = value
-					}}
-				/>
-				<button onClicked={() => (nav.page = "audio")} css="padding: 0 8px;">
-					<label
-						label={speakerDesc.as((d) => d || "Speaker")}
-						ellipsize={Pango.EllipsizeMode.END}
-						maxWidthChars={15}
+			<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
+				<box spacing={8}>
+					<button onClicked={() => (speaker.mute = !speaker.mute)}>
+						<Gtk.Image iconName={speakerIcon} />
+					</button>
+					<slider
+						hexpand
+						value={speakerVolume}
+						onChangeValue={(_, __, value) => {
+							speaker.volume = value
+						}}
 					/>
-				</button>
+					<button
+						onClicked={() => (state.showSpeaker = !state.showSpeaker)}
+						css="padding: 0 8px;"
+					>
+						<box spacing={4}>
+							<label
+								label={speakerDesc.as((d) => d || "Speaker")}
+								ellipsize={Pango.EllipsizeMode.END}
+								maxWidthChars={15}
+							/>
+							<Gtk.Image iconName={showSpeaker.as(s => s ? "pan-down-symbolic" : "pan-end-symbolic")} />
+						</box>
+					</button>
+				</box>
+				<Gtk.Revealer
+					revealChild={showSpeaker}
+					transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
+				>
+					<box css="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+						<DeviceList type="Audio" />
+					</box>
+				</Gtk.Revealer>
 			</box>
 
 			{/* Mic */}
-			<box spacing={8} css="margin-top: 8px;">
-				<button onClicked={() => (mic.mute = !mic.mute)}>
-					<Gtk.Image iconName={micIcon} />
-				</button>
-				<slider
-					hexpand
-					value={micVolume}
-					onChangeValue={(_, __, value) => {
-						mic.volume = value
-					}}
-				/>
-				<button onClicked={() => (nav.page = "audio")} css="padding: 0 8px;">
-					<label
-						label={micDesc.as((d) => d || "Mic")}
-						ellipsize={Pango.EllipsizeMode.END}
-						maxWidthChars={15}
+			<box orientation={Gtk.Orientation.VERTICAL} spacing={4} css="margin-top: 8px;">
+				<box spacing={8}>
+					<button onClicked={() => (mic.mute = !mic.mute)}>
+						<Gtk.Image iconName={micIcon} />
+					</button>
+					<slider
+						hexpand
+						value={micVolume}
+						onChangeValue={(_, __, value) => {
+							mic.volume = value
+						}}
 					/>
-				</button>
+					<button
+						onClicked={() => (state.showMic = !state.showMic)}
+						css="padding: 0 8px;"
+					>
+						<box spacing={4}>
+							<label
+								label={micDesc.as((d) => d || "Mic")}
+								ellipsize={Pango.EllipsizeMode.END}
+								maxWidthChars={15}
+							/>
+							<Gtk.Image iconName={showMic.as(s => s ? "pan-down-symbolic" : "pan-end-symbolic")} />
+						</box>
+					</button>
+				</box>
+				<Gtk.Revealer
+					revealChild={showMic}
+					transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
+				>
+					<box css="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+						<DeviceList type="Microphone" />
+					</box>
+				</Gtk.Revealer>
 			</box>
 		</box>
 	)

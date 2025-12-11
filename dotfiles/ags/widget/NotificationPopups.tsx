@@ -54,6 +54,11 @@ class PopupManager extends GObject.Object {
     }
 
     private add(n: Notifd.Notification) {
+        // Filter out "100%" battery notifications from Bluetooth as they are often false positives on connect
+        if (n.appName === "Bluetooth" && (n.summary.includes("100%") || n.body.includes("100%"))) {
+            return
+        }
+
         const list = [...this._popups]
         const idx = list.findIndex((x) => x.id === n.id)
         if (idx >= 0) {
