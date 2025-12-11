@@ -2,9 +2,6 @@ import { createBinding, For } from "ags"
 import { Gtk } from "ags/gtk4"
 import Wp from "gi://AstalWp"
 import Pango from "gi://Pango"
-
-import nav from "./ControlPanelNav"
-
 import GObject, { register, property } from "ags/gobject"
 
 @register({ GTypeName: "AudioWidgetState" })
@@ -118,7 +115,11 @@ export default function AudioWidget() {
 								ellipsize={Pango.EllipsizeMode.END}
 								maxWidthChars={15}
 							/>
-							<Gtk.Image iconName={showSpeaker.as(s => s ? "pan-down-symbolic" : "pan-end-symbolic")} />
+							<Gtk.Image
+								iconName={showSpeaker.as((s) =>
+									s ? "pan-down-symbolic" : "pan-end-symbolic",
+								)}
+							/>
 						</box>
 					</button>
 				</box>
@@ -133,7 +134,11 @@ export default function AudioWidget() {
 			</box>
 
 			{/* Mic */}
-			<box orientation={Gtk.Orientation.VERTICAL} spacing={4} css="margin-top: 8px;">
+			<box
+				orientation={Gtk.Orientation.VERTICAL}
+				spacing={4}
+				css="margin-top: 8px;"
+			>
 				<box spacing={8}>
 					<button onClicked={() => (mic.mute = !mic.mute)}>
 						<Gtk.Image iconName={micIcon} />
@@ -155,7 +160,11 @@ export default function AudioWidget() {
 								ellipsize={Pango.EllipsizeMode.END}
 								maxWidthChars={15}
 							/>
-							<Gtk.Image iconName={showMic.as(s => s ? "pan-down-symbolic" : "pan-end-symbolic")} />
+							<Gtk.Image
+								iconName={showMic.as((s) =>
+									s ? "pan-down-symbolic" : "pan-end-symbolic",
+								)}
+							/>
 						</box>
 					</button>
 				</box>
