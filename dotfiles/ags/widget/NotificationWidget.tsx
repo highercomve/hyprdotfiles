@@ -13,7 +13,8 @@ class NotificationItemState extends GObject.Object {
 export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isClosing?: boolean | any }) {
 	const summary = createBinding(n, "summary")
 	const body = createBinding(n, "body")
-	const icon = createBinding(n, "appIcon")
+	// Resolve icon: prefer appIcon, then desktopEntry, then fallback
+	const iconResult = createBinding(n, "appIcon").as(i => i || n.desktopEntry || "dialog-information-symbolic")
 
 	const state = new NotificationItemState()
 	const expanded = createBinding(state, "expanded")
@@ -46,7 +47,20 @@ export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isC
 				{/* Icon / Image */}
 				<box valign={START}>
 					<Gtk.Image
-						iconName={icon.as((i) => i || "dialog-information-symbolic")}
+						visible={iconResult.as(i => {
+							// If it contains a slash, assume it's a path/file.
+							// If visible is false for this one (IconName), it means it IS a path.
+							return !i.includes("/") && !i.startsWith("file://")
+						})}
+						iconName={iconResult}
+						pixelSize={32}
+					/>
+					<Gtk.Image
+						visible={iconResult.as(i => {
+							// If it contains a slash, assume it's a path/file.
+							return i.includes("/") || i.startsWith("file://")
+						})}
+						file={iconResult}
 						pixelSize={32}
 					/>
 				</box>

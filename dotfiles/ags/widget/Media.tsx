@@ -1,9 +1,8 @@
-import { createBinding, For } from "ags"
-import { Astal, Gtk } from "ags/gtk4"
+import { createBinding, For, Accessor } from "ags"
+import { Gtk } from "ags/gtk4"
 import App from "ags/gtk4/app"
 import Mpris from "gi://AstalMpris"
 import Pango from "gi://Pango"
-import Gio from "gi://Gio"
 import GLib from "gi://GLib"
 
 // Helper to format time
@@ -149,20 +148,20 @@ export function MediaBar() {
 	)
 }
 
-function CoverArt({ player }: { player: Mpris.Player }) {
-	const cover = createBinding(player, "coverArt")
-	if (cover.get() === "") {
-		return (
-			<Gtk.Image
-				iconName="audio-x-generic-symbolic"
-				pixelSize={220}
-				css="border-radius: 12px; opacity: 0.5;"
-			/>
-		)
-	}
+function CoverArt({ cover }: { cover: Accessor<string> }) {
 	return (
 		<box class="cover-art-container" halign={Gtk.Align.CENTER}>
-			<Gtk.Image file={cover.get()} pixelSize={200} />
+			<Gtk.Image
+				visible={cover.as((c) => c === "")}
+				iconName="audio-x-generic-symbolic"
+				pixelSize={200}
+				css="border-radius: 12px; opacity: 0.5;"
+			/>
+			<Gtk.Image
+				visible={cover.as((c) => c !== "")}
+				file={cover}
+				pixelSize={200}
+			/>
 		</box>
 	)
 }
@@ -249,7 +248,7 @@ function HookWidget({ player }: { player: Mpris.Player }) {
 				halign={Gtk.Align.CENTER}
 				css="margin-bottom: 10px;"
 			>
-				<CoverArt player={player} />
+				<CoverArt cover={cover} />
 			</box>
 
 			{/* Info */}
@@ -325,13 +324,13 @@ function HookWidget({ player }: { player: Mpris.Player }) {
 				halign={Gtk.Align.CENTER}
 				css="margin-top: 10px;"
 			>
-				<button onClicked={() => player.previous()} class="control-button">
+				<button onClicked={() => player.previous()} class="control-button" valign={Gtk.Align.CENTER}>
 					<Gtk.Image iconName="media-skip-backward-symbolic" pixelSize={24} />
 				</button>
 				<button
 					onClicked={() => player.play_pause()}
 					class="play-button"
-					css="background-color: #89b4fa; color: #1e1e2e; border-radius: 99px; padding: 12px;"
+					valign={Gtk.Align.CENTER}
 				>
 					<Gtk.Image
 						iconName={status.as((s) =>
@@ -342,7 +341,7 @@ function HookWidget({ player }: { player: Mpris.Player }) {
 						pixelSize={32}
 					/>
 				</button>
-				<button onClicked={() => player.next()} class="control-button">
+				<button onClicked={() => player.next()} class="control-button" valign={Gtk.Align.CENTER}>
 					<Gtk.Image iconName="media-skip-forward-symbolic" pixelSize={24} />
 				</button>
 			</box>

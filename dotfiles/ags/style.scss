@@ -187,10 +187,10 @@ window.Bar {
 			// animation: gradient_f 20s ease-in-out infinite; // Keyframes not defined yet, stick to solid for now or define keyframes
 		}
 
-        &.urgent {
-            background-color: $red;
-            color: $base;
-        }
+		&.urgent {
+			background-color: $red;
+			color: $base;
+		}
 	}
 }
 
@@ -458,7 +458,9 @@ switch {
 		margin-top: 8px;
 
 		button.control-button {
-			padding: 8px;
+			padding: 0;
+			min-width: 40px;
+			min-height: 40px;
 			border-radius: 50%;
 			background-color: transparent;
 			color: $text;
@@ -471,17 +473,19 @@ switch {
 		}
 
 		button.play-button {
-			padding: 12px;
+			padding: 0;
+			min-width: 56px;
+			min-height: 56px;
 			border-radius: 50%;
-			background-color: $surface0; // Highlight play button
-			color: $blue;
+			background-color: $blue;
+			color: $base;
 			transition: all 0.2s;
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 
 			&:hover {
-				background-color: $blue;
+				background-color: rgba($blue, 0.8);
 				color: $base;
-				transform: scale(1.05); // dynamic feel
+				transform: scale(1.05);
 			}
 		}
 	}
@@ -527,8 +531,8 @@ switch {
 	.tool-button {
 		color: $text;
 		transition: all 0.2s;
-        padding: 0 4px;
-        border-radius: 4px;
+		padding: 0 4px;
+		border-radius: 4px;
 
 		&:hover {
 			background-color: $surface1;
@@ -539,31 +543,31 @@ switch {
 			color: $blue; // Active state color
 		}
 
-        &.cliphist {
-            color: $blue;
-        }
-        
-        &.hypridle {
-            &.active {
-                color: $mauve;
-            }
-        }
-        
-        &.hyprsunset {
-             &.active {
-                color: $sapphire;
-            }
-        }
-        
-        &.record {
-            &.active {
-                color: $red;
-            }
-        }
+		&.cliphist {
+			color: $blue;
+		}
 
-        &.power-profile {
-             color: $yellow;
-        }
+		&.hypridle {
+			&.active {
+				color: $mauve;
+			}
+		}
+
+		&.hyprsunset {
+			&.active {
+				color: $sapphire;
+			}
+		}
+
+		&.record {
+			&.active {
+				color: $red;
+			}
+		}
+
+		&.power-profile {
+			color: $yellow;
+		}
 	}
 }
 
@@ -572,29 +576,32 @@ switch {
 	label {
 		padding: 0 2px;
 	}
-    
-    .cpu {
-        color: $sapphire;
-    }
-    .memory {
-        color: $mauve;
-    }
-    .temp {
-        color: $peach;
-    }
+
+	.cpu {
+		color: $sapphire;
+	}
+
+	.memory {
+		color: $mauve;
+	}
+
+	.temp {
+		color: $peach;
+	}
 }
 
 // Battery
 .battery-level {
-    color: $green;
-    
-    &.charging {
-        color: $green;
-    }
-    
-    &.critical { // Need to ensure logic applies this class in TSX if used, or just rely on icon color if mostly icon
-        color: $red;
-    }
+	color: $green;
+
+	&.charging {
+		color: $green;
+	}
+
+	&.critical {
+		// Need to ensure logic applies this class in TSX if used, or just rely on icon color if mostly icon
+		color: $red;
+	}
 }
 
 // Center Popup
@@ -611,6 +618,7 @@ switch {
 	}
 
 	.media-container {
+
 		// Inherit media styles but adjust if needed
 		.media-player-window {
 			background-color: transparent; // Remove nested background
@@ -672,6 +680,32 @@ switch {
 
 	label {
 		font-weight: bold;
+	}
+}
+
+// Media Bar inside Center Group
+.media-bar-title {
+	padding: 0 10px;
+	margin: 5px 5px;
+	border-radius: 10px;
+	transition: all 0.2s;
+	font-weight: bold;
+
+	&:hover {
+		background-color: $surface1;
+		color: $text;
+	}
+}
+
+.media-bar-control {
+	padding: 0 5px;
+	margin: 5px 2px;
+	border-radius: 10px;
+	transition: all 0.2s;
+
+	&:hover {
+		background-color: $surface1;
+		color: $blue;
 	}
 }
 
