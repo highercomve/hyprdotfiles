@@ -351,7 +351,8 @@ window.Bar {
 // Widget Cards
 .audio-widget,
 .network-widget,
-.bluetooth-widget {
+.bluetooth-widget,
+.brightness-slider-container {
 	background-color: $mantle;
 	border-radius: 12px;
 	padding: 12px;
@@ -497,9 +498,6 @@ switch {
 		min-height: 24px;
 		border-radius: 0;
 
-		// Separator logic
-		border-right: 1px solid rgba(186, 194, 222, 0.3);
-
 		&:last-child {
 			border-right: none;
 		}
@@ -557,7 +555,6 @@ switch {
 	}
 
 	.media-container {
-
 		// Inherit media styles but adjust if needed
 		.media-player-window {
 			background-color: transparent; // Remove nested background

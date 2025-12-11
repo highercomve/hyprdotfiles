@@ -1,9 +1,11 @@
 import { createBinding } from "ags"
 import { Gtk } from "ags/gtk4"
 import GLib from "gi://GLib"
+import PowerProfiles from "gi://AstalPowerProfiles"
 import GObject, { register, property } from "ags/gobject"
 
 const SCRIPTS_DIR = GLib.get_home_dir() + "/.config/hypr/scripts"
+const pp = PowerProfiles.get_default()
 
 @register({ GTypeName: "ToolsState" })
 class ToolsState extends GObject.Object {
@@ -80,6 +82,41 @@ function ToolButton({
 			}}
 		>
 			<Gtk.Image iconName={icon} />
+		</button>
+	)
+}
+
+function PowerProfileButton() {
+	const profiles = ["power-saver", "balanced", "performance"]
+	const prettyNames: Record<string, string> = {
+		"power-saver": "Power Saver",
+		balanced: "Balanced",
+		performance: "Performance",
+	}
+	const icons: Record<string, string> = {
+		"power-saver": "power-profile-power-saver-symbolic",
+		balanced: "power-profile-balanced-symbolic",
+		performance: "power-profile-performance-symbolic",
+	}
+
+	return (
+		<button
+			class="tool-button"
+			onClicked={() => {
+				const current = pp.active_profile
+				const index = profiles.indexOf(current)
+				const next = profiles[(index + 1) % profiles.length]
+				pp.set_active_profile(next)
+			}}
+			tooltipText={createBinding(pp, "active-profile").as(
+				(p) => prettyNames[p] || p,
+			)}
+		>
+			<Gtk.Image
+				iconName={createBinding(pp, "active-profile").as(
+					(p) => icons[p] || "power-profile-balanced-symbolic",
+				)}
+			/>
 		</button>
 	)
 }
@@ -167,6 +204,8 @@ export default function ToolsRow() {
 					>
 						<Gtk.Image iconName="media-record-symbolic" />
 					</button>
+
+					<PowerProfileButton />
 				</box>
 			</Gtk.Revealer>
 

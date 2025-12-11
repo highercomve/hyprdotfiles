@@ -65,31 +65,41 @@ function BrightnessSlider() {
 	return (
 		<box
 			visible={createBinding(BrightnessService, "available")}
+			orientation={Gtk.Orientation.VERTICAL}
 			class="brightness-slider-container"
-			css="padding: 0 4px; margin-bottom: 8px;"
+			spacing={8}
+			marginTop={10}
+			marginBottom={10}
 		>
-			<Gtk.Image iconName="display-brightness-symbolic" />
-			<Gtk.Scale
-				hexpand
-				adjustment={
-					new Gtk.Adjustment({
-						lower: 0,
-						upper: 1,
-						stepIncrement: 0.05,
-						pageIncrement: 0.1,
-					})
-				}
-				onChangeValue={(self, _, value) => {
-					BrightnessService.screen_value = value
-				}}
-				$={(self) => {
-					self.adjustment.value = BrightnessService.screen
-					const id = BrightnessService.connect("notify::screen", () => {
-						self.adjustment.value = BrightnessService.screen
-					})
-					self.connect("destroy", () => BrightnessService.disconnect(id))
-				}}
+			<label
+				label="Brightness"
+				css="font-weight: bold; font-size: 1.1em;"
+				xalign={0}
 			/>
+			<box spacing={8}>
+				<Gtk.Image iconName="display-brightness-symbolic" />
+				<Gtk.Scale
+					hexpand
+					adjustment={
+						new Gtk.Adjustment({
+							lower: 0,
+							upper: 1,
+							stepIncrement: 0.05,
+							pageIncrement: 0.1,
+						})
+					}
+					onChangeValue={(self, _, value) => {
+						BrightnessService.screen_value = value
+					}}
+					$={(self) => {
+						self.adjustment.value = BrightnessService.screen
+						const id = BrightnessService.connect("notify::screen", () => {
+							self.adjustment.value = BrightnessService.screen
+						})
+						self.connect("destroy", () => BrightnessService.disconnect(id))
+					}}
+				/>
+			</box>
 		</box>
 	)
 }
@@ -115,7 +125,11 @@ function ConnectivityToggles() {
 
 function NotificationSection() {
 	return (
-		<box orientation={Gtk.Orientation.VERTICAL} spacing={8} css="margin-top: 12px;">
+		<box
+			orientation={Gtk.Orientation.VERTICAL}
+			spacing={8}
+			css="margin-top: 12px;"
+		>
 			<box css="min-height: 1px; background-color: rgba(255,255,255,0.1); margin: 4px 0;" />
 			<DNDSwitch />
 			<Gtk.ScrolledWindow vexpand css="min-height: 200px;">
@@ -128,8 +142,8 @@ function NotificationSection() {
 function MainPage() {
 	return (
 		<box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
-			<BrightnessSlider />
 			<ConnectivityToggles />
+			<BrightnessSlider />
 			<AudioWidget />
 			<NotificationSection />
 		</box>

@@ -74,6 +74,7 @@ export default function AudioWidget() {
 			orientation={Gtk.Orientation.VERTICAL}
 			class="audio-widget"
 			spacing={8}
+			marginTop={20}
 		>
 			<label
 				label="Audio"
