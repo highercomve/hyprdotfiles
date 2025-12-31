@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 STATUSBAR_SCRIPT="$HOME/.config/hypr/user_settings/statusbar.sh"
 STATUS_BAR_TYPE="waybar"
 

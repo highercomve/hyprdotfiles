@@ -20,6 +20,7 @@ flock -n 200 || exit 0
 
 killall waybar || true
 pkill waybar || true
+pkill gjs || true
 sleep 0.5
 
 # Check if waybar-disabled file exists

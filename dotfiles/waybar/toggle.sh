@@ -12,4 +12,4 @@ if [ -f $HOME/.config/hypr/user_settings/waybar-disabled ]; then
 else
     touch $HOME/.config/hypr/user_settings/waybar-disabled
 fi
-$HOME/.config/waybar/launch.sh &
+"$HOME"/.config/hypr/scripts/launchbar.sh &

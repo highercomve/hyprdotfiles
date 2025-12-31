@@ -145,7 +145,7 @@ fi
 # -----------------------------------------------------
 
 sleep 1
-"$HOME"/.config/waybar/launch.sh
+"$HOME"/.config/hypr/scripts/launchbar.sh
 
 # -----------------------------------------------------
 # Update Pywalfox
