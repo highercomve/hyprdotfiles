@@ -2,8 +2,11 @@ import { createBinding, For } from "ags"
 import { Gtk } from "ags/gtk4"
 import Pango from "gi://Pango"
 import Notifd from "gi://AstalNotifd"
+import Apps from "gi://AstalApps"
 import GLib from "gi://GLib"
 import GObject, { register, property } from "ags/gobject"
+
+const apps = new Apps.Apps()
 
 @register({ GTypeName: "NotificationItemState" })
 class NotificationItemState extends GObject.Object {
@@ -13,8 +16,22 @@ class NotificationItemState extends GObject.Object {
 export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isClosing?: boolean | any }) {
 	const summary = createBinding(n, "summary")
 	const body = createBinding(n, "body")
+	const actions = createBinding(n, "actions")
+	
 	// Resolve icon: prefer appIcon, then desktopEntry, then fallback
-	const iconResult = createBinding(n, "appIcon").as(i => i || n.desktopEntry || "dialog-information-symbolic")
+	const iconResult = createBinding(n, "appIcon").as(i => {
+		if (n.image) return n.image
+		
+		const app = n.desktopEntry 
+			? apps.exact_query(n.desktopEntry)?.[0] 
+			: apps.fuzzy_query(n.appName)?.[0]
+
+		if (app && app.iconName) {
+			return app.iconName
+		}
+		
+		return i || n.desktopEntry || "dialog-information-symbolic"
+	})
 
 	const state = new NotificationItemState()
 	const expanded = createBinding(state, "expanded")
@@ -36,79 +53,94 @@ export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isC
 			}}
 			// Logic for closing transition if binding is provided
 			revealChild={isClosing ? isClosing.as((c: boolean) => !c) : true}
-		// Wait, the entry animation works by starting false then true. 
-		// If I bind revealChild, the manual 'true' set might be overridden if the binding emits.
-		// Better strategy: Use a computed binding merging 'mounted' state and 'isClosing'.
 		>
 			<box
 				class="notification-card"
 				spacing={8}
+				orientation={Gtk.Orientation.VERTICAL}
 			>
-				{/* Icon / Image */}
-				<box valign={START}>
-					<Gtk.Image
-						visible={iconResult.as(i => {
-							// If it contains a slash, assume it's a path/file.
-							// If visible is false for this one (IconName), it means it IS a path.
-							return !i.includes("/") && !i.startsWith("file://")
-						})}
-						iconName={iconResult}
-						pixelSize={32}
-					/>
-					<Gtk.Image
-						visible={iconResult.as(i => {
-							// If it contains a slash, assume it's a path/file.
-							return i.includes("/") || i.startsWith("file://")
-						})}
-						file={iconResult}
-						pixelSize={32}
-					/>
-				</box>
-
-				{/* Text Content - Click to Expand */}
-				<button
-					hexpand
-					onClicked={() => { state.expanded = !state.expanded }}
-					css="padding: 0; background: transparent; border: none; box-shadow: none;"
-				>
-					<box orientation={Gtk.Orientation.VERTICAL}>
-						<Gtk.Label
-							label={summary}
-							halign={START}
-							ellipsize={Pango.EllipsizeMode.END}
-							css="font-weight: bold;"
-						/>
-						<Gtk.Label
-							label={body}
-							halign={START}
-							wrap
-							useMarkup
-							lines={expanded.as(e => e ? -1 : 2)}
-							ellipsize={expanded.as(e => e ? Pango.EllipsizeMode.NONE : Pango.EllipsizeMode.END)}
-							css="color: var(--subtext0); font-size: 0.9em;"
-						/>
-						<label
-							label={createBinding(n, "time").as((t) => {
-								const date = new Date(t * 1000)
-								return date.toLocaleTimeString([], {
-									hour: "2-digit",
-									minute: "2-digit",
-								})
+				<box spacing={8}>
+					{/* Icon / Image */}
+					<box valign={START}>
+						<Gtk.Image
+							visible={iconResult.as(i => {
+								// If it contains a slash, assume it's a path/file.
+								// If visible is false for this one (IconName), it means it IS a path.
+								return !i.includes("/") && !i.startsWith("file://")
 							})}
-							css="font-size: 0.7em; color: var(--overlay0); margin-top: 4px;"
-							halign={END}
+							iconName={iconResult}
+							pixelSize={32}
+						/>
+						<Gtk.Image
+							visible={iconResult.as(i => {
+								// If it contains a slash, assume it's a path/file.
+								return i.includes("/") || i.startsWith("file://")
+							})}
+							file={iconResult}
+							pixelSize={32}
 						/>
 					</box>
-				</button>
 
-				{/* Actions (Close) */}
-				<button
-					valign={START}
-					css="padding: 4px; background: transparent; border: none; box-shadow: none;"
-					onClicked={() => n.dismiss()}
-				>
-					<Gtk.Image iconName="window-close-symbolic" pixelSize={16} />
-				</button>
+					{/* Text Content - Click to Expand */}
+					<button
+						hexpand
+						onClicked={() => { state.expanded = !state.expanded }}
+						css="padding: 0; background: transparent; border: none; box-shadow: none;"
+					>
+						<box orientation={Gtk.Orientation.VERTICAL}>
+							<Gtk.Label
+								label={summary}
+								halign={START}
+								ellipsize={Pango.EllipsizeMode.END}
+								css="font-weight: bold;"
+							/>
+							<Gtk.Label
+								label={body}
+								halign={START}
+								wrap
+								useMarkup
+								lines={expanded.as(e => e ? -1 : 2)}
+								ellipsize={expanded.as(e => e ? Pango.EllipsizeMode.NONE : Pango.EllipsizeMode.END)}
+								css="color: var(--subtext0); font-size: 0.9em;"
+							/>
+							<label
+								label={createBinding(n, "time").as((t) => {
+									const date = new Date(t * 1000)
+									return date.toLocaleTimeString([], {
+										hour: "2-digit",
+										minute: "2-digit",
+									})
+								})}
+								css="font-size: 0.7em; color: var(--overlay0); margin-top: 4px;"
+								halign={END}
+							/>
+						</box>
+					</button>
+
+					{/* Actions (Close) */}
+					<button
+						valign={START}
+						css="padding: 4px; background: transparent; border: none; box-shadow: none;"
+						onClicked={() => n.dismiss()}
+					>
+						<Gtk.Image iconName="window-close-symbolic" pixelSize={16} />
+					</button>
+				</box>
+				
+				{/* Action Buttons */}
+				<box visible={actions.as(a => a.length > 0)} spacing={8} marginTop={4}>
+					<For each={actions}>
+						{(action) => (
+							<button
+								hexpand
+								css="padding: 4px 8px; font-size: 0.9em;"
+								onClicked={() => n.invoke(action.id)}
+							>
+								<label label={action.label} />
+							</button>
+						)}
+					</For>
+				</box>
 			</box>
 		</Gtk.Revealer>
 	)

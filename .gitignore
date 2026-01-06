@@ -1,5 +1,5 @@
 dotfiles/.cache/hyprland-dotfiles
-dotfiles/nvim
+#dotfiles/nvim
 dotfiles/gtk-3.0/bookmarks
 dotfiles/gtk-4.0/servers
 waybar-music/waybar-music
