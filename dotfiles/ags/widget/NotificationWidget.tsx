@@ -134,7 +134,7 @@ export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isC
 							<button
 								hexpand
 								css="padding: 4px 8px; font-size: 0.9em;"
-								onClicked={() => n.invoke(action.id)}
+								onClicked={() => action.invoke()}
 							>
 								<label label={action.label} />
 							</button>

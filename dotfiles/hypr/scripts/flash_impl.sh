@@ -20,12 +20,45 @@ if [ -z "$IMAGE" ] || [ -z "$DEVICE" ]; then
     exit 1
 fi
 
-# Verify device availability
+# Check validation
 if [ ! -b "$DEVICE" ]; then
     echo "Error: Device $DEVICE is not a block device or not found."
     echo "Press Enter to exit."
     read
     exit 1
+fi
+
+EXTRACT_DIR=""
+ORIGINAL_IMAGE="$IMAGE"
+
+# Cleanup function
+cleanup() {
+    if [ -n "$EXTRACT_DIR" ] && [ -d "$EXTRACT_DIR" ]; then
+        echo "Cleaning up temporary directory..."
+        rm -rf "$EXTRACT_DIR"
+    fi
+}
+trap cleanup EXIT
+
+# Check if image is a zip file
+if [[ "$IMAGE" == *.zip ]]; then
+    echo "Detected zip file. Extracting..."
+    EXTRACT_DIR=$(mktemp -d)
+    
+    # Unzip specific logical extensions if needed, or just find the first .wic
+    # For now, just unzip everything to temp and look for a .wic file
+    unzip -q "$IMAGE" -d "$EXTRACT_DIR"
+    
+    # Find .wic file (including compressed variants like .wic.bz2, .wic.gz)
+    WIC_IMAGE=$(find "$EXTRACT_DIR" -name "*.wic*" ! -name "*.bmap" | head -n 1)
+    
+    if [ -z "$WIC_IMAGE" ]; then
+        echo "Error: No .wic file found inside the zip archive."
+        exit 1
+    fi
+    
+    IMAGE="$WIC_IMAGE"
+    echo "Found wic image: $(basename "$IMAGE")"
 fi
 
 # Display Information
@@ -59,8 +92,13 @@ START_TIME=$(date +%s)
 
 if [ "$USE_BMAPTOOL" = true ]; then
     echo "  - Using bmaptool to copy image."
-
-    bmaptool copy "$IMAGE" "$DEVICE" --nobmap
+    
+    # Check if the file is a wic file (likely inside a zip or passed directly)
+    if [[ "$IMAGE" == *.wic* ]]; then
+         bmaptool copy "$IMAGE" "$DEVICE"
+    else
+         bmaptool copy "$IMAGE" "$DEVICE" --nobmap
+    fi
 else
     if [[ "$IMAGE" == *.gz ]]; then
         echo "  - Detected gzip compressed image. Using dd."
