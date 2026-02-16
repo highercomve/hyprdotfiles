@@ -3,8 +3,10 @@
 # --- General Configuration ---
 
 # History control
-bind "\e[A":history-search-backward
-bind "\e[B":history-search-forward
+if [[ $- == *i* ]]; then
+    bind "\e[A":history-search-backward
+    bind "\e[B":history-search-forward
+fi
 
 # Check window size after each command and, if necessary, update the values of LINES and COLUMNS.
 shopt -s checkwinsize
@@ -153,6 +155,7 @@ alias ll='ls -lavh --ignore=..'
 alias l='ls -lav --ignore=.?*'
 
 # Navigation
+
 if [ -d "$HOME/projects/" ]; then
     alias projects="cd ~/projects/"
     alias pantacor="cd ~/projects/pantacor"
@@ -260,8 +263,8 @@ if [ -f "$HOME/.deno/env" ]; then
 fi
 
 # ZVM
-if [ -d "$HOME/.zvm/current" ]; then
-    path_append "$HOME/.zvm/current"
+if [ -d "$HOME/.zvm" ]; then
+    export PATH="$PATH:$HOME/.zvm/current"
 fi
 
 # Soar (Ridge specific, making generic if exists)
@@ -322,3 +325,11 @@ export PARALLEL_MAKE="-j16"
 
 # Limits recursive functions
 [[ -z "$FUNCNEST" ]] && export FUNCNEST=100
+
+# pnpm
+export PNPM_HOME="/home/sergiom/.local/share/pnpm"
+case ":$PATH:" in
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

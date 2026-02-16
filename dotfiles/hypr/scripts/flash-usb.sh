@@ -44,10 +44,10 @@ for pattern in "${EXCLUDE_PATTERNS[@]}"; do
     FD_EXCLUDE_ARGS+=('--exclude' "$pattern")
 done
 
-IMAGES=$(fd --type f --regex '(\.img(\.gz)?|-(?i)(wrynose|whinlatter|scarthgap|kirkstone)\.zip)$' "/home" "${FD_EXCLUDE_ARGS[@]}" 2>/dev/null)
+IMAGES=$(fd --type f --regex '(\.img(\.(gz|xz|bz2))?|\.wic(\.(gz|xz|bz2))?|-(?i)(wrynose|whinlatter|scarthgap|kirkstone)\.zip)$' "${HOME}" "${FD_EXCLUDE_ARGS[@]}" 2>/dev/null)
 
 if [ -z "$IMAGES" ]; then
-    notify "No .img or .img.gz files found in /home"
+    notify "No .img, .img.gz or .wic files found in /home"
     exit 0
 fi
 
