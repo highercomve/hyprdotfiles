@@ -8,15 +8,24 @@
 // from the command palette or from `Zed` application menu.
 {
 	// "show_completions_on_input": false,
-	"agent": {
-		"always_allow_tool_actions": true,
-		"inline_assistant_model": {
+	"context_servers": {
+  "serena-context-server": {
+   "enabled": true,
+   "remote": false,
+   "settings": {}
+  }
+ },
+ "agent": {
+		"tool_permissions": {
+   "default": "allow"
+  },
+  "inline_assistant_model": {
 			"provider": "google",
 			"model": "gemini-3-flash-preview"
 		},
 		"default_model": {
 			"provider": "google",
-			"model": "gemini-2.5-flash"
+			"model": "gemini-3.1-pro-preview"
 		}
 	},
 	"ui_font_size": 18,

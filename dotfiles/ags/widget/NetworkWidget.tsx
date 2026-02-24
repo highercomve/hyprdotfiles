@@ -14,17 +14,41 @@ function runCmd(cmd: string) {
 	}
 }
 
+let cachedResult: Network.AccessPoint[] = []
+let lastApUpdate = 0
+
 // Helper to deduplicate APs
 function deduplicateAPs(aps: Network.AccessPoint[]) {
 	const map = new Map<string, Network.AccessPoint>()
-	aps.forEach((ap) => {
-		if (!ap.ssid) return // Ignore hidden/unknown SSIDs for cleanliness, or handle nicely
+	for (const ap of aps) {
+		if (!ap.ssid) continue // Ignore hidden/unknown SSIDs for cleanliness, or handle nicely
 		const existing = map.get(ap.ssid)
 		if (!existing || ap.strength > existing.strength) {
 			map.set(ap.ssid, ap)
 		}
-	})
-	return Array.from(map.values()).sort((a, b) => b.strength - a.strength)
+	}
+
+	const result = Array.from(map.values()).sort((a, b) => b.strength - a.strength)
+
+	let changed = result.length !== cachedResult.length
+	if (!changed) {
+		for (let i = 0; i < result.length; i++) {
+			if (result[i] !== cachedResult[i]) {
+				changed = true
+				break
+			}
+		}
+	}
+
+	const now = Date.now()
+	if (changed) {
+		// Update immediately if length changed, otherwise throttle to 3 seconds
+		if (result.length !== cachedResult.length || now - lastApUpdate > 3000) {
+			cachedResult = result
+			lastApUpdate = now
+		}
+	}
+	return cachedResult
 }
 
 @register({ GTypeName: "NetworkViewState" })
@@ -280,8 +304,12 @@ export default function NetworkWidget() {
 						/>
 
 						{/* Scan Button */}
-						<button tooltipText="Scan Networks" onClicked={() => wifi.scan()}>
-							<Gtk.Image iconName="system-search-symbolic" />
+						<button 
+							tooltipText="Scan Networks" 
+							onClicked={() => wifi.scan()}
+							sensitive={createBinding(wifi, "scanning").as(s => !s)}
+						>
+							<Gtk.Image iconName={createBinding(wifi, "scanning").as(s => s ? "process-working-symbolic" : "system-search-symbolic")} />
 						</button>
 
 						<switch

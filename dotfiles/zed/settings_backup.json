@@ -10,15 +10,14 @@
 	// "show_completions_on_input": false,
 	"agent": {
 		"always_allow_tool_actions": true,
-  "inline_assistant_model": {
+		"inline_assistant_model": {
 			"provider": "google",
-			"model": "gemini-2.5-flash"
+			"model": "gemini-3.1-pro-preview"
 		},
 		"default_model": {
-			"provider": "copilot_chat",
-			"model": "gemini-2.0-flash-001"
-		},
-		"version": "2"
+			"provider": "google",
+			"model": "gemini-3.1-pro-preview"
+		}
 	},
 	"ui_font_size": 18,
 	"buffer_font_size": 18,
@@ -29,8 +28,8 @@
 	},
 	"theme": {
 		"mode": "system",
-		"light": "One Light",
-		"dark": "VSCode Dark Modern"
+		"light": "CodeSandbox",
+		"dark": "One Black"
 	},
 	"languages": {
 		"HTML": {

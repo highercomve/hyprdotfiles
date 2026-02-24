@@ -11,13 +11,27 @@ function substitute(className: string) {
 	return subs[className] || className
 }
 
+let cachedClients: Hyprland.Client[] = []
+function getClients(c: Hyprland.Client[]) {
+	const sorted = [...c].sort((a, b) => a.workspace.id - b.workspace.id)
+	let changed = sorted.length !== cachedClients.length
+	if (!changed) {
+		for (let i = 0; i < sorted.length; i++) {
+			if (sorted[i] !== cachedClients[i]) {
+				changed = true
+				break
+			}
+		}
+	}
+	if (changed) cachedClients = sorted
+	return cachedClients
+}
+
 export default function Taskbar() {
 	const hypr = Hyprland.get_default()
 
 	// Sort clients by workspace ID to keep them ordered
-	const clients = createBinding(hypr, "clients").as((c) =>
-		[...c].sort((a, b) => a.workspace.id - b.workspace.id),
-	)
+	const clients = createBinding(hypr, "clients").as(getClients)
 
 	return (
 		<box class="taskbar">

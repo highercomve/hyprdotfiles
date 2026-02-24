@@ -2,6 +2,7 @@ import { createBinding, For } from "ags"
 import { Gtk } from "ags/gtk4"
 import Bluetooth from "gi://AstalBluetooth"
 import Pango from "gi://Pango"
+import GLib from "gi://GLib"
 
 export default function BluetoothWidget() {
 	const bt = Bluetooth.get_default()
@@ -38,7 +39,15 @@ export default function BluetoothWidget() {
 						)}
 						onClicked={() => {
 							if (adapter.discovering) adapter.stop_discovery()
-							else adapter.start_discovery()
+							else {
+								adapter.start_discovery()
+								GLib.timeout_add(GLib.PRIORITY_DEFAULT, 15000, () => {
+									if (bt.adapter && bt.adapter.discovering) {
+										bt.adapter.stop_discovery()
+									}
+									return GLib.SOURCE_REMOVE
+								})
+							}
 						}}
 					>
 						<Gtk.Image
@@ -52,7 +61,9 @@ export default function BluetoothWidget() {
 				<switch
 					active={isPowered}
 					onActivate={({ active }) => {
-						bt.adapter.powered = active
+						if (bt.adapter) {
+							bt.adapter.powered = active
+						}
 					}}
 				/>
 			</box>
@@ -73,12 +84,14 @@ export default function BluetoothWidget() {
 								<button
 									onClicked={() => {
 										if (dev.connected) {
-											// @ts-ignore: GJS require callback argument
-											dev.disconnect_device(null)
+											try {
+												dev.disconnect_device(() => { })
+											} catch (e) { console.error(e) }
 										} else {
-											if (!dev.paired) dev.pair()
-											// @ts-ignore: GJS require callback argument
-											dev.connect_device(null)
+											try {
+												if (!dev.paired) dev.pair()
+												dev.connect_device(() => { })
+											} catch (e) { console.error(e) }
 										}
 									}}
 									class={connected((c) => (c ? "active-network" : ""))}

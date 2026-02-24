@@ -9,6 +9,8 @@ import NotificationList, { DNDSwitch } from "./NotificationWidget"
 import PopupWindow from "./PopupWindow"
 import Notifd from "gi://AstalNotifd"
 import BrightnessService from "./BrightnessService"
+import Network from "gi://AstalNetwork"
+import Bluetooth from "gi://AstalBluetooth"
 
 function PageHeader({ label, onBack }: { label: string; onBack: () => void }) {
 	return (
@@ -35,16 +37,24 @@ function TogglePill({
 	onClick,
 	onDetail,
 }: {
-	icon: string
+	icon: string | any
 	label: string
-	active?: boolean
+	active?: boolean | any
 	onClick?: () => void
 	onDetail?: () => void
 }) {
+	const boxClass = typeof active === "boolean" || active === undefined
+		? `toggle-pill ${active ? "active" : ""}`
+		: active.as((a: boolean) => `toggle-pill ${a ? "active" : ""}`)
+
+	const btnClass = typeof active === "boolean" || active === undefined
+		? `toggle-icon ${active ? "active" : ""}`
+		: active.as((a: boolean) => `toggle-icon ${a ? "active" : ""}`)
+
 	return (
-		<box class={`toggle-pill ${active ? "active" : ""}`} spacing={0}>
+		<box class={boxClass} spacing={0}>
 			<button
-				class={`toggle-icon ${active ? "active" : ""}`}
+				class={btnClass}
 				onClicked={onClick}
 				hexpand
 			>
@@ -105,18 +115,32 @@ function BrightnessSlider() {
 }
 
 function ConnectivityToggles() {
+	const net = Network.get_default()
+	const bt = Bluetooth.get_default()
+
+	const wifiActive = net?.wifi ? createBinding(net.wifi, "enabled") : false
+	const wifiIcon = net?.wifi ? createBinding(net.wifi, "iconName") : "network-wireless-symbolic"
+
+	const btActive = bt ? createBinding(bt, "isPowered") : false
+
 	return (
 		<box spacing={4} homogeneous>
 			<TogglePill
-				icon="network-wireless-symbolic"
+				icon={wifiIcon}
 				label="Wi-Fi"
-				active={true} // TODO: actual state
+				active={wifiActive}
+				onClick={() => {
+					if (net?.wifi) net.wifi.enabled = !net.wifi.enabled
+				}}
 				onDetail={() => (nav.page = "network")}
 			/>
 			<TogglePill
 				icon="bluetooth-active-symbolic"
 				label="Bluetooth"
-				active={true}
+				active={btActive}
+				onClick={() => {
+					if (bt?.adapter) bt.adapter.powered = !bt.adapter.powered
+				}}
 				onDetail={() => (nav.page = "bluetooth")}
 			/>
 		</box>
