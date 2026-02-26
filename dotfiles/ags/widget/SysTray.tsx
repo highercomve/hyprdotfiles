@@ -6,6 +6,7 @@ function TrayItem({ item }: { item: Tray.TrayItem }) {
 	return (
 		<Gtk.MenuButton
 			class="systray-item"
+			visible={createBinding(item, "gicon").as((icon) => icon !== null)}
 			tooltipMarkup={createBinding(item, "tooltipMarkup")}
 			primary={createBinding(item, "isMenu")((isMenu) => !isMenu)}
 			menuModel={createBinding(item, "menuModel")}

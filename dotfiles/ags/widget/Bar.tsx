@@ -19,8 +19,10 @@ import Taskbar from "./Taskbar"
 function BatteryLevel() {
 	const bat = Battery.get_default()
 
+	if (!bat || !bat.isPresent) return <box visible={false} />
+
 	return (
-		<box visible={createBinding(bat, "isPresent")} class="battery-level" spacing={4}>
+		<box class="battery-level" spacing={4}>
 			<label
 				class="battery-percentage"
 				label={createBinding(bat, "percentage").as((p) =>
@@ -41,13 +43,15 @@ import Notifd from "gi://AstalNotifd"
 
 function QuickSettings() {
 	const audio = Audio.get_default()?.audio.defaultSpeaker
+	const notifd = Notifd.get_default()
 	// const wifi = Network.get_default()?.wifi
 	// const bt = Bluetooth.get_default()
 
 	// Bindings might be null if service not available
 	const volumeIcon = audio && createBinding(audio, "volumeIcon")
-	// const wifiIcon = wifi && createBinding(wifi, "iconName")
-	// const btPowered = bt && createBinding(bt, "isPowered")
+	const dndIcon = createBinding(notifd, "dontDisturb").as(dnd =>
+		dnd ? "notifications-disabled-symbolic" : "preferences-system-notifications-symbolic"
+	)
 
 	return (
 		<button
@@ -56,9 +60,9 @@ function QuickSettings() {
 			tooltipText="Quick Settings"
 		>
 			<box spacing={8}>
-				<Gtk.Image iconName="preferences-system-notifications-symbolic" />
+				<Gtk.Image iconName={dndIcon} />
 				{volumeIcon && <Gtk.Image iconName={volumeIcon} />}
-				{/*{wifiIcon && <Gtk.Image iconName={wifiIcon} />}
+				{/* {wifiIcon && <Gtk.Image iconName={wifiIcon} />}
 				{btPowered && (
 					<Gtk.Image
 						iconName={btPowered((p) =>
@@ -103,7 +107,7 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 						<MediaBar />
 					</box>
 				</Gtk.Box>
-				<Gtk.Box hexpand halign={Gtk.Align.END} spacing={4} $type="end">
+				<Gtk.Box hexpand halign={Gtk.Align.END} spacing={0} $type="end">
 					<SystemMonitor />
 					<ToolsRow />
 					{/* Add here a notification icon that open the swaync window */}
