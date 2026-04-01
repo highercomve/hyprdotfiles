@@ -681,6 +681,23 @@ switch {
 	label {
 		font-weight: bold;
 	}
+
+	.ytm-button {
+		padding: 0 8px;
+		border-radius: 8px;
+		transition: all 0.2s;
+		color: $lavender;
+
+		&:hover {
+			background-color: $surface1;
+			color: $mauve;
+		}
+
+		&:active {
+			background-color: $surface2;
+			transform: scale(0.9);
+		}
+	}
 }
 
 // Media Bar inside Center Group

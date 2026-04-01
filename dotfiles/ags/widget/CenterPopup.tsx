@@ -2,6 +2,7 @@ import { Astal, Gtk } from "ags/gtk4"
 import App from "ags/gtk4/app"
 import PopupWindow from "./PopupWindow"
 import Media from "./Media"
+import YouTubeSearch from "./YouTubeSearch"
 
 export default function CenterPopup() {
 	return (
@@ -11,7 +12,7 @@ export default function CenterPopup() {
 			halign={Gtk.Align.CENTER}
 			valign={Gtk.Align.START}
 			marginTop={40}
-			widthRequest={700}
+			widthRequest={800}
 			layer={Astal.Layer.OVERLAY}
 		>
 			<box
@@ -20,13 +21,21 @@ export default function CenterPopup() {
 				spacing={20}
 				css="padding: 24px;"
 			>
-				<box class="calendar-container" css="min-width: 300px;">
+				<box
+                    class="calendar-container"
+                    css="min-width: 370px;"
+                    valign={Gtk.Align.START}
+                    vexpand={false}
+                    orientation={Gtk.Orientation.VERTICAL}
+                    spacing={12}
+                >
 					<Gtk.Calendar />
+                    <YouTubeSearch />
 				</box>
 
 				<box css="min-width: 1px; background-color: rgba(255,255,255,0.1); margin: 10px 0;" />
 
-				<box class="media-container" hexpand>
+				<box class="media-container" css="min-width: 370px;">
 					<Media />
 				</box>
 			</box>

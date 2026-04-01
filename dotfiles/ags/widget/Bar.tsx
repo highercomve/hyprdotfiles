@@ -96,15 +96,19 @@ export default function Bar(gdkmonitor: Gdk.Monitor) {
 				</Gtk.Box>
 				<Gtk.Box $type="center">
 					<box class="group-center module-group" spacing={8}>
-						<button
-							onClicked={() => App.toggle_window("center-popup")}
-							class="clock-button"
-							css="background: transparent; border: none; padding: 0;"
-						>
-							<Clock />
-						</button>
+						<box css="min-width: 180px;" halign={Gtk.Align.CENTER}>
+							<button
+								onClicked={() => App.toggle_window("center-popup")}
+								class="clock-button"
+								css="background: transparent; border: none; padding: 0;"
+							>
+								<Clock />
+							</button>
+						</box>
 						<box css="min-width: 1px; background-color: rgba(255,255,255,0.2);" />
-						<MediaBar />
+						<box css="min-width: 180px;" halign={Gtk.Align.CENTER}>
+							<MediaBar />
+						</box>
 					</box>
 				</Gtk.Box>
 				<Gtk.Box hexpand halign={Gtk.Align.END} spacing={0} $type="end">

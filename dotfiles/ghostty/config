@@ -56,3 +56,4 @@ keybind = ctrl+t>right=next_tab
 keybind = ctrl+t>left=previous_tab
 
 shell-integration-features = ssh-terminfo,ssh-env
+window-decoration = false

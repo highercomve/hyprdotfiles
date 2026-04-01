@@ -3,7 +3,6 @@ import Notifd from "gi://AstalNotifd"
 import GObject, { register, property } from "ags/gobject"
 import { createBinding, For } from "ags"
 import GLib from "gi://GLib"
-import App from "ags/gtk4/app"
 import { NotificationItem } from "./NotificationWidget"
 
 const TIMEOUT = 5000 // 5 seconds
@@ -36,12 +35,14 @@ class PopupManager extends GObject.Object {
     }
 
     private map: Map<number, number> = new Map() // id -> timeoutId
+    private notifiedHandlerId: number = 0
+    private resolvedHandlerId: number = 0
 
     constructor() {
         super()
         const notifd = Notifd.get_default()
 
-        notifd.connect("notified", (_, id) => {
+        this.notifiedHandlerId = notifd.connect("notified", (_, id) => {
             if (notifd.dontDisturb) return
 
             const n = notifd.get_notification(id)
@@ -50,7 +51,7 @@ class PopupManager extends GObject.Object {
             }
         })
 
-        notifd.connect("resolved", (_, id) => this.remove(id))
+        this.resolvedHandlerId = notifd.connect("resolved", (_, id) => this.remove(id))
     }
 
     private add(n: Notifd.Notification) {
@@ -66,6 +67,8 @@ class PopupManager extends GObject.Object {
                 GLib.source_remove(this.map.get(n.id)!)
                 this.map.delete(n.id)
             }
+            // Dispose the old PopupState before removing
+            list[idx].state.run_dispose()
             list.splice(idx, 1)
         }
 
@@ -104,6 +107,8 @@ class PopupManager extends GObject.Object {
             const list = [...this._popups]
             const idx = list.findIndex((x) => x.id === id)
             if (idx >= 0) {
+                // Dispose the PopupState GObject before removing
+                list[idx].state.run_dispose()
                 list.splice(idx, 1)
                 this.popups = list
             }
@@ -112,14 +117,44 @@ class PopupManager extends GObject.Object {
         })
         this.map.set(id, cleanupId)
     }
+
+    destroy() {
+        // Disconnect notifd signal handlers
+        const notifd = Notifd.get_default()
+        if (this.notifiedHandlerId) {
+            notifd.disconnect(this.notifiedHandlerId)
+            this.notifiedHandlerId = 0
+        }
+        if (this.resolvedHandlerId) {
+            notifd.disconnect(this.resolvedHandlerId)
+            this.resolvedHandlerId = 0
+        }
+
+        // Clear all pending timeouts
+        for (const [, timerId] of this.map) {
+            GLib.source_remove(timerId)
+        }
+        this.map.clear()
+
+        // Dispose all remaining PopupState objects
+        for (const item of this._popups) {
+            item.state.run_dispose()
+        }
+        this._popups = []
+    }
 }
 
 const manager = new PopupManager()
 
+export function cleanupNotificationPopups() {
+    manager.destroy()
+}
+
 export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
     const { TOP, RIGHT } = Astal.WindowAnchor
 
-    const popups = createBinding(manager, "update").as(() => manager.popups)
+    const getPopups = () => manager.popups
+    const popups = createBinding(manager, "update").as(getPopups)
 
     return (
         <Astal.Window
@@ -135,7 +170,6 @@ export default function NotificationPopups(gdkmonitor: Gdk.Monitor) {
             defaultWidth={400}
             hexpand={true}
             visible={popups.as(l => l.length > 0)}
-            application={App}
         >
             <box orientation={Gtk.Orientation.VERTICAL} spacing={4} widthRequest={400} hexpand={false}>
                 <For each={popups}>

@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "ags": "file:/usr/share/ags/js",
-    "gnim-utils": "github:retrozinndev/gnim-utils"
+    "gnim-utils": "github:retrozinndev/gnim-utils",
+    "ytmusic-api": "^5.3.1"
   },
   "prettier": {
     "semi": false,

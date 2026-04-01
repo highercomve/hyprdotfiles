@@ -1,5 +1,6 @@
 import GObject, { register, property } from "ags/gobject"
 import GLib from "gi://GLib"
+import Gio from "gi://Gio"
 
 // Helper for sync execution
 function exec(cmd: string): string {
@@ -28,6 +29,9 @@ class BrightnessService extends GObject.Object {
     @property(Boolean) available = false
 
     private _max = 0
+    private monitor: Gio.FileMonitor | null = null
+    private timerId: number | null = null
+    private debounceTimer: number | null = null
 
     constructor() {
         super()
@@ -51,22 +55,74 @@ class BrightnessService extends GObject.Object {
             const currentStr = exec("brightnessctl get")
             this.screen = (Number(currentStr) || 0) / this._max
 
-            // Poll for changes
-            GLib.timeout_add(GLib.PRIORITY_DEFAULT, 200, () => {
-                const current = Number(exec("brightnessctl get"))
-                if (!isNaN(current)) {
-                    const newVal = current / this._max
-                    if (Math.abs(newVal - this.screen) > 0.01) {
-                        this.screen = newVal
-                        this.notify("screen")
-                    }
-                }
-                return true
-            })
+            // Watch sysfs for brightness changes instead of polling
+            this.startMonitoring()
         } catch (error) {
             console.error("BrightnessService init error:", error)
             this.available = false
         }
+    }
+
+    private startMonitoring() {
+        try {
+            // Find the backlight device path
+            const backlightDir = Gio.File.new_for_path("/sys/class/backlight")
+            const enumerator = backlightDir.enumerate_children("standard::name", Gio.FileQueryInfoFlags.NONE, null)
+            let info
+            let brightnessPath = ""
+            while ((info = enumerator.next_file(null)) !== null) {
+                brightnessPath = `/sys/class/backlight/${info.get_name()}/brightness`
+                break // use first device
+            }
+            enumerator.close(null)
+
+            if (!brightnessPath) {
+                // Fallback to polling at 1s if no sysfs path found
+                this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+                    this.readBrightness()
+                    return true
+                })
+                return
+            }
+
+            const file = Gio.File.new_for_path(brightnessPath)
+            this.monitor = file.monitor_file(Gio.FileMonitorFlags.NONE, null)
+            this.monitor.connect("changed", () => {
+                // Debounce to avoid flooding during slider drags
+                if (this.debounceTimer) GLib.source_remove(this.debounceTimer)
+                this.debounceTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
+                    try {
+                        this.readBrightness()
+                    } finally {
+                        this.debounceTimer = null
+                    }
+                    return false
+                })
+            })
+        } catch (e) {
+            console.error("FileMonitor failed, falling back to polling:", e)
+            this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+                this.readBrightness()
+                return true
+            })
+        }
+    }
+
+    private readBrightness() {
+        const current = Number(exec("brightnessctl get"))
+        if (!isNaN(current)) {
+            const newVal = current / this._max
+            if (Math.abs(newVal - this.screen) > 0.01) {
+                this.screen = newVal
+                this.notify("screen")
+            }
+        }
+    }
+
+    destroy() {
+        if (this.monitor) { this.monitor.cancel(); this.monitor = null }
+        if (this.timerId) { GLib.source_remove(this.timerId); this.timerId = null }
+        if (this.debounceTimer) { GLib.source_remove(this.debounceTimer); this.debounceTimer = null }
     }
 
     set screen_value(percent: number) {

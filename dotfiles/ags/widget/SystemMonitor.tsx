@@ -13,6 +13,7 @@ class SystemState extends GObject.Object {
 
 	private prevCpu = { total: 0, idle: 0 }
 	private hwmonPath = ""
+	private timerId: number | null = null
 
 	constructor() {
 		super()
@@ -21,9 +22,10 @@ class SystemState extends GObject.Object {
 	}
 
 	findHwmon() {
+		let enumerator: Gio.FileEnumerator | null = null
 		try {
 			const dir = Gio.File.new_for_path("/sys/class/hwmon")
-			const enumerator = dir.enumerate_children("standard::name", Gio.FileQueryInfoFlags.NONE, null)
+			enumerator = dir.enumerate_children("standard::name", Gio.FileQueryInfoFlags.NONE, null)
 			let info
 			while ((info = enumerator.next_file(null)) !== null) {
 				const name = info.get_name()
@@ -50,17 +52,26 @@ class SystemState extends GObject.Object {
 		} catch (e) {
 			console.error(e)
 			this.hwmonPath = "/sys/class/hwmon/hwmon4/temp3_input" // fallback
+		} finally {
+			enumerator?.close(null)
 		}
 	}
 
 	startPolling() {
 		// Poll every 2 seconds
-		GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+		this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
 			this.updateCpu()
 			this.updateMemory()
 			this.updateTemp()
 			return true // repeat
 		})
+	}
+
+	destroy() {
+		if (this.timerId) {
+			GLib.source_remove(this.timerId)
+			this.timerId = null
+		}
 	}
 
 	updateCpu() {
@@ -137,6 +148,10 @@ class SystemState extends GObject.Object {
 }
 
 const systemState = new SystemState()
+
+export function cleanup() {
+	systemState.destroy()
+}
 
 export default function SystemMonitor() {
 	return (

@@ -13,6 +13,9 @@ export default function BluetoothWidget() {
 	const devices = createBinding(bt, "devices")
 	const adapter = bt.adapter // might be null, usually accessible
 
+	// Track discovery timeout to prevent leaks on rapid scan clicks
+	let discoveryTimeoutId: number | null = null
+
 	// Sort devices: Connected first
 	const sortedDevices = devices.as((devs) =>
 		[...devs].sort((a, b) => Number(b.connected) - Number(a.connected)),
@@ -41,10 +44,15 @@ export default function BluetoothWidget() {
 							if (adapter.discovering) adapter.stop_discovery()
 							else {
 								adapter.start_discovery()
-								GLib.timeout_add(GLib.PRIORITY_DEFAULT, 15000, () => {
+								// Clear any previous discovery timeout to prevent stacking
+								if (discoveryTimeoutId) {
+									GLib.source_remove(discoveryTimeoutId)
+								}
+								discoveryTimeoutId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 15000, () => {
 									if (bt.adapter && bt.adapter.discovering) {
 										bt.adapter.stop_discovery()
 									}
+									discoveryTimeoutId = null
 									return GLib.SOURCE_REMOVE
 								})
 							}

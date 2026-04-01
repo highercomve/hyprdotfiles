@@ -49,7 +49,11 @@ export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isC
 					self.reveal_child = true
 					return false
 				})
-				self.connect("destroy", () => GLib.source_remove(id))
+				self.connect("destroy", () => {
+					GLib.source_remove(id)
+					// Dispose the NotificationItemState GObject to prevent accumulation
+					state.run_dispose()
+				})
 			}}
 			// Logic for closing transition if binding is provided
 			revealChild={isClosing ? isClosing.as((c: boolean) => !c) : true}

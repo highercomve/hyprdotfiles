@@ -1,0 +1,168 @@
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Using Browser/Cookie auth
+Error in main: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 122, in nav
+    root = root[k]
+           ~~~~^^^
+KeyError: 'runs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/ytm_bridge.py", line 86, in main
+    results = yt.get_library_playlists(limit=20)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/mixins/library.py", line 44, in get_library_playlists
+    playlists = parse_content_list(results["items"][1:], parse_playlist)
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 60, in parse_content_list
+    contents.append(parse_func(result[key]))
+                    ~~~~~~~~~~^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/parsers/browsing.py", line 154, in parse_playlist
+    "playlistId": nav(data, TITLE + NAVIGATION_BROWSE_ID)[2:],
+                  ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sergiom/Code/hyprconfig/dotfiles/ags/.venv/lib/python3.14/site-packages/ytmusicapi/navigation.py", line 126, in nav
+    raise type(e)(f"Unable to find '{k}' using path {items!r} on {root!r}, exception: {e}")
+KeyError: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+General error in main: Server returned HTTP 400: Bad Request.
+Invalid value (query), Starting an object on a scalar field
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"
+Error fetching library playlists: "Unable to find 'runs' using path ['title', 'runs', 0, 'navigationEndpoint', 'browseEndpoint', 'browseId'] on {}, exception: 'runs'"

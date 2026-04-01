@@ -12,13 +12,23 @@ class OSDState extends GObject.Object {
 
 	private timeout: number | null = null
 	private speaker = Audio.get_default()?.audio.defaultSpeaker
+	private volumeHandlerId: number = 0
+	private muteHandlerId: number = 0
 
 	constructor() {
 		super()
 		if (this.speaker) {
-			this.speaker.connect("notify::volume", this.onUpdate.bind(this))
-			this.speaker.connect("notify::mute", this.onUpdate.bind(this))
+			this.volumeHandlerId = this.speaker.connect("notify::volume", this.onUpdate.bind(this))
+			this.muteHandlerId = this.speaker.connect("notify::mute", this.onUpdate.bind(this))
 		}
+	}
+
+	destroy() {
+		if (this.speaker) {
+			if (this.volumeHandlerId) this.speaker.disconnect(this.volumeHandlerId)
+			if (this.muteHandlerId) this.speaker.disconnect(this.muteHandlerId)
+		}
+		if (this.timeout) GLib.source_remove(this.timeout)
 	}
 
 	onUpdate() {
@@ -37,6 +47,10 @@ class OSDState extends GObject.Object {
 }
 
 const osdState = new OSDState()
+
+export function cleanup() {
+	osdState.destroy()
+}
 
 export default function OSD(monitor: Gdk.Monitor) {
 	return (

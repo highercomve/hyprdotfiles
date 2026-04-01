@@ -1,6 +1,7 @@
 import { createBinding } from "ags"
 import { Gtk } from "ags/gtk4"
 import GLib from "gi://GLib"
+import Gio from "gi://Gio"
 import PowerProfiles from "gi://AstalPowerProfiles"
 import GObject, { register, property } from "ags/gobject"
 
@@ -14,6 +15,8 @@ class ToolsState extends GObject.Object {
 	@property(String) sunset = ""
 	@property(String) record = ""
 
+	private timerId: number | null = null
+
 	constructor() {
 		super()
 		this.startPolling()
@@ -21,7 +24,7 @@ class ToolsState extends GObject.Object {
 
 	startPolling() {
 		// Poll every 2 seconds
-		GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+		this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
 			this.checkStatus(`${SCRIPTS_DIR}/hypridle.sh status`, "idle")
 			this.checkStatus(`${SCRIPTS_DIR}/hyprsunset.sh status`, "sunset")
 			this.checkStatus(`${SCRIPTS_DIR}/record.sh status`, "record")
@@ -29,29 +32,33 @@ class ToolsState extends GObject.Object {
 		})
 	}
 
+	destroy() {
+		if (this.timerId) {
+			GLib.source_remove(this.timerId)
+			this.timerId = null
+		}
+	}
+
 	checkStatus(cmd: string, prop: string) {
 		try {
 			const [parsed, argv] = GLib.shell_parse_argv(cmd)
 			if (!parsed || !argv) return
 
-			const [success, out, err, status] = GLib.spawn_sync(
-				null,
+			const proc = Gio.Subprocess.new(
 				argv,
-				null,
-				GLib.SpawnFlags.SEARCH_PATH,
-				null,
+				Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE,
 			)
+			proc!.communicate_utf8_async(null, null, (proc, res) => {
+				try {
+					const [, stdout] = proc!.communicate_utf8_finish(res)
+					if (!proc!.get_successful() || !stdout) return
 
-			if (!success || status !== 0 || !out) return
+					const json = JSON.parse(stdout)
+					const val = json.class || json.alt || json.text || ""
 
-			const text = new TextDecoder().decode(out)
-			// Parse JSON
-			try {
-				const json = JSON.parse(text)
-				const val = json.class || json.alt || json.text || ""
-
-				if ((this as any)[prop] !== val) (this as any)[prop] = val
-			} catch (e) { }
+					if ((this as any)[prop] !== val) (this as any)[prop] = val
+				} catch (e) { }
+			})
 		} catch (e) {
 			console.error(e)
 		}
@@ -59,6 +66,10 @@ class ToolsState extends GObject.Object {
 }
 
 const toolsState = new ToolsState()
+
+export function cleanup() {
+	toolsState.destroy()
+}
 
 function ToolButton({
 	icon,
