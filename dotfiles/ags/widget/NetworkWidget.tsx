@@ -14,41 +14,44 @@ function runCmd(cmd: string) {
 	}
 }
 
-let cachedResult: Network.AccessPoint[] = []
-let lastApUpdate = 0
+// Build a deduplicator with its own cache so the widget can drop it on destroy
+// — module-level state would otherwise hold AP GObject references after the
+// widget unmounts.
+function makeApDeduplicator() {
+	let cachedResult: Network.AccessPoint[] = []
+	let lastApUpdate = 0
 
-// Helper to deduplicate APs
-function deduplicateAPs(aps: Network.AccessPoint[]) {
-	const map = new Map<string, Network.AccessPoint>()
-	for (const ap of aps) {
-		if (!ap.ssid) continue // Ignore hidden/unknown SSIDs for cleanliness, or handle nicely
-		const existing = map.get(ap.ssid)
-		if (!existing || ap.strength > existing.strength) {
-			map.set(ap.ssid, ap)
-		}
-	}
-
-	const result = Array.from(map.values()).sort((a, b) => b.strength - a.strength)
-
-	let changed = result.length !== cachedResult.length
-	if (!changed) {
-		for (let i = 0; i < result.length; i++) {
-			if (result[i] !== cachedResult[i]) {
-				changed = true
-				break
+	return (aps: Network.AccessPoint[]) => {
+		const map = new Map<string, Network.AccessPoint>()
+		for (const ap of aps) {
+			if (!ap.ssid) continue
+			const existing = map.get(ap.ssid)
+			if (!existing || ap.strength > existing.strength) {
+				map.set(ap.ssid, ap)
 			}
 		}
-	}
 
-	const now = Date.now()
-	if (changed) {
-		// Update immediately if length changed, otherwise throttle to 3 seconds
-		if (result.length !== cachedResult.length || now - lastApUpdate > 3000) {
-			cachedResult = result
-			lastApUpdate = now
+		const result = Array.from(map.values()).sort((a, b) => b.strength - a.strength)
+
+		let identical = result.length === cachedResult.length
+		if (identical) {
+			for (let i = 0; i < result.length; i++) {
+				if (result[i] !== cachedResult[i]) { identical = false; break }
+			}
 		}
+		if (identical) return cachedResult
+
+		// Throttle binding updates when only ordering/strength shifted (same set of
+		// APs by identity), but always swap to release stale AP references.
+		const now = Date.now()
+		const sameSet = result.length === cachedResult.length &&
+			result.every(ap => cachedResult.includes(ap))
+		if (sameSet && now - lastApUpdate < 3000) return cachedResult
+
+		cachedResult = result
+		lastApUpdate = now
+		return cachedResult
 	}
-	return cachedResult
 }
 
 @register({ GTypeName: "NetworkViewState" })
@@ -251,7 +254,8 @@ export default function NetworkWidget() {
 	// Wired usually doesn't have an "enabled" prop like wifi.
 	// We can infer state from internet/state.
 
-	// Sort and Dedupe APs
+	// Sort and Dedupe APs — per-widget cache so refs are released with the widget
+	const deduplicateAPs = makeApDeduplicator()
 	const sortedAPs = wifi
 		? createBinding(wifi, "accessPoints").as(deduplicateAPs)
 		: undefined

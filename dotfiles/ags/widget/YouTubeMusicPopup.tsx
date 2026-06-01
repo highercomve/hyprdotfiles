@@ -36,15 +36,12 @@ function LoginView() {
                     )
                     self.add_named(btn, "button")
                     self.add_named(code, "code")
-                    
-                    self.connect("notify::visible", () => {
-                         const c = YouTubeService.loginCode ? "code" : "button"
-                         self.set_visible_child_name(c)
-                    })
-                    const id = YouTubeService.connect("notify::login-code", () => {
-                        const c = YouTubeService.loginCode ? "code" : "button"
-                        self.set_visible_child_name(c)
-                    })
+
+                    const apply = () => {
+                        self.set_visible_child_name(YouTubeService.loginCode ? "code" : "button")
+                    }
+                    apply()
+                    const id = YouTubeService.connect("notify::login-code", apply)
                     self.connect("destroy", () => YouTubeService.disconnect(id))
                 }}
             />

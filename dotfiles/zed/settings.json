@@ -8,7 +8,23 @@
 // from the command palette or from `Zed` application menu.
 {
 	// "show_completions_on_input": false,
-	"edit_predictions": {
+ "cli_default_open_behavior": "existing_window",
+ "bottom_dock_layout": "contained",
+ "project_panel": {
+  "dock": "left"
+ },
+ "collaboration_panel": {
+  "dock": "right"
+ },
+ "git_panel": {
+  "dock": "right"
+ },
+ "agent_servers": {
+  "claude-acp": {
+   "type": "registry"
+  }
+ },
+ "edit_predictions": {
   "ollama": {
    "model": "qwen3-coder:latest"
   },
@@ -22,12 +38,13 @@
   }
  },
  "agent": {
-		"tool_permissions": {
+		"dock": "left",
+  "tool_permissions": {
    "default": "allow"
   },
   "inline_assistant_model": {
-			"provider": "ollama",
-			"model": "qwen3:8b"
+			"provider": "google",
+			"model": "gemini-3-flash-preview"
 		},
 		"default_model": {
 			"enable_thinking": true,
@@ -40,7 +57,8 @@
 	"hard_tabs": true,
 	"tab_size": 4,
 	"outline_panel": {
-		"indent_size": 10
+		"dock": "right",
+  "indent_size": 10
 	},
 	"theme": {
 		"mode": "system",

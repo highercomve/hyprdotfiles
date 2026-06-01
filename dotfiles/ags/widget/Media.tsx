@@ -56,11 +56,18 @@ function MediaTicker({ player }: { player: Mpris.Player }) {
 	return label
 }
 
-// Memoized filter to avoid creating new closures on every binding evaluation
+// Memoized filter — returns the *same* array reference when the active player
+// is unchanged, so <For> doesn't re-diff and recreate child widgets (and their
+// 1s GLib timers) on every notify::players tick.
+let _cachedActive: Mpris.Player | null = null
+let _cachedResult: Mpris.Player[] = []
 const filterActiveMprisPlayer = (ps: Mpris.Player[]) => {
     const filtered = ps.filter(p => !p.busName.includes("YouTubeMusic"))
-    const active = filtered.find(p => p.playbackStatus === Mpris.PlaybackStatus.PLAYING) || filtered[0]
-    return active ? [active] : []
+    const active = filtered.find(p => p.playbackStatus === Mpris.PlaybackStatus.PLAYING) || filtered[0] || null
+    if (active === _cachedActive) return _cachedResult
+    _cachedActive = active
+    _cachedResult = active ? [active] : []
+    return _cachedResult
 }
 
 export function MediaBar() {

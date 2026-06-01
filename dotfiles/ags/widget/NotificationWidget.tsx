@@ -13,27 +13,47 @@ class NotificationItemState extends GObject.Object {
 	@property(Boolean) expanded = false
 }
 
+// Per-notification caches: a notification can be rendered simultaneously in
+// the popup AND the list, so we share state (no double allocation) and we
+// resolve the app icon exactly once per notification (the fuzzy_query is the
+// expensive part). WeakMap auto-clears when notifd releases the notification.
+const stateCache = new WeakMap<Notifd.Notification, NotificationItemState>()
+const appIconNameCache = new WeakMap<Notifd.Notification, string | null>()
+
+function getNotificationState(n: Notifd.Notification): NotificationItemState {
+	let s = stateCache.get(n)
+	if (!s) {
+		s = new NotificationItemState()
+		stateCache.set(n, s)
+	}
+	return s
+}
+
+function resolveAppIconName(n: Notifd.Notification): string | null {
+	if (appIconNameCache.has(n)) return appIconNameCache.get(n)!
+	const app = n.desktopEntry
+		? apps.exact_query(n.desktopEntry)?.[0]
+		: apps.fuzzy_query(n.appName)?.[0]
+	const name = (app && app.iconName) || null
+	appIconNameCache.set(n, name)
+	return name
+}
+
 export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isClosing?: boolean | any }) {
 	const summary = createBinding(n, "summary")
 	const body = createBinding(n, "body")
 	const actions = createBinding(n, "actions")
-	
-	// Resolve icon: prefer appIcon, then desktopEntry, then fallback
+
+	// Resolve icon: prefer n.image, then cached app icon, then notify::appIcon,
+	// then desktopEntry/fallback. The Apps query runs once per notification.
+	const cachedAppIcon = resolveAppIconName(n)
 	const iconResult = createBinding(n, "appIcon").as(i => {
 		if (n.image) return n.image
-		
-		const app = n.desktopEntry 
-			? apps.exact_query(n.desktopEntry)?.[0] 
-			: apps.fuzzy_query(n.appName)?.[0]
-
-		if (app && app.iconName) {
-			return app.iconName
-		}
-		
+		if (cachedAppIcon) return cachedAppIcon
 		return i || n.desktopEntry || "dialog-information-symbolic"
 	})
 
-	const state = new NotificationItemState()
+	const state = getNotificationState(n)
 	const expanded = createBinding(state, "expanded")
 
 	const { START, CENTER, END } = Gtk.Align
@@ -51,8 +71,9 @@ export function NotificationItem({ n, isClosing }: { n: Notifd.Notification; isC
 				})
 				self.connect("destroy", () => {
 					GLib.source_remove(id)
-					// Dispose the NotificationItemState GObject to prevent accumulation
-					state.run_dispose()
+					// state is shared via WeakMap keyed on the notification — it
+					// auto-releases when notifd drops the notification. Do not
+					// dispose here or the sibling instance (popup vs. list) crashes.
 				})
 			}}
 			// Logic for closing transition if binding is provided

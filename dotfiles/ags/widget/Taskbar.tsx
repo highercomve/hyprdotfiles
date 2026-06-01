@@ -2,8 +2,6 @@ import { createBinding, For } from "ags"
 import Hyprland from "gi://AstalHyprland"
 import { Gtk } from "ags/gtk4"
 
-const hypr = Hyprland.get_default()
-
 function substitute(className: string) {
 	const subs: Record<string, string> = {
 		"dev.zed.Zed": "zed",
@@ -11,24 +9,24 @@ function substitute(className: string) {
 	return subs[className] || className
 }
 
-let cachedClients: Hyprland.Client[] = []
-function getClients(c: Hyprland.Client[]) {
-	const sorted = [...c].sort((a, b) => a.workspace.id - b.workspace.id)
-	let changed = sorted.length !== cachedClients.length
-	if (!changed) {
-		for (let i = 0; i < sorted.length; i++) {
-			if (sorted[i] !== cachedClients[i]) {
-				changed = true
-				break
+function makeClientSorter() {
+	let cached: Hyprland.Client[] = []
+	return (c: Hyprland.Client[]) => {
+		const sorted = [...c].sort((a, b) => a.workspace.id - b.workspace.id)
+		let identical = sorted.length === cached.length
+		if (identical) {
+			for (let i = 0; i < sorted.length; i++) {
+				if (sorted[i] !== cached[i]) { identical = false; break }
 			}
 		}
+		if (!identical) cached = sorted
+		return cached
 	}
-	if (changed) cachedClients = sorted
-	return cachedClients
 }
 
 export default function Taskbar() {
 	const hypr = Hyprland.get_default()
+	const getClients = makeClientSorter()
 
 	// Sort clients by workspace ID to keep them ordered
 	const clients = createBinding(hypr, "clients").as(getClients)

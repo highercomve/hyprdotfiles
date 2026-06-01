@@ -85,6 +85,9 @@ export default function AudioWidget() {
 			class="audio-widget"
 			spacing={8}
 			marginTop={20}
+			$={(self) => {
+				self.connect("destroy", () => state.run_dispose())
+			}}
 		>
 			<label
 				label="Audio"

@@ -11,12 +11,34 @@ class OSDState extends GObject.Object {
 	@property(String) icon = "audio-volume-high-symbolic"
 
 	private timeout: number | null = null
-	private speaker = Audio.get_default()?.audio.defaultSpeaker
+	private audio = Audio.get_default()?.audio
+	private speaker: any = null
 	private volumeHandlerId: number = 0
 	private muteHandlerId: number = 0
+	private defaultSpeakerHandlerId: number = 0
 
 	constructor() {
 		super()
+		this.bindSpeaker()
+		// Re-bind when the user switches their default output device — otherwise
+		// the OSD silently goes stale and leaks signal handlers on the old speaker.
+		if (this.audio) {
+			this.defaultSpeakerHandlerId = this.audio.connect(
+				"notify::default-speaker",
+				() => this.bindSpeaker(),
+			)
+		}
+	}
+
+	private bindSpeaker() {
+		// Disconnect from previous speaker, if any
+		if (this.speaker) {
+			if (this.volumeHandlerId) this.speaker.disconnect(this.volumeHandlerId)
+			if (this.muteHandlerId) this.speaker.disconnect(this.muteHandlerId)
+			this.volumeHandlerId = 0
+			this.muteHandlerId = 0
+		}
+		this.speaker = this.audio?.defaultSpeaker ?? null
 		if (this.speaker) {
 			this.volumeHandlerId = this.speaker.connect("notify::volume", this.onUpdate.bind(this))
 			this.muteHandlerId = this.speaker.connect("notify::mute", this.onUpdate.bind(this))
@@ -27,6 +49,10 @@ class OSDState extends GObject.Object {
 		if (this.speaker) {
 			if (this.volumeHandlerId) this.speaker.disconnect(this.volumeHandlerId)
 			if (this.muteHandlerId) this.speaker.disconnect(this.muteHandlerId)
+		}
+		if (this.audio && this.defaultSpeakerHandlerId) {
+			this.audio.disconnect(this.defaultSpeakerHandlerId)
+			this.defaultSpeakerHandlerId = 0
 		}
 		if (this.timeout) GLib.source_remove(this.timeout)
 	}

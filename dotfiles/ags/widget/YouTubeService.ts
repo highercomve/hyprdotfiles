@@ -212,8 +212,15 @@ class YouTubeService extends GObject.Object {
             if (this.playbin && this.isPlaying) {
                 const [ok_pos, pos] = this.playbin.query_position(Gst.Format.TIME)
                 const [ok_dur, dur] = this.playbin.query_duration(Gst.Format.TIME)
-                if (ok_pos) { this.position = pos / Gst.SECOND; this.notify("position") }
-                if (ok_dur) { this.duration = dur / Gst.SECOND; this.notify("duration") }
+                // @property setters already emit notify::; only assign when value changed
+                if (ok_pos) {
+                    const newPos = pos / Gst.SECOND
+                    if (newPos !== this.position) this.position = newPos
+                }
+                if (ok_dur) {
+                    const newDur = dur / Gst.SECOND
+                    if (newDur !== this.duration) this.duration = newDur
+                }
             }
             return true
         })
@@ -234,14 +241,12 @@ class YouTubeService extends GObject.Object {
     async checkAuth() {
         const res = await this.callBridge("check_auth")
         this.isLoggedIn = res.data?.authenticated || false
-        this.notify("is-logged-in")
         if (this.isLoggedIn) this.getLibrary()
     }
 
     async getLibrary() {
         const res = await this.callBridge("library_playlists")
         this.userPlaylists = res.data || []
-        this.notify("user-playlists")
     }
 
     private setupPlayer() {
@@ -255,7 +260,8 @@ class YouTubeService extends GObject.Object {
                     this.busSignalId = bus.connect("message", (bus: Gst.Bus, msg: Gst.Message) => {
                         if (!msg) return
                         if (msg.type === Gst.MessageType.EOS || msg.type === Gst.MessageType.ERROR) {
-                            this.isPlaying = false; this.notify("is-playing"); this.notifyMpris("PlaybackStatus")
+                            this.isPlaying = false
+                            this.notifyMpris("PlaybackStatus")
                         }
                     })
                 }
@@ -264,11 +270,11 @@ class YouTubeService extends GObject.Object {
     }
 
     async search(query: string, filter: string | null = null) {
-        if (!query) { this.searchResults = []; this.notify("search-results"); return }
-        this.isSearching = true; this.notify("is-searching")
+        if (!query) { this.searchResults = []; return }
+        this.isSearching = true
         const result = await this.callBridge("search", { query, filter })
         this.searchResults = result.data || []
-        this.isSearching = false; this.notify("is-searching"); this.notify("search-results")
+        this.isSearching = false
     }
 
     async startRadio(videoId: string) {
@@ -289,30 +295,44 @@ class YouTubeService extends GObject.Object {
 
     async play(videoId: string, title?: string, artist?: string, cover?: string) {
         if (!this.playbin) return
-        this.currentTitle = title || "Loading..."; this.currentArtist = artist || ""; this.currentCover = cover || ""
-        this.notify("current-title"); this.notify("current-artist"); this.notify("current-cover"); this.notifyMpris("Metadata")
+        this.currentTitle = title || "Loading..."
+        this.currentArtist = artist || ""
+        this.currentCover = cover || ""
+        this.notifyMpris("Metadata")
         this.stop()
         const audioUrl = await this.extractAudioUrl(videoId)
-        if (!audioUrl) { this.currentTitle = "Error loading stream"; this.notify("current-title"); this.notifyMpris("Metadata"); return }
-        this.currentTitle = title || "Unknown Title"; this.notify("current-title"); this.notifyMpris("Metadata")
+        if (!audioUrl) {
+            this.currentTitle = "Error loading stream"
+            this.notifyMpris("Metadata")
+            return
+        }
+        this.currentTitle = title || "Unknown Title"
+        this.notifyMpris("Metadata")
         this.playbin.set_property("uri", audioUrl)
         this.playbin.set_state(Gst.State.PLAYING)
-        this.isPlaying = true; this.notify("is-playing"); this.notifyMpris("PlaybackStatus")
+        this.isPlaying = true
+        this.notifyMpris("PlaybackStatus")
     }
 
     pause() {
         if (!this.playbin) return
-        this.playbin.set_state(Gst.State.PAUSED); this.isPlaying = false; this.notify("is-playing"); this.notifyMpris("PlaybackStatus")
+        this.playbin.set_state(Gst.State.PAUSED)
+        this.isPlaying = false
+        this.notifyMpris("PlaybackStatus")
     }
 
     resume() {
         if (!this.playbin) return
-        this.playbin.set_state(Gst.State.PLAYING); this.isPlaying = true; this.notify("is-playing"); this.notifyMpris("PlaybackStatus")
+        this.playbin.set_state(Gst.State.PLAYING)
+        this.isPlaying = true
+        this.notifyMpris("PlaybackStatus")
     }
 
     stop() {
         if (!this.playbin) return
-        this.playbin.set_state(Gst.State.NULL); this.isPlaying = false; this.notify("is-playing"); this.notifyMpris("PlaybackStatus")
+        this.playbin.set_state(Gst.State.NULL)
+        this.isPlaying = false
+        this.notifyMpris("PlaybackStatus")
     }
 
     destroy() {
@@ -328,6 +348,10 @@ class YouTubeService extends GObject.Object {
             }
             this.playbin.set_state(Gst.State.NULL);
             this.playbin = null;
+        }
+        if (this.dbus) {
+            try { this.dbus.unexport(); } catch (e) {}
+            this.dbus = null;
         }
         if (this.busOwnerId) {
             Gio.bus_unown_name(this.busOwnerId);
