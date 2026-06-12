@@ -20,6 +20,9 @@
   "dock": "right"
  },
  "agent_servers": {
+  "opencode": {
+   "type": "registry"
+  },
   "claude-acp": {
    "type": "registry"
   }
