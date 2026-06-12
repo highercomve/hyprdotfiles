@@ -8,6 +8,7 @@
 # LISTENERS["short-name"]="full/path/to/script.sh"
 declare -A LISTENERS
 LISTENERS["gtk-theme-switcher"]="$HOME/.config/hypr/scripts/listeners/gtk-theme-switcher.sh"
+LISTENERS["monitor-off-suspend"]="$HOME/.config/hypr/scripts/listeners/monitor-off-suspend.sh"
 # Example for another listener:
 # LISTENERS["another-listener"]="$HOME/.config/hypr/user_scripts/listeners/another-listener.sh"
 
@@ -67,12 +68,14 @@ stop_listener() {
         return 0
     else
         echo "Found PID(s) for '$script_name': $pid. Sending SIGTERM..."
-        kill "$pid"
+        # Intentionally unquoted: pgrep may return several PIDs (script + pipe
+        # subshells), which must be passed to kill as separate arguments.
+        kill $pid
         # Give it a moment to terminate gracefully
         sleep 1
         if pgrep -f "$script_path" >/dev/null; then
             echo "Listener '$script_name' did not stop gracefully. Sending SIGKILL..."
-            kill -9 "$pid"
+            kill -9 $pid
             echo "Listener '$script_name' forcefully stopped."
         else
             echo "Listener '$script_name' stopped successfully."
