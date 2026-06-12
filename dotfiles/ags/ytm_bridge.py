@@ -8,6 +8,16 @@ OAUTH_FILE = os.path.join(BRIDGE_DIR, "oauth.json")
 CREDENTIALS_FILE = os.path.join(BRIDGE_DIR, "credentials.json")
 BROWSER_FILE = os.path.join(BRIDGE_DIR, "browser.json")
 
+def friendly_error(e):
+    """Turn a raw ytmusicapi/HTTP exception into a short, user-facing message.
+    A 400 or a 'runs' KeyError on an empty body almost always means the stored
+    browser/oauth auth is stale or invalid, not a transient network blip."""
+    msg = str(e)
+    low = msg.lower()
+    if any(s in low for s in ("400", "401", "403", "unauthorized", "runs", "on {}")):
+        return "YouTube Music auth is invalid or expired — re-link your account (refresh browser.json / oauth.json)."
+    return msg
+
 def get_yt_instance():
     try:
         if os.path.exists(BROWSER_FILE): return YTMusic(BROWSER_FILE)
@@ -62,15 +72,19 @@ def main():
             try:
                 results = yt.get_library_playlists(limit=20)
                 print(json.dumps({"type": "library_playlists", "data": results}))
-            except:
-                print(json.dumps({"type": "library_playlists", "data": []}))
+            except Exception as e:
+                # Surface the failure once instead of silently returning []. The
+                # caller shows this to the user and does not retry in a loop.
+                print(json.dumps({"type": "library_playlists", "data": [], "error": friendly_error(e)}))
 
         elif cmd_type == "playlist":
             results = yt.get_playlist(query)
             print(json.dumps({"type": "playlist", "data": results}))
 
     except Exception as e:
-        print(json.dumps({"error": str(e)}))
+        # Always emit a single structured JSON line — never a raw traceback to
+        # stderr (that is what used to spam bridge.log).
+        print(json.dumps({"error": friendly_error(e)}))
 
 if __name__ == "__main__":
     main()

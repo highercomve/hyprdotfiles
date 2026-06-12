@@ -53,6 +53,14 @@ function LibraryView() {
     return (
         <Gtk.Box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
             <Gtk.Label label="Your Playlists" halign={Gtk.Align.START} css="font-weight: bold; color: #cdd6f4; margin-left: 8px;" />
+            <Gtk.Label
+                visible={createBinding(YouTubeService, "libraryError").as(e => e !== "")}
+                label={createBinding(YouTubeService, "libraryError")}
+                wrap
+                halign={Gtk.Align.START}
+                maxWidthChars={36}
+                css="color: #f38ba8; font-size: 0.85em; margin-left: 8px;"
+            />
             <Gtk.ScrolledWindow
                 hscrollbarPolicy={Gtk.PolicyType.NEVER}
                 vscrollbarPolicy={Gtk.PolicyType.AUTOMATIC}

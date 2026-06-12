@@ -84,6 +84,7 @@ class YouTubeService extends GObject.Object {
     @property(String) loginCode = ""
     @property(String) loginUrl = ""
     @property(Object) userPlaylists = []
+    @property(String) libraryError = ""
 
     private bridgeDir = GLib.get_home_dir() + "/Code/hyprconfig/dotfiles/ags"
     private bridgePath = this.bridgeDir + "/ytm_bridge.py"
@@ -244,9 +245,19 @@ class YouTubeService extends GObject.Object {
         if (this.isLoggedIn) this.getLibrary()
     }
 
+    private libraryLoading = false
     async getLibrary() {
-        const res = await this.callBridge("library_playlists")
-        this.userPlaylists = res.data || []
+        // Re-entry guard: never run two fetches at once, and don't hammer the
+        // bridge on failure — a 400/auth error surfaces once via libraryError.
+        if (this.libraryLoading) return
+        this.libraryLoading = true
+        try {
+            const res = await this.callBridge("library_playlists")
+            this.userPlaylists = res?.data || []
+            this.libraryError = res?.error || ""
+        } finally {
+            this.libraryLoading = false
+        }
     }
 
     private setupPlayer() {
