@@ -119,7 +119,8 @@ if [ -n "$selected_ttyusb_info" ]; then
     terminal_cmd=$(cat "$HOME/.config/hypr/user_settings/terminal.sh")
     terminal_cmd=alacritty
     # Execute the device console script in a new terminal
-    $terminal_cmd --title "device-console-applet" -e sudo "$device_console_script_path" "$dev_path"
+    # $terminal_cmd --title "device-console-applet" -e sudo "$device_console_script_path" "$dev_path"
+    $terminal_cmd --title "device-console-applet" -e "$device_console_script_path" "$dev_path"
     ;;
   *)
     echo "No action selected. Operation cancelled."
