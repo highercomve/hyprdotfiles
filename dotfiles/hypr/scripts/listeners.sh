@@ -9,6 +9,10 @@
 declare -A LISTENERS
 LISTENERS["gtk-theme-switcher"]="$HOME/.config/hypr/scripts/listeners/gtk-theme-switcher.sh"
 LISTENERS["monitor-off-suspend"]="$HOME/.config/hypr/scripts/listeners/monitor-off-suspend.sh"
+
+# Registered (so they can be toggled manually) but skipped by --startall.
+declare -A NO_AUTOSTART
+NO_AUTOSTART["monitor-off-suspend"]=1
 # Example for another listener:
 # LISTENERS["another-listener"]="$HOME/.config/hypr/user_scripts/listeners/another-listener.sh"
 
@@ -96,6 +100,7 @@ case "$1" in
 --startall)
     echo "Starting all registered listeners..."
     for key in "${!LISTENERS[@]}"; do
+        [ -n "${NO_AUTOSTART[$key]}" ] && { echo "Skipping '$key' (manual start only)."; continue; }
         start_listener "$key"
     done
     echo "All registered listeners processed."

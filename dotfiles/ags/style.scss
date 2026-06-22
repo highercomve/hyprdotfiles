@@ -565,6 +565,12 @@ switch {
 			}
 		}
 
+		&.monitor-suspend {
+			&.active {
+				color: $green;
+			}
+		}
+
 		&.power-profile {
 			color: $yellow;
 		}
