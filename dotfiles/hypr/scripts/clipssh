@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# clipssh <sshhost> : ssh wrapper that makes Ctrl+V image paste work in a
+# Claude Code running on a headless remote. Claude reads pasted images via
+# `xclip -t image/png -o`, so we drop a fake xclip on the remote that returns
+# whatever image you last copied on the host. Copy on host, Ctrl+V in Claude.
+set -euo pipefail
+
+host=${1:?usage: clipssh <sshhost>}
+sock="${TMPDIR:-/tmp}/clipssh-$host.sock"
+
+# one shared connection so the master only auths/warns once and uploads reuse it
+ssh -nNf -o ControlMaster=yes -o ControlPath="$sock" -o ControlPersist=120 "$host"
+
+# install the fake xclip + start each session with an empty clipboard
+ssh -o ControlPath="$sock" "$host" \
+  'mkdir -p ~/.local/bin; cat > ~/.local/bin/xclip; chmod +x ~/.local/bin/xclip; : > /tmp/clipssh.png' <<'SHIM'
+#!/bin/sh
+# clipssh: pretend to be the X clipboard for Claude Code's image paste
+case "$*" in
+  *TARGETS*)   [ -s /tmp/clipssh.png ] && echo image/png ;;
+  *image/png*) cat /tmp/clipssh.png 2>/dev/null ;;
+  *) exit 1 ;;
+esac
+SHIM
+
+# host clipboard -> remote /tmp/clipssh.png on every image you copy
+wl-paste -t image/png --watch sh -c '
+  t=$(mktemp); cat >"$t"
+  [ -s "$t" ] || { rm -f "$t"; exit; }   # ponytail: --watch also fires on non-image changes; skip empties
+  ssh -o ControlPath="$1" "$2" "cat > /tmp/clipssh.png" <"$t" 2>/dev/null
+  rm -f "$t"
+' _ "$sock" "$host" &
+w=$!
+
+# interactive session with the shim forced onto PATH (remote has no real xclip)
+ssh -t -o ControlPath="$sock" "$host" 'export PATH="$HOME/.local/bin:$PATH"; exec bash -il'
+
+kill "$w" 2>/dev/null || true
+ssh -O exit -o ControlPath="$sock" "$host" 2>/dev/null || true
