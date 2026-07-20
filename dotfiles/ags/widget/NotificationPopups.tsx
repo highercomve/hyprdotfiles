@@ -28,11 +28,10 @@ class PopupManager extends GObject.Object {
 
     get popups() { return this._popups }
 
-    set popups(v: PopupItem[]) {
-        this._popups = v
-        this.update++
-        this.notify("update")
-    }
+	set popups(v: PopupItem[]) {
+		this._popups = v
+		this.update++
+	}
 
     private map: Map<number, number> = new Map() // id -> timeoutId
     private notifiedHandlerId: number = 0

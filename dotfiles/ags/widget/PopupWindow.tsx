@@ -1,6 +1,4 @@
 import { Astal, Gtk, Gdk } from "ags/gtk4"
-import { getScope } from "ags"
-import GObject from "gi://GObject"
 
 export type PopupWindowProps = Partial<Astal.Window.ConstructorProps> & {
 	children?: any
@@ -35,7 +33,7 @@ export default function PopupWindow(props: PopupWindowProps) {
 		actionKeyPressed,
 		actionClosed,
 		children,
-		className,
+		css,
 		marginLeft,
 		marginTop,
 		marginRight,
@@ -67,12 +65,13 @@ export default function PopupWindow(props: PopupWindowProps) {
 				Astal.WindowAnchor.LEFT |
 				Astal.WindowAnchor.RIGHT
 			}
-			keymode={Astal.Keymode.EXCLUSIVE}
+			keymode={windowProps.keymode ?? Astal.Keymode.EXCLUSIVE}
 			exclusivity={Astal.Exclusivity.IGNORE}
 			application={windowProps.application}
 			css={`
-				background-color: transparent;
-			`}
+					background-color: transparent;
+					${css ?? ""}
+				`}
 			$={(self: Astal.Window) => {
 				const gestureClick = Gtk.GestureClick.new()
 				const keyController = Gtk.EventControllerKey.new()

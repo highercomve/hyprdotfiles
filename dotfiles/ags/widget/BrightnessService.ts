@@ -2,25 +2,29 @@ import GObject, { register, property } from "ags/gobject"
 import GLib from "gi://GLib"
 import Gio from "gi://Gio"
 
-// Helper for sync execution
-function exec(cmd: string): string {
-    try {
-        const [success, stdout] = GLib.spawn_command_line_sync(cmd)
-        if (!success || !stdout) return ""
-        return new TextDecoder().decode(stdout).trim()
-    } catch (e) {
-        console.error(`Error executing ${cmd}:`, e)
-        return ""
-    }
-}
-
-// Helper for async execution
-function execAsync(cmd: string) {
-    try {
-        GLib.spawn_command_line_async(cmd)
-    } catch (e) {
-        console.error(`Error spawning ${cmd}:`, e)
-    }
+function exec(argv: string[]): Promise<string> {
+    return new Promise((resolve, reject) => {
+        try {
+            const proc = Gio.Subprocess.new(
+                argv,
+                Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE,
+            )
+            proc.communicate_utf8_async(null, null, (process, result) => {
+                try {
+                    const [, stdout, stderr] = process.communicate_utf8_finish(result)
+                    if (!process.get_successful()) {
+                        reject(new Error(stderr || `Command failed: ${argv[0]}`))
+                        return
+                    }
+                    resolve((stdout || "").trim())
+                } catch (error) {
+                    reject(error)
+                }
+            })
+        } catch (error) {
+            reject(error)
+        }
+    })
 }
 
 @register({ GTypeName: "BrightnessService" })
@@ -32,94 +36,98 @@ class BrightnessService extends GObject.Object {
     private monitor: Gio.FileMonitor | null = null
     private timerId: number | null = null
     private debounceTimer: number | null = null
+    private readInFlight = false
+    private destroyed = false
 
     constructor() {
         super()
+        void this.initialize()
+    }
 
+    private async initialize() {
         try {
-            // Check if any backlight device exists
-            // brightnessctl --class=backlight list
-            const devices = exec("brightnessctl --class=backlight list")
-            if (devices.includes("No devices found") || !devices) {
-                this.available = false
-                return
-            }
+            const devices = await exec(["brightnessctl", "--class=backlight", "list"])
+            if (this.destroyed || devices.includes("No devices found") || !devices) return
 
-            // If we are here, we probably have a backlight device
+            const maxStr = await exec(["brightnessctl", "max"])
+            const max = Number(maxStr)
+            if (this.destroyed || !Number.isFinite(max) || max <= 0) return
+
+            this._max = max
             this.available = true
-
-            // Get max brightness
-            const maxStr = exec("brightnessctl max")
-            this._max = Number(maxStr) || 1
-
-            const currentStr = exec("brightnessctl get")
-            this.screen = (Number(currentStr) || 0) / this._max
-
-            // Watch sysfs for brightness changes instead of polling
-            this.startMonitoring()
+            await this.readBrightness()
+            if (!this.destroyed) this.startMonitoring()
         } catch (error) {
-            console.error("BrightnessService init error:", error)
-            this.available = false
+            if (!this.destroyed) console.error("BrightnessService init error:", error)
         }
     }
 
     private startMonitoring() {
         try {
-            // Find the backlight device path
             const backlightDir = Gio.File.new_for_path("/sys/class/backlight")
-            const enumerator = backlightDir.enumerate_children("standard::name", Gio.FileQueryInfoFlags.NONE, null)
+            const enumerator = backlightDir.enumerate_children(
+                "standard::name",
+                Gio.FileQueryInfoFlags.NONE,
+                null,
+            )
             let info
             let brightnessPath = ""
             while ((info = enumerator.next_file(null)) !== null) {
                 brightnessPath = `/sys/class/backlight/${info.get_name()}/brightness`
-                break // use first device
+                break
             }
             enumerator.close(null)
 
             if (!brightnessPath) {
-                // Fallback to polling at 1s if no sysfs path found
-                this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
-                    this.readBrightness()
-                    return true
-                })
+                this.startPolling()
                 return
             }
 
             const file = Gio.File.new_for_path(brightnessPath)
             this.monitor = file.monitor_file(Gio.FileMonitorFlags.NONE, null)
             this.monitor.connect("changed", () => {
-                // Debounce to avoid flooding during slider drags
                 if (this.debounceTimer) GLib.source_remove(this.debounceTimer)
                 this.debounceTimer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 50, () => {
-                    try {
-                        this.readBrightness()
-                    } finally {
-                        this.debounceTimer = null
-                    }
-                    return false
+                    void this.readBrightness()
+                    this.debounceTimer = null
+                    return GLib.SOURCE_REMOVE
                 })
             })
-        } catch (e) {
-            console.error("FileMonitor failed, falling back to polling:", e)
-            this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
-                this.readBrightness()
-                return true
-            })
+        } catch (error) {
+            console.error("FileMonitor failed, falling back to polling:", error)
+            this.startPolling()
         }
     }
 
-    private readBrightness() {
-        const current = Number(exec("brightnessctl get"))
-        if (!isNaN(current)) {
-            const newVal = current / this._max
-            if (Math.abs(newVal - this.screen) > 0.01) {
-                this.screen = newVal
-                this.notify("screen")
-            }
+    private startPolling() {
+        if (this.timerId) GLib.source_remove(this.timerId)
+        this.timerId = GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+            void this.readBrightness()
+            return GLib.SOURCE_CONTINUE
+        })
+    }
+
+    private async readBrightness() {
+        if (this.destroyed || !this.available || !this._max || this.readInFlight) return
+        this.readInFlight = true
+        try {
+            const output = await exec(["brightnessctl", "get"])
+            if (this.destroyed || !output) return
+
+            const current = Number(output)
+            if (!Number.isFinite(current)) return
+
+            const newValue = Math.max(0, Math.min(1, current / this._max))
+            if (Math.abs(newValue - this.screen) > 0.01) this.screen = newValue
+        } catch (error) {
+            // Keep the last known value on transient brightnessctl failures.
+        } finally {
+            this.readInFlight = false
         }
     }
 
     destroy() {
+        this.destroyed = true
         if (this.monitor) { this.monitor.cancel(); this.monitor = null }
         if (this.timerId) { GLib.source_remove(this.timerId); this.timerId = null }
         if (this.debounceTimer) { GLib.source_remove(this.debounceTimer); this.debounceTimer = null }
@@ -128,12 +136,10 @@ class BrightnessService extends GObject.Object {
     set screen_value(percent: number) {
         if (!this.available) return
 
-        if (percent < 0) percent = 0
-        if (percent > 1) percent = 1
-
-        execAsync(`brightnessctl set ${Math.round(percent * 100)}% -q`)
-        this.screen = percent
-        this.notify("screen")
+        const value = Math.max(0, Math.min(1, percent))
+        void exec(["brightnessctl", "set", `${Math.round(value * 100)}%`, "-q"])
+            .catch(() => this.readBrightness())
+        this.screen = value
     }
 
     get screen_value() {

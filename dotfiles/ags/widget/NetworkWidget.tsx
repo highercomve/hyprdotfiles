@@ -3,12 +3,12 @@ import GObject, { register, property } from "ags/gobject"
 import { Gtk } from "ags/gtk4"
 import Network from "gi://AstalNetwork"
 import NM from "gi://NM"
-import GLib from "gi://GLib"
+import Gio from "gi://Gio"
 
 // Helper to run commands
-function runCmd(cmd: string) {
+function runCmd(argv: string[]) {
 	try {
-		GLib.spawn_command_line_async(cmd)
+		Gio.Subprocess.new(argv, Gio.SubprocessFlags.NONE)
 	} catch (e) {
 		console.error(e)
 	}
@@ -232,11 +232,15 @@ function SavedNetworkItem({ connection }: { connection: NM.RemoteConnection }) {
 
 export default function NetworkWidget() {
 	const net = Network.get_default()
+	if (!net) return <label label="Network service unavailable" />
+
 	const wifi = net?.wifi
 	const wired = net?.wired
+	const client = net.client
+	if (!client) return <label label="Network client unavailable" />
 
 	// Wired Icon: Derive from state directly to ensure visibility
-	const wiredIcon = createBinding(wired, "state").as((s) => {
+	const wiredIcon = wired ? createBinding(wired, "state").as((s) => {
 		switch (s) {
 			case NM.DeviceState.ACTIVATED:
 				return "network-wired-symbolic"
@@ -250,7 +254,7 @@ export default function NetworkWidget() {
 			default:
 				return "network-wired-symbolic"
 		}
-	})
+	}) : "network-wired-symbolic"
 	// Wired usually doesn't have an "enabled" prop like wifi.
 	// We can infer state from internet/state.
 
@@ -283,10 +287,12 @@ export default function NetworkWidget() {
 						onActivate={({ active }) => {
 							const dev = wired.device
 							if (!dev) return
-							const cmd = active
-								? `nmcli device connect ${dev.interface}`
-								: `nmcli device disconnect ${dev.interface}`
-							runCmd(cmd)
+							runCmd([
+								"nmcli",
+								"device",
+								active ? "connect" : "disconnect",
+								dev.interface,
+							])
 						}}
 					/>
 				</box>
@@ -310,7 +316,9 @@ export default function NetworkWidget() {
 						{/* Scan Button */}
 						<button 
 							tooltipText="Scan Networks" 
-							onClicked={() => wifi.scan()}
+							onClicked={() => {
+								try { wifi.scan() } catch (e) { console.error(e) }
+							}}
 							sensitive={createBinding(wifi, "scanning").as(s => !s)}
 						>
 							<Gtk.Image iconName={createBinding(wifi, "scanning").as(s => s ? "process-working-symbolic" : "system-search-symbolic")} />
@@ -335,7 +343,7 @@ export default function NetworkWidget() {
 						<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
 							<For each={sortedAPs!}>
 								{(ap: Network.AccessPoint) => (
-									<APItem ap={ap} wifi={wifi} client={net.client} />
+									<APItem ap={ap} wifi={wifi} client={client} />
 								)}
 							</For>
 						</box>
@@ -372,10 +380,7 @@ export default function NetworkWidget() {
 				>
 					<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
 						<For
-							each={createBinding(
-								net?.client!,
-								"connections",
-							).as((connections) =>
+							each={createBinding(client, "connections").as((connections) =>
 								connections
 									.filter((c) => c.get_connection_type() === "802-11-wireless")
 									.sort((a, b) => (a.get_id() || "").localeCompare(b.get_id() || ""))

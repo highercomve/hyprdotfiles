@@ -10,6 +10,65 @@ class AudioWidgetState extends GObject.Object {
 	@property(Boolean) showMic = false
 }
 
+function AudioEndpoint({
+	device,
+	label,
+	state,
+	expandedProperty,
+}: {
+	device: any
+	label: string
+	state: AudioWidgetState
+	expandedProperty: "showSpeaker" | "showMic"
+}) {
+	const volume = createBinding(device, "volume")
+	const icon = createBinding(device, "volumeIcon")
+	const description = createBinding(device, "description")
+	const expanded = createBinding(state, expandedProperty)
+
+	return (
+		<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
+			<box spacing={8}>
+				<button onClicked={() => (device.mute = !device.mute)}>
+					<Gtk.Image iconName={icon} />
+				</button>
+				<slider
+					hexpand
+					value={volume}
+					onChangeValue={(_, __, value) => {
+						device.volume = value
+					}}
+				/>
+				<button
+					onClicked={() => (state[expandedProperty] = !state[expandedProperty])}
+					css="padding: 0 8px;"
+				>
+					<box spacing={4}>
+						<label
+							label={description.as((d) => d || label)}
+							ellipsize={Pango.EllipsizeMode.END}
+							maxWidthChars={15}
+						/>
+						<Gtk.Image
+							iconName={expanded.as((open) =>
+								open ? "pan-down-symbolic" : "pan-end-symbolic",
+							)}
+						/>
+					</box>
+				</button>
+			</box>
+			<Gtk.Revealer
+				revealChild={expanded}
+				transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
+			>
+				<box css="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+					<DeviceList type={label === "Mic" ? "Microphone" : "Audio"} />
+				</box>
+			</Gtk.Revealer>
+		</box>
+	)
+}
+
 export function DeviceList({
 	type,
 }: {
@@ -65,19 +124,7 @@ export default function AudioWidget() {
 	const speaker = wp.audio.defaultSpeaker
 	const mic = wp.audio.defaultMicrophone
 
-	// Speaker bindings
-	const speakerVolume = createBinding(speaker, "volume")
-	const speakerIcon = createBinding(speaker, "volumeIcon")
-	const speakerDesc = createBinding(speaker, "description")
-
-	// Mic bindings
-	const micVolume = createBinding(mic, "volume")
-	const micIcon = createBinding(mic, "volumeIcon")
-	const micDesc = createBinding(mic, "description")
-
 	const state = new AudioWidgetState()
-	const showSpeaker = createBinding(state, "showSpeaker")
-	const showMic = createBinding(state, "showMic")
 
 	return (
 		<box
@@ -95,91 +142,23 @@ export default function AudioWidget() {
 				xalign={0}
 			/>
 
-			{/* Speaker */}
-			<box orientation={Gtk.Orientation.VERTICAL} spacing={4}>
-				<box spacing={8}>
-					<button onClicked={() => (speaker.mute = !speaker.mute)}>
-						<Gtk.Image iconName={speakerIcon} />
-					</button>
-					<slider
-						hexpand
-						value={speakerVolume}
-						onChangeValue={(_, __, value) => {
-							speaker.volume = value
-						}}
-					/>
-					<button
-						onClicked={() => (state.showSpeaker = !state.showSpeaker)}
-						css="padding: 0 8px;"
-					>
-						<box spacing={4}>
-							<label
-								label={speakerDesc.as((d) => d || "Speaker")}
-								ellipsize={Pango.EllipsizeMode.END}
-								maxWidthChars={15}
-							/>
-							<Gtk.Image
-								iconName={showSpeaker.as((s) =>
-									s ? "pan-down-symbolic" : "pan-end-symbolic",
-								)}
-							/>
-						</box>
-					</button>
-				</box>
-				<Gtk.Revealer
-					revealChild={showSpeaker}
-					transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
-				>
-					<box css="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
-						<DeviceList type="Audio" />
-					</box>
-				</Gtk.Revealer>
-			</box>
+			{speaker ? (
+				<AudioEndpoint
+					device={speaker}
+					label="Speaker"
+					state={state}
+					expandedProperty="showSpeaker"
+				/>
+			) : <label label="No output device" />}
 
-			{/* Mic */}
-			<box
-				orientation={Gtk.Orientation.VERTICAL}
-				spacing={4}
-				css="margin-top: 8px;"
-			>
-				<box spacing={8}>
-					<button onClicked={() => (mic.mute = !mic.mute)}>
-						<Gtk.Image iconName={micIcon} />
-					</button>
-					<slider
-						hexpand
-						value={micVolume}
-						onChangeValue={(_, __, value) => {
-							mic.volume = value
-						}}
-					/>
-					<button
-						onClicked={() => (state.showMic = !state.showMic)}
-						css="padding: 0 8px;"
-					>
-						<box spacing={4}>
-							<label
-								label={micDesc.as((d) => d || "Mic")}
-								ellipsize={Pango.EllipsizeMode.END}
-								maxWidthChars={15}
-							/>
-							<Gtk.Image
-								iconName={showMic.as((s) =>
-									s ? "pan-down-symbolic" : "pan-end-symbolic",
-								)}
-							/>
-						</box>
-					</button>
-				</box>
-				<Gtk.Revealer
-					revealChild={showMic}
-					transitionType={Gtk.RevealerTransitionType.SLIDE_DOWN}
-				>
-					<box css="padding: 8px 0; border-top: 1px solid rgba(255,255,255,0.05);">
-						<DeviceList type="Microphone" />
-					</box>
-				</Gtk.Revealer>
-			</box>
+			{mic ? (
+				<AudioEndpoint
+					device={mic}
+					label="Mic"
+					state={state}
+					expandedProperty="showMic"
+				/>
+			) : <label label="No input device" />}
 		</box>
 	)
 }

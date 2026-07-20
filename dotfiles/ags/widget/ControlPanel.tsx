@@ -168,6 +168,13 @@ function MainPage() {
 		<box orientation={Gtk.Orientation.VERTICAL} spacing={8}>
 			<ConnectivityToggles />
 			<BrightnessSlider />
+			<button onClicked={() => (nav.page = "audio")} css="padding: 6px;">
+				<box spacing={8} halign={Gtk.Align.CENTER}>
+					<Gtk.Image iconName="audio-card-symbolic" />
+					<label label="Manage Audio Devices" />
+					<Gtk.Image iconName="go-next-symbolic" />
+				</box>
+			</button>
 			<AudioWidget />
 			<NotificationSection />
 		</box>
@@ -242,6 +249,7 @@ export default function ControlPanel() {
 						self.add_named(<MainPage />, "main")
 						self.add_named(<NetworkPage />, "network")
 						self.add_named(<BluetoothPage />, "bluetooth")
+						self.add_named(<AudioPage />, "audio")
 
 						// Standard GObject connection
 						const id = nav.connect("notify::page", () => {

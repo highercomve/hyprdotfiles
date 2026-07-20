@@ -73,7 +73,6 @@ const filterActiveMprisPlayer = (ps: Mpris.Player[]) => {
 export function MediaBar() {
 	const mpris = Mpris.get_default()
 	const players = createBinding(mpris, "players")
-    const isYouTubePlaying = createBinding(YouTubeService, "isPlaying")
 
 	return (
 		<Gtk.Box class="media-bar">
@@ -94,7 +93,7 @@ export function MediaBar() {
                             <Gtk.Button onClicked={() => YouTubeService.pause()} class="media-bar-control" css="background: transparent; border: none;">
                                 <Gtk.Image iconName="media-playback-pause-symbolic" />
                             </Gtk.Button>
-                            <Gtk.Button onClicked={() => {}} class="media-bar-control" css="background: transparent; border: none;">
+                            <Gtk.Button onClicked={() => YouTubeService.next()} class="media-bar-control" css="background: transparent; border: none;">
                                 <Gtk.Image iconName="media-skip-forward-symbolic" />
                             </Gtk.Button>
                         </Gtk.Box>
@@ -193,6 +192,8 @@ function YouTubePlayerWidget() {
             </Gtk.Box>
             <Gtk.Box orientation={Gtk.Orientation.VERTICAL} spacing={4} hexpand>
                 <Gtk.Scale hexpand adjustment={adjustment} onChangeValue={(self, _, value) => YouTubeService.set_position(value)} $={(self) => {
+                    self.adjustment.value = YouTubeService.position
+                    self.adjustment.upper = YouTubeService.duration || 100
                     const id = YouTubeService.connect("notify::position", () => self.adjustment.value = YouTubeService.position)
                     const id2 = YouTubeService.connect("notify::duration", () => self.adjustment.upper = YouTubeService.duration || 100)
                     self.connect("destroy", () => { YouTubeService.disconnect(id); YouTubeService.disconnect(id2) })
@@ -204,11 +205,11 @@ function YouTubePlayerWidget() {
                 </Gtk.Box>
             </Gtk.Box>
             <Gtk.Box class="controls" spacing={32} halign={Gtk.Align.CENTER}>
-                <Gtk.Button class="control-button"><Gtk.Image iconName="media-skip-backward-symbolic" pixelSize={24} /></Gtk.Button>
+                <Gtk.Button onClicked={() => YouTubeService.previous()} class="control-button"><Gtk.Image iconName="media-skip-backward-symbolic" pixelSize={24} /></Gtk.Button>
                 <Gtk.Button onClicked={() => YouTubeService.isPlaying ? YouTubeService.pause() : YouTubeService.resume()} class="play-button">
                     <Gtk.Image iconName={isPlaying.as(p => p ? "media-playback-pause-symbolic" : "media-playback-start-symbolic")} pixelSize={32} />
                 </Gtk.Button>
-                <Gtk.Button class="control-button"><Gtk.Image iconName="media-skip-forward-symbolic" pixelSize={24} /></Gtk.Button>
+                <Gtk.Button onClicked={() => YouTubeService.next()} class="control-button"><Gtk.Image iconName="media-skip-forward-symbolic" pixelSize={24} /></Gtk.Button>
             </Gtk.Box>
         </Gtk.Box>
     )

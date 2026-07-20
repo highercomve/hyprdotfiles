@@ -86,7 +86,7 @@ class YouTubeService extends GObject.Object {
     @property(Object) userPlaylists = []
     @property(String) libraryError = ""
 
-    private bridgeDir = GLib.get_home_dir() + "/Code/hyprconfig/dotfiles/ags"
+    private bridgeDir = GLib.get_user_config_dir() + "/ags"
     private bridgePath = this.bridgeDir + "/ytm_bridge.py"
     private pythonPath = this.bridgeDir + "/.venv/bin/python"
     private ytdlpPath = this.bridgeDir + "/.venv/bin/yt-dlp"
@@ -95,6 +95,11 @@ class YouTubeService extends GObject.Object {
     private dbus: any = null
     private busOwnerId: number = 0
     private busSignalId: number = 0
+    private searchRequestId = 0
+    private radioRequestId = 0
+    private playRequestId = 0
+    private queue: Array<{ videoId: string, title?: string, artist?: string, cover?: string }> = []
+    private queueIndex = -1
 
     constructor() {
         super()
@@ -118,6 +123,7 @@ class YouTubeService extends GObject.Object {
         try {
             if (prop === "PlaybackStatus") this.dbus.emit_property_changed("PlaybackStatus", new GLib.Variant("s", this.PlaybackStatus))
             else if (prop === "Metadata") this.dbus.emit_property_changed("Metadata", new GLib.Variant("a{sv}", this.Metadata))
+            else if (prop === "Volume") this.dbus.emit_property_changed("Volume", new GLib.Variant("d", this.Volume))
         } catch (e) {}
     }
 
@@ -143,15 +149,18 @@ class YouTubeService extends GObject.Object {
     get SupportedMimeTypes() { return ["audio/mpeg"] }
     set SupportedMimeTypes(_) {}
 
-    Next() {}
-    Previous() {}
+    Next() { this.next() }
+    Previous() { this.previous() }
     Pause() { this.pause() }
     PlayPause() { this.isPlaying ? this.pause() : this.resume() }
     Stop() { this.stop() }
     Play() { this.resume() }
     Seek(offset: number) { this.set_position(this.position + (offset / 1000000)) }
     SetPosition(id: string, pos: number) { this.set_position(pos / 1000000) }
-    OpenUri(uri: string) {}
+    OpenUri(uri: string) {
+        const match = uri.match(/[?&]v=([^&]+)/) || uri.match(/youtu\.be\/([^?]+)/)
+        if (match?.[1]) this.play(match[1])
+    }
 
     get PlaybackStatus() { return this.isPlaying ? "Playing" : "Paused" }
     set PlaybackStatus(_) {}
@@ -167,8 +176,20 @@ class YouTubeService extends GObject.Object {
     }
     set Metadata(_) {}
 
-    get Volume() { return 1.0 }
-    set Volume(_) {}
+    get Volume() {
+        try {
+            return this.playbin?.get_property("volume") ?? 1.0
+        } catch (e) {
+            return 1.0
+        }
+    }
+    set Volume(value: number) {
+        if (!this.playbin) return
+        try {
+            this.playbin.set_property("volume", Math.max(0, Math.min(1, value)))
+            this.notifyMpris("Volume")
+        } catch (e) {}
+    }
 
     get Position() { return Math.floor(this.position * 1000000) }
     set Position(_) {}
@@ -188,10 +209,10 @@ class YouTubeService extends GObject.Object {
     get MaximumRate() { return 1.0 }
     set MaximumRate(_) {}
 
-    get CanGoNext() { return false }
+    get CanGoNext() { return this.queueIndex >= 0 && this.queueIndex < this.queue.length - 1 }
     set CanGoNext(_) {}
 
-    get CanGoPrevious() { return false }
+    get CanGoPrevious() { return this.queueIndex > 0 }
     set CanGoPrevious(_) {}
 
     get CanPlay() { return true }
@@ -220,7 +241,10 @@ class YouTubeService extends GObject.Object {
                 }
                 if (ok_dur) {
                     const newDur = dur / Gst.SECOND
-                    if (newDur !== this.duration) this.duration = newDur
+                    if (newDur !== this.duration) {
+                        this.duration = newDur
+                        this.notifyMpris("Metadata")
+                    }
                 }
             }
             return true
@@ -281,19 +305,45 @@ class YouTubeService extends GObject.Object {
     }
 
     async search(query: string, filter: string | null = null) {
-        if (!query) { this.searchResults = []; return }
+        const requestId = ++this.searchRequestId
+        if (!query.trim()) {
+            this.searchResults = []
+            this.isSearching = false
+            return
+        }
         this.isSearching = true
-        const result = await this.callBridge("search", { query, filter })
-        this.searchResults = result.data || []
-        this.isSearching = false
+        try {
+            const result = await this.callBridge("search", { query, filter })
+            if (requestId !== this.searchRequestId) return
+            this.searchResults = result.data || []
+        } finally {
+            if (requestId === this.searchRequestId) this.isSearching = false
+        }
     }
 
     async startRadio(videoId: string) {
+        const requestId = ++this.radioRequestId
         const res = await this.callBridge("radio", videoId)
+        if (requestId !== this.radioRequestId) return
         if (res.data?.length > 0) {
-            const first = res.data[0]
-            this.play(first.videoId, first.title, first.artists?.[0]?.name)
+            this.queue = res.data
+                .filter((track: any) => track.videoId)
+                .map((track: any) => ({
+                    videoId: track.videoId,
+                    title: track.title,
+                    artist: track.artists?.[0]?.name,
+                    cover: track.thumbnails?.length
+                        ? track.thumbnails[track.thumbnails.length - 1]?.url
+                        : undefined,
+                }))
+            this.queueIndex = 0
+            void this.playCurrent()
         }
+    }
+
+    private async playCurrent() {
+        const track = this.queue[this.queueIndex]
+        if (track) await this.play(track.videoId, track.title, track.artist, track.cover, false)
     }
 
     async extractAudioUrl(videoId: string): Promise<string> {
@@ -304,14 +354,21 @@ class YouTubeService extends GObject.Object {
         } catch (e) { return "" }
     }
 
-    async play(videoId: string, title?: string, artist?: string, cover?: string) {
+    async play(videoId: string, title?: string, artist?: string, cover?: string, resetQueue = true) {
         if (!this.playbin) return
+        if (resetQueue) {
+            this.radioRequestId += 1
+            this.queue = [{ videoId, title, artist, cover }]
+            this.queueIndex = 0
+        }
+        const requestId = ++this.playRequestId
         this.currentTitle = title || "Loading..."
         this.currentArtist = artist || ""
         this.currentCover = cover || ""
         this.notifyMpris("Metadata")
-        this.stop()
+        this.stop(false)
         const audioUrl = await this.extractAudioUrl(videoId)
+        if (requestId !== this.playRequestId || !this.playbin) return
         if (!audioUrl) {
             this.currentTitle = "Error loading stream"
             this.notifyMpris("Metadata")
@@ -325,7 +382,24 @@ class YouTubeService extends GObject.Object {
         this.notifyMpris("PlaybackStatus")
     }
 
+    next() {
+        if (this.queueIndex < 0 || this.queueIndex >= this.queue.length - 1) return
+        this.queueIndex += 1
+        void this.playCurrent()
+    }
+
+    previous() {
+        if (this.position > 5) {
+            this.set_position(0)
+            return
+        }
+        if (this.queueIndex <= 0) return
+        this.queueIndex -= 1
+        void this.playCurrent()
+    }
+
     pause() {
+        this.playRequestId += 1
         if (!this.playbin) return
         this.playbin.set_state(Gst.State.PAUSED)
         this.isPlaying = false
@@ -339,7 +413,8 @@ class YouTubeService extends GObject.Object {
         this.notifyMpris("PlaybackStatus")
     }
 
-    stop() {
+    stop(invalidatePending = true) {
+        if (invalidatePending) this.playRequestId += 1
         if (!this.playbin) return
         this.playbin.set_state(Gst.State.NULL)
         this.isPlaying = false
@@ -347,6 +422,9 @@ class YouTubeService extends GObject.Object {
     }
 
     destroy() {
+        this.searchRequestId += 1
+        this.radioRequestId += 1
+        this.playRequestId += 1
         if (this.syncTimer) {
             GLib.source_remove(this.syncTimer);
             this.syncTimer = null;
