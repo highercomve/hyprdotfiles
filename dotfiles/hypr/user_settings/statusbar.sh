@@ -1,1 +1,1 @@
-ags
+quickshell

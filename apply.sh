@@ -26,6 +26,11 @@ echo "Checking for existing files..."
 
 # Get directories from dotfiles folder and backup existing ones
 while IFS= read -r dir; do
+    # quickshell is a multi-config dir (may hold other shells); it is not stowed,
+    # our config is linked into it as a named config below instead
+    if [ "$dir" = "quickshell" ]; then
+        continue
+    fi
     if [ -d "$HOME/.config/$dir" ]; then
         echo "Backing up $dir..."
         mv "$HOME/.config/$dir" "$HOME/.config/$dir.bak"
@@ -49,5 +54,11 @@ stow -v -D -t "$HOME/.config" -d "$(dirname "$DOTFILES_DIR")" "$(basename "$DOTF
 # Stow the entire dotfiles directory at once
 echo "Stowing new dotfiles..."
 stow -v -R -t "$HOME/.config" -d "$(dirname "$DOTFILES_DIR")" "$(basename "$DOTFILES_DIR")"
+
+# Link the quickshell config as a named config (~/.config/quickshell may hold
+# other quickshell configs, so the directory itself is never symlinked/stowed)
+mkdir -p "$HOME/.config/quickshell"
+ln -sfn "$DOTFILES_DIR/quickshell" "$HOME/.config/quickshell/hyprconfig"
+echo "Linked quickshell config to ~/.config/quickshell/hyprconfig"
 
 echo "Dotfile application complete."

@@ -1,0 +1,7 @@
+singleton Panels 1.0 Panels.qml
+singleton Network 1.0 Network.qml
+singleton Brightness 1.0 Brightness.qml
+singleton SystemStats 1.0 SystemStats.qml
+singleton Tools 1.0 Tools.qml
+singleton NotificationStore 1.0 NotificationStore.qml
+singleton Ytm 1.0 Ytm.qml

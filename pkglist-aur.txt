@@ -18,6 +18,7 @@ keybase-bin-debug
 nautilus-admin-gtk4
 nautilus-sendto
 nautilus-sendto-debug
+noctalia-qs
 reiserfsprogs
 thelounge
 thelounge-debug

@@ -1,0 +1,7 @@
+# quickshell is deployed as a named config (~/.config/quickshell/hyprconfig)
+# by apply.sh, never stowed — ~/.config/quickshell holds other configs too.
+^/quickshell
+# This file's existence overrides stow's default ignore list; re-add the basics.
+\.git
+\.gitignore
+^/\.stow-local-ignore

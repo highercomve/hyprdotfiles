@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+oauth.json
+browser.json
+credentials.json
+bridge.log
