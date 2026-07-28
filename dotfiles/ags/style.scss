@@ -676,6 +676,83 @@ switch {
 	}
 }
 
+// World Clock (inside center popup, below the calendar)
+.world-clock {
+	padding: 4px 10px;
+
+	.wc-title {
+		color: $sapphire;
+		font-weight: bold;
+	}
+
+	.wc-add {
+		background: transparent;
+		border: none;
+		border-radius: 8px;
+		padding: 2px 6px;
+		color: $sapphire;
+
+		&:hover {
+			background-color: $surface1;
+		}
+	}
+
+	entry {
+		background-color: rgba(255, 255, 255, 0.05);
+		color: $text;
+		border: none;
+		border-radius: 8px;
+		padding: 6px 10px;
+	}
+
+	.wc-suggestion {
+		background: transparent;
+		border: none;
+		border-radius: 6px;
+		padding: 4px 10px;
+		color: $subtext1;
+
+		&:hover {
+			background-color: $surface1;
+		}
+	}
+
+	.wc-row {
+		padding: 2px 4px;
+		border-radius: 6px;
+
+		&:hover {
+			background-color: $surface0;
+		}
+	}
+
+	.wc-city {
+		color: $text;
+	}
+
+	.wc-meta {
+		color: $subtext0;
+		font-size: 0.85em;
+	}
+
+	.wc-time {
+		color: $blue;
+		font-weight: bold;
+	}
+
+	.wc-remove {
+		background: transparent;
+		border: none;
+		border-radius: 4px;
+		padding: 2px 4px;
+		color: $surface2;
+
+		&:hover {
+			color: $red;
+		}
+	}
+}
+
 .group-center {
 	@extend .module-group;
 	padding: 0 12px;

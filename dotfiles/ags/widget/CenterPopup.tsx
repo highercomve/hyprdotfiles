@@ -2,7 +2,7 @@ import { Astal, Gtk } from "ags/gtk4"
 import App from "ags/gtk4/app"
 import PopupWindow from "./PopupWindow"
 import Media from "./Media"
-import YouTubeSearch from "./YouTubeSearch"
+import WorldClock from "./WorldClock"
 
 export default function CenterPopup() {
 	return (
@@ -30,7 +30,8 @@ export default function CenterPopup() {
                     spacing={12}
                 >
 					<Gtk.Calendar />
-                    <YouTubeSearch />
+                    {/* YouTube search hidden for now per user request */}
+                    <WorldClock />
 				</box>
 
 				<box css="min-width: 1px; background-color: rgba(255,255,255,0.1); margin: 10px 0;" />

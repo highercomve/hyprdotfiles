@@ -13,6 +13,7 @@ import { cleanup as cleanupSystemMonitor } from "./widget/SystemMonitor"
 import { cleanup as cleanupTools } from "./widget/ToolsWidget"
 import { cleanup as cleanupOSD } from "./widget/OSD"
 import { cleanupNotificationPopups } from "./widget/NotificationPopups"
+import { cleanup as cleanupWorldClock } from "./widget/WorldClockService"
 
 app.start({
 	css: style,
@@ -31,6 +32,7 @@ app.start({
 			cleanupTools()
 			cleanupOSD()
 			cleanupNotificationPopups()
+			cleanupWorldClock()
 		})
 	},
 })
