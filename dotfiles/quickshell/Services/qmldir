@@ -5,3 +5,4 @@ singleton SystemStats 1.0 SystemStats.qml
 singleton Tools 1.0 Tools.qml
 singleton NotificationStore 1.0 NotificationStore.qml
 singleton Ytm 1.0 Ytm.qml
+singleton WorldClocks 1.0 WorldClocks.qml

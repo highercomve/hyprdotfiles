@@ -46,6 +46,17 @@ PanelPopup {
                         Layout.fillHeight: true
                     }
 
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 1
+                        color: "#1affffff"
+                    }
+
+                    WorldClockView {
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: implicitHeight
+                    }
+
                     // Hidden for now per user request; set visible: true to restore
                     YouTubeSearch {
                         visible: false
