@@ -23,6 +23,11 @@ Singleton {
                 return
             }
 
+            // The server destroys the object when the sender closes the
+            // notification (or it expires) — drop our reference then, or the
+            // list renders dangling entries as blank cards.
+            n.closed.connect(() => root.removeNotification(n))
+
             root.notifications.push(n)
             root.notifications = root.notifications.slice()
 
@@ -52,23 +57,36 @@ Singleton {
         closeTimer.start(id)
     }
 
-    function dismissNotification(n) {
-        n.dismiss()
+    function removeNotification(n) {
         const idx = root.notifications.indexOf(n)
         if (idx >= 0) {
             const list = root.notifications.slice()
             list.splice(idx, 1)
             root.notifications = list
         }
+        const popup = root.popups.find(p => p.n === n)
+        if (popup) root.removePopup(popup.id)
+    }
+
+    function dismissNotification(n) {
+        // dismiss() fires closed → removeNotification; the fallback covers
+        // objects the server already destroyed, where dismiss() throws.
+        try {
+            n.dismiss()
+        } catch (e) {
+            root.removeNotification(n)
+        }
     }
 
     function clearAll() {
         const list = root.notifications.slice()
-        list.forEach(n => n.dismiss())
         root.notifications = []
         root.popups = []
         popupTimers.clearAll()
         closeTimer.clearAll()
+        list.forEach(n => {
+            try { n.dismiss() } catch (e) {}
+        })
     }
 
     function resolveIcon(n) {

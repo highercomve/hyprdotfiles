@@ -1,0 +1,24 @@
+[Unit]
+Description=Sunshine isolated game streaming session (headless Hyprland on seat1)
+After=network-online.target systemd-user-sessions.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sergiom
+# PAMName=login + XDG_SEAT=seat1 makes pam_systemd register a logind session on
+# seat1 (no VT — non-seat0 seats have none, so the session is active instantly
+# and never competes with the local seat0 session). The compositor needs this
+# session for libseat/libinput to enumerate seat1 input devices.
+PAMName=login
+Environment=XDG_SEAT=seat1
+Environment=XDG_SESSION_TYPE=wayland
+Environment=XDG_SESSION_CLASS=user
+Environment=XDG_SESSION_DESKTOP=Hyprland
+UnsetEnvironment=DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE
+ExecStart=/home/sergiom/.config/hypr/sunshine-seat1/session.sh
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=graphical.target

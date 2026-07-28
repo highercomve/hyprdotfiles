@@ -57,8 +57,10 @@ ColumnLayout {
     Item { Layout.fillHeight: true }
 
     function matchesType(node) {
-        if (isInput) return node.type & PwNodeType.AudioSource
-        return node.type & PwNodeType.AudioSink
+        // PwNodeType values are bitflags sharing the Audio bit, so a plain
+        // `type & AudioSink` also matches audio sources (e.g. headset mics).
+        if (node.isStream || !(node.type & PwNodeType.Audio)) return false
+        return isInput ? !node.isSink : node.isSink
     }
 
     function isDefault(node) {

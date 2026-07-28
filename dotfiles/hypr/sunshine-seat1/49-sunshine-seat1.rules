@@ -1,0 +1,20 @@
+// Allow sergiom to start/stop/restart the sunshine-seat1 unit without a
+// password, so the desktop launcher / statusbar toggle works seamlessly.
+// Installed to /etc/polkit-1/rules.d/ by install.sh.
+polkit.addRule(function(action, subject) {
+    if ((action.id == "org.freedesktop.systemd1.manage-units" ||
+         action.id == "org.freedesktop.systemd1.manage-unit-files") &&
+        action.lookup("unit") == "sunshine-seat1.service" &&
+        subject.user == "sergiom") {
+        return polkit.Result.YES;
+    }
+});
+
+// Allow session activation (loginctl activate) so session.sh can claim the
+// active slot on seat1 ahead of GDM's greeter.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.login1.chvt" &&
+        subject.user == "sergiom") {
+        return polkit.Result.YES;
+    }
+});

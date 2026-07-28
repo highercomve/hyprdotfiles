@@ -22,6 +22,7 @@ Rectangle {
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 44
+            Layout.bottomMargin: 8
             color: "transparent"
 
             RowLayout {
@@ -136,50 +137,6 @@ Rectangle {
                             }
                         }
                     }
-                }
-            }
-        }
-
-        Rectangle {
-            Layout.fillWidth: true
-            Layout.preferredHeight: 40
-            color: Theme.mantle
-            radius: 12
-
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: Panels.switchControlPanelPage("audio")
-            }
-
-            RowLayout {
-                anchors {
-                    fill: parent
-                    margins: 12
-                }
-                spacing: 8
-
-                Text {
-                    text: ""
-                    color: Theme.text
-                    font.family: "Font Awesome 7 Free Solid"
-                    font.pixelSize: 16
-                }
-
-                Text {
-                    text: "Manage Audio Devices"
-                    color: Theme.text
-                    font.family: Theme.fontFamily
-                    font.pixelSize: 15
-                }
-
-                Item { Layout.fillWidth: true }
-
-                Text {
-                    text: ""
-                    color: Theme.subtext0
-                    font.family: "Font Awesome 7 Free Solid"
-                    font.pixelSize: 14
                 }
             }
         }

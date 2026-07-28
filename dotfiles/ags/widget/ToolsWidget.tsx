@@ -14,7 +14,6 @@ class ToolsState extends GObject.Object {
 	@property(String) idle = "" // "active" | "inactive"
 	@property(String) sunset = ""
 	@property(String) record = ""
-	@property(String) monitorSuspend = "" // "active" | "notactive"
 
 	private timerId: number | null = null
 
@@ -29,7 +28,6 @@ class ToolsState extends GObject.Object {
 			this.checkStatus(`${SCRIPTS_DIR}/hypridle.sh status`, "idle")
 			this.checkStatus(`${SCRIPTS_DIR}/hyprsunset.sh status`, "sunset")
 			this.checkStatus(`${SCRIPTS_DIR}/record.sh status`, "record")
-			this.checkStatus(`${SCRIPTS_DIR}/monitor-suspend.sh status`, "monitorSuspend")
 			return true // repeat
 		})
 	}
@@ -219,28 +217,6 @@ export default function ToolsRow() {
 						}}
 					>
 						<Gtk.Image iconName="media-record-symbolic" />
-					</button>
-
-					<button
-						class={createBinding(toolsState, "monitorSuspend").as(
-							(s) => `tool-button monitor-suspend ${s === "active" ? "active" : ""}`,
-						)}
-						tooltipText="Suspend on Monitor Off"
-						onClicked={() => {
-							GLib.spawn_command_line_async(
-								`${SCRIPTS_DIR}/monitor-suspend.sh toggle`,
-							)
-							setTimeout(
-								() =>
-									toolsState.checkStatus(
-										`${SCRIPTS_DIR}/monitor-suspend.sh status`,
-										"monitorSuspend",
-									),
-								200,
-							)
-						}}
-					>
-						<Gtk.Image iconName="display-symbolic" />
 					</button>
 
 					<PowerProfileButton />

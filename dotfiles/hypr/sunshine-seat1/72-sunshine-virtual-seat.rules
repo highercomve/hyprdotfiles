@@ -1,0 +1,16 @@
+# Multiseat rules for the isolated Sunshine streaming session (seat1).
+# Installed to /etc/udev/rules.d/ by install.sh.
+
+# 1. Input isolation (official rule from Sunshine docs, requires Sunshine >= v2026.516):
+# Sunshine names its virtual input devices "... (seat1)" when XDG_SEAT=seat1.
+# This moves those devices to seat1 so only the headless seat1 compositor
+# receives remote input — the local seat0 session never sees it.
+SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="*(seat1)*", TAG+="seat", ENV{ID_SEAT}="seat1"
+
+# 2. GPU for the headless session:
+# The AMD Raphael iGPU (pci 0000:11:00.0) has no connected outputs — the
+# monitor is on the RTX 4070 (0000:01:00.0). Assign the iGPU's DRM device to
+# seat1 so the headless Hyprland gets a KMS device + GBM allocator of its own.
+# (Render nodes are not seat-gated, so the seat1 session can still use the
+# 4070 for game rendering via PRIME offload.)
+TAG=="seat", ENV{ID_PATH}=="pci-0000:11:00.0", ENV{ID_SEAT}="seat1"

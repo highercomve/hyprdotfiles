@@ -65,14 +65,6 @@ Rectangle {
                 }
 
                 ToolButton {
-                    icon: ""
-                    fontFamily: "Font Awesome 7 Free Solid"
-                    active: Tools.monitorSuspend === "active"
-                    activeColor: Theme.green
-                    onClicked: Tools.toggle("~/.config/hypr/scripts/monitor-suspend.sh")
-                }
-
-                ToolButton {
                     icon: ""
                     fontFamily: "Font Awesome 7 Free Solid"
                     activeColor: Theme.yellow

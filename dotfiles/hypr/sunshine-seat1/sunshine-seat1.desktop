@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Sunshine Seat1 (Remote Stream)
+Comment=Toggle the isolated remote game streaming session
+Exec=/home/sergiom/.config/hypr/sunshine-seat1/toggle.sh toggle
+Icon=sunshine
+Terminal=false
+Categories=Game;Network;

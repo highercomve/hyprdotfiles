@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# NetworkManager dispatcher: prefer ethernet over WiFi.
+# While the wired connection is up, WiFi is switched off (so the machine has a
+# single LAN IP and Moonlight/mDNS can't pick the WiFi address); when the
+# cable goes down, WiFi comes back automatically.
+#
+# Installed to /etc/NetworkManager/dispatcher.d/ (root:root, 755).
+
+IFACE="$1"
+ACTION="$2"
+
+WIRED_IFACE="enp12s0"
+
+[ "$IFACE" = "$WIRED_IFACE" ] || exit 0
+
+case "$ACTION" in
+up)
+    logger -t wired-preferred "ethernet up, disabling wifi"
+    nmcli radio wifi off
+    ;;
+down)
+    logger -t wired-preferred "ethernet down, enabling wifi"
+    nmcli radio wifi on
+    ;;
+esac

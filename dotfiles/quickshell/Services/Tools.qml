@@ -10,7 +10,6 @@ Singleton {
     property string idle: ""
     property string sunset: ""
     property string record: ""
-    property string monitorSuspend: ""
     property string powerProfile: ""
 
     Timer {
@@ -46,12 +45,6 @@ Singleton {
     }
 
     Process {
-        id: monitorProc
-        command: ["bash", "-c", "~/.config/hypr/scripts/monitor-suspend.sh status"]
-        stdout: StdioCollector { onStreamFinished: root._applyStatus(text, "monitorSuspend") }
-    }
-
-    Process {
         id: toggleProc
         command: []
         onExited: delayedPoll.start()
@@ -78,7 +71,6 @@ Singleton {
         idleProc.running = true
         sunsetProc.running = true
         recordProc.running = true
-        monitorProc.running = true
         powerGetProc.running = true
     }
 
