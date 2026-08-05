@@ -5,3 +5,4 @@ dotfiles/gtk-4.0/servers
 waybar-music/waybar-music
 examples
 .config
+dotfiles/hypr/user_settings/ttyusb-aliases.conf
