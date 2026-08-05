@@ -50,7 +50,12 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: Hyprland.dispatch("focuswindow address:" + modelData.address)
+                    onClicked: {
+                        // Hyprland's Lua dispatch requires the 0x prefix; Quickshell reports
+                        // the address bare, so normalize before building the argument.
+                        const addr = String(modelData.address).replace(/^0x/, "")
+                        Hyprland.dispatch("hl.dsp.focus({ window = \"address:0x" + addr + "\" })")
+                    }
                 }
             }
         }
