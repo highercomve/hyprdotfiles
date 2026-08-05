@@ -46,11 +46,14 @@ single per-user service that binds to whatever
 
 Left alone it broke both directions:
 
-- At boot the unit starts ~14s before the GDM login finishes, so the first
-  portal request (Chrome) activated xdph against seat1. When this session
-  exited 13s later, xdph spent the rest of the uptime polling a hung-up
-  wayland socket — two threads at ~150% CPU — and the local desktop's portal
-  was dead too (screen sharing fell back to a cross-GPU shm copy path).
+- Back when the unit was enabled at boot it started ~14s before the GDM login
+  finished, so the first portal request (Chrome) activated xdph against seat1.
+  When this session exited 13s later, xdph spent the rest of the uptime polling
+  a hung-up wayland socket — two threads at ~150% CPU — and the local desktop's
+  portal was dead too (screen sharing fell back to a cross-GPU shm copy path).
+  It now starts after login (see *Lifecycle*), which removes the race, but the
+  shims stay: the seat1 compositor would still clobber the shared environment
+  every time it starts or stops.
 - Toggling the session off mid-session ran `unset-environment` and wiped
   seat0's `WAYLAND_DISPLAY`/signature, breaking later dbus activations.
 
@@ -78,13 +81,42 @@ Then pair Moonlight: web UI at `https://<host>:48990`, add host `<host>:48989`.
 This instance is fully separate from any Sunshine you run manually in the main
 session (different ports, state in `~/.config/sunshine-seat1/`).
 
+## Lifecycle: login, not boot
+
+The unit has **no `[Install]` section and must never be enabled**. Started at
+boot it opens a logind session for the user before anyone logs in, and GDM's
+greeter then answers the login with *"there is already a session running"*,
+offering to switch to that session instead. (The `unspecified` session type
+keeps GDM from *killing* this session; the greeter still counts it when
+deciding whether the user is already logged in.)
+
+Instead the desktop starts it after login, from `conf/autostart.lua`:
+
+```lua
+hl.exec_cmd("~/.config/hypr/sunshine-seat1/toggle.sh autostart")
+```
+
+`toggle.sh autostart` runs `systemctl start` — passwordless via the polkit
+rule — and no-ops when the unit isn't installed, when the session is already
+up, or when parked with `touch ~/.config/hypr/user_settings/sunshine-seat1-disabled`.
+So the stream session exists only while the desktop session does, and the
+greeter never sees it.
+
+Running the compositor *without* its own logind session (straight from the
+desktop's Hyprland, no unit) does not work: `pam_systemd` is what puts a
+session on seat1, and without one aquamarine gets no seat, no GPU and no
+libinput — Hyprland aborts with `CBackend::create() failed!`. The virtual
+input devices Sunshine creates are udev-tagged to seat1 too, so they would be
+invisible to a seat0 compositor.
+
 ## Operate
 
 ```bash
 systemctl status  sunshine-seat1    # health
 journalctl -u sunshine-seat1 -f     # logs (compositor + sunshine)
+~/.config/hypr/sunshine-seat1/toggle.sh   # start/stop from the desktop
 systemctl stop    sunshine-seat1    # kill the remote session
-systemctl disable sunshine-seat1    # don't start at boot
+touch ~/.config/hypr/user_settings/sunshine-seat1-disabled  # skip it at login
 ```
 
 ## Verify isolation
@@ -96,6 +128,12 @@ systemctl disable sunshine-seat1    # don't start at boot
 
 ## Troubleshooting
 
+- **GDM says "there is already a session running" at login**: the unit is
+  enabled and started at boot, so the user already has a seat1 session when
+  the greeter runs. `sudo systemctl disable sunshine-seat1` — the desktop
+  starts it after login instead (see *Lifecycle*). Check with
+  `systemctl is-enabled sunshine-seat1` → `static`/`disabled`, and
+  `loginctl list-sessions` at the greeter → no session for your user.
 - **Black screen on stream** (`Couldn't initialize va display: unknown libva
   error` in `~/.config/sunshine-seat1/sunshine.log`, then nvenc fallback with
   per-frame `GL: ... 00000502` errors): the AppImage's bundled libva is older
@@ -161,8 +199,8 @@ sudo ~/.config/hypr/sunshine-seat1/uninstall.sh
 
 Reverts everything install.sh set up (service, udev seat rules, polkit rule,
 desktop launcher, and the wired-preferred NM dispatcher if installed), plus the
-seat0 half of the activation-environment fix: it deletes
-`hypr/scripts/portal-rebind.sh` and strips its `exec-once` from
+seat0 half of the setup: it deletes `hypr/scripts/portal-rebind.sh` and strips
+both that `exec-once` and the `toggle.sh autostart` one from
 `conf/autostart.{lua,conf}`. The `bin/` shims need no reverting — they only
 apply to `session.sh`, so they go away with this folder. The AMD iGPU returns
 to seat0; user state in `~/.config/sunshine-seat1/` and the Sunshine binary are

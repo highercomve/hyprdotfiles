@@ -19,6 +19,20 @@ status)
 start)
     systemctl start "$UNIT" && notify-send "Sunshine seat1" "Remote stream session started (port 48989)"
     ;;
+autostart)
+    # Called from conf/autostart.lua at login. The unit is deliberately not
+    # enabled at boot — a logind session that already exists when the greeter
+    # runs makes GDM answer the login with "there is already a session
+    # running" (see sunshine-seat1.service). Starting it from the desktop
+    # session instead keeps the greeter unaware of it.
+    #
+    # Silent no-op when the unit isn't installed (install.sh never run) or
+    # when parked with user_settings/sunshine-seat1-disabled.
+    [ -f /etc/systemd/system/"$UNIT" ] || exit 0
+    [ -f "$HOME/.config/hypr/user_settings/sunshine-seat1-disabled" ] && exit 0
+    is_active && exit 0
+    exec "$0" start
+    ;;
 stop)
     systemctl stop "$UNIT" && notify-send "Sunshine seat1" "Remote stream session stopped"
     ;;

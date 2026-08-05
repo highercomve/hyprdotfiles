@@ -34,5 +34,15 @@ ExecStart=/home/sergiom/.config/hypr/sunshine-seat1/session.sh
 Restart=on-failure
 RestartSec=5
 
-[Install]
-WantedBy=graphical.target
+# No [Install] section on purpose: this unit must NOT be enabled at boot.
+#
+# Started at boot, it opens a logind session for the user before anyone has
+# logged in, and GDM's greeter then refuses the login with "there is already a
+# session running" (it offers to switch to the existing one instead). The
+# session type dodge below keeps GDM from *killing* this session, but the
+# greeter still counts it when deciding whether the user is already logged in.
+#
+# Instead conf/autostart.lua starts it from the seat0 Hyprland session, right
+# after login (toggle.sh autostart -> systemctl start, passwordless via the
+# polkit rule). Same session, same isolation, but it only exists while the
+# desktop does — so the greeter never sees it.

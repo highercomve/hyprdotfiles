@@ -19,6 +19,13 @@ hl.on("hyprland.start", function()
     -- socket. No-op in the normal case.
     hl.exec_cmd("~/.config/hypr/scripts/portal-rebind.sh")
 
+    -- Isolated seat1 streaming session (Sunshine). Started here rather than
+    -- enabled at boot: a logind session that is already open when the GDM
+    -- greeter runs makes it answer the login with "there is already a session
+    -- running". No-op if the unit isn't installed or the session is parked
+    -- via user_settings/sunshine-seat1-disabled.
+    hl.exec_cmd("~/.config/hypr/sunshine-seat1/toggle.sh autostart")
+
     -- Start listeners
     hl.exec_cmd("~/.config/hypr/scripts/listeners.sh --startall")
 

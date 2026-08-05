@@ -45,15 +45,16 @@ rm -f /home/sergiom/.local/share/applications/sunshine-seat1.desktop
 # xdg-desktop-portal-hyprland; with seat1 gone there is nothing left to race.
 # Harmless if left behind — it no-ops when no foreign instance owns the portal
 # — but it belongs to this feature, so take it with us.
-echo "==> Removing the seat0 portal-rebind safety net"
+echo "==> Removing the seat0 portal-rebind safety net and the session autostart"
 for f in "$HYPR_DIR/conf/autostart.lua" "$HYPR_DIR/conf/autostart.conf"; do
-    [ -f "$f" ] && grep -q 'portal-rebind\.sh' "$f" || continue
+    [ -f "$f" ] && grep -qE 'portal-rebind\.sh|sunshine-seat1/toggle\.sh' "$f" || continue
     # We run as root; put the config file back the way we found it.
     owner="$(stat -c '%u:%g' "$f")"
     perl -0777 -pi -e \
-        's/^[ \t]*(?:--|#) Safety net for the two-compositor setup.*?portal-rebind\.sh.*?\n[ \t]*\n//ms' "$f"
+        's/^[ \t]*(?:--|#) Safety net for the two-compositor setup.*?portal-rebind\.sh.*?\n[ \t]*\n//ms;
+         s/^[ \t]*(?:--|#) Isolated seat1 streaming session.*?toggle\.sh autostart.*?\n[ \t]*\n//ms' "$f"
     chown "$owner" "$f"
-    echo "    stripped the exec-once from ${f#"$HYPR_DIR"/}"
+    echo "    stripped the exec-once lines from ${f#"$HYPR_DIR"/}"
 done
 rm -f "$HYPR_DIR/scripts/portal-rebind.sh"
 

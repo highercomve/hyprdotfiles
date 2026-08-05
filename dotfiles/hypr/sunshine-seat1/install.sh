@@ -34,7 +34,12 @@ install -m 644 -o sergiom -g sergiom "$DIR/sunshine-seat1.desktop" \
 echo "==> Installing systemd unit"
 install -m 644 "$DIR/sunshine-seat1.service" /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now sunshine-seat1.service
+# Deliberately NOT enabled: a session already open at boot makes the GDM
+# greeter answer the login with "there is already a session running". The
+# desktop's conf/autostart.lua starts it after login instead (toggle.sh
+# autostart). Start it once here so this install is usable right away.
+systemctl disable sunshine-seat1.service 2>/dev/null || true
+systemctl start sunshine-seat1.service
 
 echo "==> Waiting for the session to come up..."
 sleep 5
