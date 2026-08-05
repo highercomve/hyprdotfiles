@@ -15,7 +15,7 @@
       "prep-cmd": [
         {
           "do": "",
-          "undo": "steam -shutdown"
+          "undo": "timeout 20 env -u LD_PRELOAD steam -shutdown"
         }
       ],
       "image-path": "steam.png"
