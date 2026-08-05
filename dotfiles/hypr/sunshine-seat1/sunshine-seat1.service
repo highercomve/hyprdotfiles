@@ -12,7 +12,21 @@ User=sergiom
 # session for libseat/libinput to enumerate seat1 input devices.
 PAMName=login
 Environment=XDG_SEAT=seat1
-Environment=XDG_SESSION_TYPE=wayland
+# Session type MUST NOT be wayland/x11: on every GDM login,
+# on_stop_conflicting_session() (gdm-manager.c) terminates ALL of the user's
+# other active *graphical* logind sessions — that's what killed this
+# compositor and produced the greeter's "there is already an open session"
+# nag. GDM's filter (_systemd_session_is_graphical, gdm-common.c) only looks
+# at the session TYPE (wayland/x11/mir), not the class, so registering as
+# "unspecified" makes GDM ignore this session entirely. logind device access
+# (libseat TakeControl) does not depend on the type — but it DOES depend on
+# the class: logind (systemd 261) rejects TakeDevice for background-class
+# sessions ("Session class doesn't support taking device control"), which
+# leaves aquamarine with no GPU and Hyprland aborts at startup. The class must
+# stay "user". init.sh exports XDG_SESSION_TYPE=wayland for the app tree;
+# session.sh must NOT, or libseat's SetType(getenv(XDG_SESSION_TYPE)) would
+# retype the logind session to wayland and re-expose it to GDM's killer.
+Environment=XDG_SESSION_TYPE=unspecified
 Environment=XDG_SESSION_CLASS=user
 Environment=XDG_SESSION_DESKTOP=Hyprland
 UnsetEnvironment=DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE

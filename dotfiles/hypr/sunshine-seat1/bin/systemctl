@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+# systemctl shim — active ONLY inside the seat1 streaming session (session.sh
+# prepends this bin/ to PATH before exec'ing the headless compositor).
+#
+# Why this exists
+# ---------------
+# Hyprland unconditionally shells out, at startup:
+#
+#   systemctl --user import-environment DISPLAY WAYLAND_DISPLAY \
+#       HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP QT_QPA_PLATFORMTHEME \
+#       PATH XDG_DATA_DIRS
+#
+# and the mirror `unset-environment` on shutdown. There is one systemd --user
+# manager per USER, not per seat, so the headless seat1 compositor writes its
+# own signature into the activation environment that the seat0 desktop owns.
+# Two concrete breakages this caused:
+#
+#   * At boot, sunshine-seat1.service starts ~14s before the GDM login
+#     finishes. The first app to ask for a portal (Chrome, via
+#     org.freedesktop.portal.Desktop) therefore had
+#     xdg-desktop-portal-hyprland dbus-activated against *seat1's* signature.
+#     xdph holds that wayland connection for its whole life, so when the seat1
+#     compositor exited 13s later it was left polling a hung-up socket — two
+#     threads spinning at ~150% CPU, forever, on a portal that could not serve
+#     the local desktop either.
+#
+#   * Toggling this session off mid-session ran `unset-environment` and wiped
+#     seat0's WAYLAND_DISPLAY / HYPRLAND_INSTANCE_SIGNATURE from the shared
+#     env, breaking dbus activations for the local desktop afterwards.
+#
+# The seat1 session needs none of it: Sunshine captures through
+# wlr-screencopy (`capture = wlr` in sunshine.conf), so no xdg portal is ever
+# involved, and nothing here is dbus-activated on demand. Swallowing both
+# subcommands keeps the shared environment exclusively seat0's.
+#
+# Everything else is passed straight through to the real systemctl.
+#
+# Hyprland runs the import as a shell chain that ends in
+# `dbus-update-activation-environment --systemd ...`, which forwards the same
+# variables to the systemd --user manager on its own — so this shim only works
+# together with its companion, bin/dbus-update-activation-environment.
+#
+# The seat0 side has an independent safety net (scripts/portal-rebind.sh, run
+# from conf/autostart.lua) that rebinds xdph if it ever does come up attached
+# to a foreign instance.
+
+is_user=0
+verb=""
+for arg in "$@"; do
+    case "$arg" in
+        --user) is_user=1 ;;
+        -*)     ;;
+        *)      [ -z "$verb" ] && verb="$arg" ;;
+    esac
+done
+
+if [ "$is_user" = 1 ] && { [ "$verb" = "import-environment" ] || [ "$verb" = "unset-environment" ]; }; then
+    logger -t sunshine-seat1 "systemctl shim: swallowed '$*' (would clobber seat0's activation env)"
+    exit 0
+fi
+
+exec /usr/bin/systemctl "$@"

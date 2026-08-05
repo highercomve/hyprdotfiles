@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# Companion to bin/systemctl — active ONLY inside the seat1 streaming session
+# (session.sh prepends this bin/ to PATH before exec'ing the headless
+# compositor). Read bin/systemctl first; it explains why the seat1 session must
+# not touch the shared activation environment.
+#
+# Swallowing `systemctl --user import-environment` alone is not enough:
+# Hyprland runs the two as one shell chain,
+#
+#   systemctl --user import-environment DISPLAY WAYLAND_DISPLAY ... \
+#     && hash dbus-update-activation-environment 2>/dev/null \
+#     && dbus-update-activation-environment --systemd WAYLAND_DISPLAY \
+#          XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE ...
+#
+# and `--systemd` makes dbus-update-activation-environment forward the same
+# variables to the systemd --user manager itself. So the second half of the
+# chain re-poisons the environment even when the first half is a no-op.
+#
+# Nothing in the seat1 tree is dbus-activated on demand (Sunshine captures via
+# wlr-screencopy and launches its apps directly), so every invocation from
+# this session is swallowed.
+
+logger -t sunshine-seat1 "dbus-update-activation-environment shim: swallowed '$*' (would clobber seat0's activation env)"
+exit 0
