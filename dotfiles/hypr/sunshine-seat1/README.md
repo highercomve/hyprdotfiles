@@ -29,6 +29,44 @@ seat0 (local, untouched)              seat1 (remote stream)
   client's resolution/FPS on connect.
 - Games render on the RTX 4070 via its render node (render nodes are not
   seat-gated); the iGPU handles compositing + VAAPI encoding (zero-copy).
+- `bin/systemctl` + `bin/dbus-update-activation-environment`: PATH shims
+  (prepended in `session.sh`) that keep this session out of the **shared**
+  activation environment — see below.
+
+### Activation-environment isolation
+
+`systemd --user` and the dbus activation environment are per-**user**, not
+per-seat, but Hyprland unconditionally publishes its own session into them at
+startup (`systemctl --user import-environment DISPLAY WAYLAND_DISPLAY
+HYPRLAND_INSTANCE_SIGNATURE ... && dbus-update-activation-environment
+--systemd ...`) and clears them again on exit. With two compositors that is a
+race the seat1 session must lose, because `xdg-desktop-portal-hyprland` is a
+single per-user service that binds to whatever
+`HYPRLAND_INSTANCE_SIGNATURE` it was activated with and **never re-attaches**.
+
+Left alone it broke both directions:
+
+- At boot the unit starts ~14s before the GDM login finishes, so the first
+  portal request (Chrome) activated xdph against seat1. When this session
+  exited 13s later, xdph spent the rest of the uptime polling a hung-up
+  wayland socket — two threads at ~150% CPU — and the local desktop's portal
+  was dead too (screen sharing fell back to a cross-GPU shm copy path).
+- Toggling the session off mid-session ran `unset-environment` and wiped
+  seat0's `WAYLAND_DISPLAY`/signature, breaking later dbus activations.
+
+The shims swallow exactly those calls; both are needed, because Hyprland runs
+them as one `&&` chain and `dbus-update-activation-environment --systemd`
+forwards to the systemd manager on its own. This session needs neither: it is
+captured through wlr-screencopy (`capture = wlr`) and never uses a portal.
+
+On the seat0 side, `hypr/scripts/portal-rebind.sh` (run from
+`conf/autostart.lua`) is the safety net: at login it restarts xdph if it finds
+it bound to a foreign or dead instance.
+
+Verify: with the stream session running,
+`systemctl --user show-environment | grep HYPRLAND` must still show the seat0
+signature, and `journalctl -t sunshine-seat1 | grep shim` shows the swallowed
+calls.
 
 ## Install
 
@@ -58,6 +96,30 @@ systemctl disable sunshine-seat1    # don't start at boot
 
 ## Troubleshooting
 
+- **Black screen on stream** (`Couldn't initialize va display: unknown libva
+  error` in `~/.config/sunshine-seat1/sunshine.log`, then nvenc fallback with
+  per-frame `GL: ... 00000502` errors): the AppImage's bundled libva is older
+  than 2.24 and can't bind Mesa's driver (`__vaDriverInit_1_24` only), so
+  vaapi dies and the cross-GPU nvenc fallback captures black. init.sh
+  preloads the host libva (`LD_PRELOAD=/usr/lib/libva.so.2:...libva-drm.so.2`).
+  Verify: `grep 'Found H.264 encoder' ~/.config/sunshine-seat1/sunshine.log`
+  → `h264_vaapi [vaapi]`. (AV1 is absent: the Raphael iGPU has no AV1
+  encoder — use HEVC/H.264 on the client.)
+- **Steam dies with "requires user namespaces" / `bwrap: Unexpected
+  capabilities but not setuid`, and quitting the stream hangs on `steam
+  -shutdown`**: systemd ≥ 261's pam_systemd gives login sessions an ambient
+  CAP_WAKE_ALARM; bwrap refuses to run with unexpected caps. session.sh drops
+  all ambient caps via `setpriv --ambient-caps=-all` before starting the
+  compositor (the pam_systemd `default-capability-ambient-set=` option can't
+  express an empty set). Verify: `grep CapAmb
+  /proc/$(systemctl show -p MainPID --value sunshine-seat1)/status` → zeros.
+  Note: the MAIN session gets the same ambient cap on its next relogin —
+  Steam/Proton/Flatpak launched there may break the same way (upstream
+  systemd 261 change, not specific to this setup).
+- **vaapi fails in seat0 shells** (`vainfo`, ffmpeg): the main Hyprland
+  config exports `env = LIBVA_DRIVER_NAME,nvidia`
+  (`hypr/conf/environment.conf`) but no libva-nvidia-driver is installed —
+  the var only breaks probing. Remove it or install libva-nvidia-driver.
 - **Service crashes with "CBackend::create() failed! / no allocator"**: the
   iGPU didn't land on seat1. Check `loginctl seat-status seat1` lists the DRM
   device; re-run `sudo udevadm trigger -s drm`.
@@ -94,9 +156,14 @@ sudo install -m 755 ~/.config/hypr/sunshine-seat1/99-wired-preferred \
 ## Uninstall
 
 ```bash
-sudo systemctl disable --now sunshine-seat1
-sudo rm /etc/systemd/system/sunshine-seat1.service \
-        /etc/udev/rules.d/72-sunshine-virtual-seat.rules
-sudo systemctl daemon-reload
-sudo udevadm control --reload-rules && sudo udevadm trigger
+sudo ~/.config/hypr/sunshine-seat1/uninstall.sh
 ```
+
+Reverts everything install.sh set up (service, udev seat rules, polkit rule,
+desktop launcher, and the wired-preferred NM dispatcher if installed), plus the
+seat0 half of the activation-environment fix: it deletes
+`hypr/scripts/portal-rebind.sh` and strips its `exec-once` from
+`conf/autostart.{lua,conf}`. The `bin/` shims need no reverting — they only
+apply to `session.sh`, so they go away with this folder. The AMD iGPU returns
+to seat0; user state in `~/.config/sunshine-seat1/` and the Sunshine binary are
+kept.
