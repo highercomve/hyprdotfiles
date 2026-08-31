@@ -22,30 +22,37 @@ Singleton {
         stdout: StdioCollector { onStreamFinished: root.handleHwmon(text) }
     }
 
+    // procfs/sysfs files emit no inotify events, so watchChanges never fires
+    // on them; poll with reload() and parse in onLoaded instead.
     FileView {
         id: cpuFile
         path: "/proc/stat"
-        watchChanges: false
+        onLoaded: root.updateCpu()
     }
 
     FileView {
         id: memFile
         path: "/proc/meminfo"
-        watchChanges: false
+        onLoaded: root.updateMemory()
     }
 
     FileView {
         id: tempFile
         path: root._hwmonPath
-        watchChanges: true
-        onTextChanged: root.updateTemp()
+        onLoaded: root.updateTemp()
     }
 
     Timer {
         interval: 2000
         running: true
         repeat: true
-        onTriggered: root.update()
+        triggeredOnStart: true
+        onTriggered: {
+            cpuFile.reload()
+            memFile.reload()
+            if (root._hwmonPath)
+                tempFile.reload()
+        }
     }
 
     Component.onCompleted: hwmonProc.running = true
@@ -89,13 +96,6 @@ Singleton {
 
         root._hwmonPath = chosenPath
         root._hwmonReady = true
-        root.updateTemp()
-    }
-
-    function update() {
-        updateCpu()
-        updateMemory()
-        updateTemp()
     }
 
     function updateCpu() {
