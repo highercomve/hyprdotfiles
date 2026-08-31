@@ -52,6 +52,18 @@ swaync_theme=$(jq -r ".themes.\"$selected\".swaync" "$CONFIG_FILE")
 rofi_theme=$(jq -r ".themes.\"$selected\".rofi" "$CONFIG_FILE")
 wlogout_theme=$(jq -r ".themes.\"$selected\".wlogout" "$CONFIG_FILE")
 waypaper_theme=$(jq -r ".themes.\"$selected\".waypaper" "$CONFIG_FILE")
+palette_name=$(jq -r ".themes.\"$selected\".palette // empty" "$CONFIG_FILE")
+
+# Apply the color palette to Hyprland, Quickshell, and AGS before any bar
+# restarts, so whichever bar relaunches below picks up the new colors.
+# (apply-palette.sh runs hyprctl reload, rebuilds the AGS bundle, and
+# quickshell picks the palette up live via a file watch.)
+PALETTE_FILE="$HOME/.config/themes/palettes/$palette_name.json"
+if [ -n "$palette_name" ] && [ -f "$PALETTE_FILE" ]; then
+    "$HOME/.config/themes/apply-palette.sh" "$PALETTE_FILE"
+else
+    echo "Warning: no palette for theme $selected ($PALETTE_FILE)"
+fi
 
 # Update Waybar
 # Assuming ~/.config/waybar is where the dotfiles/waybar is linked or copied

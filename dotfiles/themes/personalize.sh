@@ -151,12 +151,21 @@ waybar = { input_path = "$MATUGEN_TEMPLATES/colors-waybar.css", output_path = "$
 swaync = { input_path = "$MATUGEN_TEMPLATES/colors-swaync.css", output_path = "$HOME/.config/swaync/themes/personalize/colors.css" }
 wlogout = { input_path = "$MATUGEN_TEMPLATES/colors-wlogout.css", output_path = "$HOME/.config/wlogout/themes/personalize/colors.css" }
 rofi = { input_path = "$MATUGEN_TEMPLATES/colors-rofi.rasi", output_path = "$HOME/.config/rofi/themes/personalize_colors.rasi" }
+palette = { input_path = "$MATUGEN_TEMPLATES/palette.json", output_path = "$HOME/.config/themes/palettes/personalize.json" }
 EOF
 
 # 4. Run Matugen
 # Now run matugen with the temporary config
+mkdir -p "$HOME/.config/themes/palettes"
 matugen image "$WALLPAPER" --config "$MATUGEN_CONFIG_TMP"
 rm "$MATUGEN_CONFIG_TMP"
+
+# 4b. Apply the generated palette to Hyprland, Quickshell, and AGS.
+# (themeswitcher.sh also applies it when "Personalize" is selected; doing it
+# here too keeps direct personalize.sh runs consistent.)
+if [ -f "$HOME/.config/themes/palettes/personalize.json" ]; then
+    "$HOME/.config/themes/apply-palette.sh" "$HOME/.config/themes/palettes/personalize.json"
+fi
 
 # 5. Update config.json if needed
 # We need to check if "Personalize" entry exists.

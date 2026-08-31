@@ -6,3 +6,4 @@ waybar-music/waybar-music
 examples
 .config
 dotfiles/hypr/user_settings/ttyusb-aliases.conf
+dotfiles/themes/palettes/personalize.json

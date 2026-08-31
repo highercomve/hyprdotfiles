@@ -5,49 +5,56 @@
       "swaync": "default",
       "rofi": "highercomve-black.rasi",
       "wlogout": "default",
-      "waypaper": "default"
+      "waypaper": "default",
+      "palette": "default"
     },
     "ChromeOS": {
       "waybar": "chromeos",
       "swaync": "chromeos",
       "rofi": "highercomve-chromeos.rasi",
       "wlogout": "chromeos",
-      "waypaper": "chromeos"
+      "waypaper": "chromeos",
+      "palette": "chromeos"
     },
     "Light": {
       "waybar": "light",
       "swaync": "light",
       "rofi": "highercomve-black.rasi",
       "wlogout": "light",
-      "waypaper": "light"
+      "waypaper": "light",
+      "palette": "light"
     },
     "Modern": {
       "waybar": "modern",
       "swaync": "modern",
       "rofi": "highercomve-modern.rasi",
       "wlogout": "modern",
-      "waypaper": "modern"
+      "waypaper": "modern",
+      "palette": "modern"
     },
     "Future": {
       "waybar": "future",
       "swaync": "future",
       "rofi": "highercomve-future.rasi",
       "wlogout": "future",
-      "waypaper": "future"
+      "waypaper": "future",
+      "palette": "future"
     },
     "Zen": {
       "waybar": "zen",
       "swaync": "zen",
       "rofi": "highercomve-zen.rasi",
       "wlogout": "zen",
-      "waypaper": "zen"
+      "waypaper": "zen",
+      "palette": "zen"
     },
     "Personalize": {
       "waybar": "personalize",
       "swaync": "personalize",
       "rofi": "personalize.rasi",
       "wlogout": "personalize",
-      "waypaper": "personalize"
+      "waypaper": "personalize",
+      "palette": "personalize"
     }
   }
 }
