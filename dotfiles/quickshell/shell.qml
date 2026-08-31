@@ -25,4 +25,5 @@ ShellRoot {
 
     ControlPanel {}
     CenterPopup {}
+    AiUsagePopup {}
 }

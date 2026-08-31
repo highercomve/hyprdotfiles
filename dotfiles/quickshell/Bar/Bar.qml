@@ -87,6 +87,7 @@ PanelWindow {
             }
             spacing: 4
 
+            AiUsageWidget {}
             SystemMonitor {}
             ToolsRow {}
 

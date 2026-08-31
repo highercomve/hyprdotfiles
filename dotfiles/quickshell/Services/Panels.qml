@@ -4,6 +4,7 @@ import Quickshell
 Singleton {
     property bool controlPanelOpen: false
     property bool centerPopupOpen: false
+    property bool aiUsageOpen: false
     property string controlPanelPage: "main"
 
     function toggleControlPanel() {
@@ -22,6 +23,14 @@ Singleton {
 
     function switchControlPanelPage(page) {
         controlPanelPage = page
+    }
+
+    function toggleAiUsage() {
+        aiUsageOpen = !aiUsageOpen
+    }
+
+    function closeAiUsage() {
+        aiUsageOpen = false
     }
 
     function toggleCenterPopup() {

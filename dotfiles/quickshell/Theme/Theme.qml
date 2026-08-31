@@ -87,4 +87,5 @@ Singleton {
     readonly property color wsActiveBg:  mauve
     readonly property color wsActiveFg:  base
     readonly property color ytmColor:    lavender
+    readonly property color aiColor:     teal
 }
