@@ -15,9 +15,9 @@ PanelWindow {
     anchors.top: true
     anchors.right: true
     WlrLayershell.layer: WlrLayer.Overlay
-    WlrLayershell.exclusionMode: ExclusionMode.Ignore
-    WlrLayershell.margins.top: 12
-    WlrLayershell.margins.right: 12
+    WlrLayershell.exclusionMode: ExclusionMode.Normal
+    WlrLayershell.margins.top: 4
+    WlrLayershell.margins.right: 0
     width: 400
     height: popupColumn.implicitHeight + 24
     visible: NotificationStore.popups.length > 0
@@ -27,6 +27,7 @@ PanelWindow {
         id: popupColumn
         anchors {
             top: parent.top
+            left: parent.left
             right: parent.right
             margins: 12
         }

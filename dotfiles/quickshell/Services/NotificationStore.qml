@@ -44,7 +44,8 @@ Singleton {
         const popup = { n: n, id: n.id, closing: false, createdAt: Date.now() }
         list.unshift(popup)
         root.popups = list
-        popupTimers.start(n.id)
+        // Critical notifications (e.g. crash-watch) stay until acted on/dismissed.
+        if (n.urgency !== NotificationUrgency.Critical) popupTimers.start(n.id)
     }
 
     function removePopup(id) {

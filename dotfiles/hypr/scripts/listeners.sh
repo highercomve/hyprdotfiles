@@ -8,6 +8,7 @@
 # LISTENERS["short-name"]="full/path/to/script.sh"
 declare -A LISTENERS
 LISTENERS["gtk-theme-switcher"]="$HOME/.config/hypr/scripts/listeners/gtk-theme-switcher.sh"
+LISTENERS["crash-watch"]="$HOME/.config/hypr/scripts/listeners/crash-watch.sh"
 
 # Listeners registered here (so they can be toggled manually) but skipped by
 # --startall, e.g.: NO_AUTOSTART["some-listener"]=1
