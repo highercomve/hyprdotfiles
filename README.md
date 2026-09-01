@@ -160,6 +160,7 @@ A utility for managing `ttyUSB` serial devices, which is bound to `Super + Shift
 - Actions available:
     - **Copy path**: Copies the device path (e.g., `/dev/ttyUSB0`) to the clipboard.
     - **Open console**: Opens a new terminal with a `picocom` serial console connected to the selected device.
+    - **Set custom name / Set baud**: Per-device name and console baud rate (e.g. `921600` for the Orange Pi i96), stored in `~/.config/hypr/user_settings/ttyusb-aliases.conf`.
 
 ## Theming
 

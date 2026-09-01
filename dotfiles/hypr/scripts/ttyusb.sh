@@ -37,9 +37,10 @@ menu() { # menu <prompt> [extra rofi args...]; entries on stdin
 # ---------------------------------------------------------------- aliases ---
 
 declare -A ALIASES=()
+declare -A BAUDS=() # per-device console baud, empty = picocom default (115200)
 
 load_aliases() {
-  ALIASES=()
+  ALIASES=() BAUDS=()
   [ -f "$ALIAS_FILE" ] || return 0
   local line key name
   while IFS= read -r line || [ -n "$line" ]; do
@@ -47,7 +48,11 @@ load_aliases() {
     case "$line" in '' | '#'*) continue ;; esac
     key="${line%%=*}"
     name="${line#*=}"
-    [ -n "$key" ] && [ "$key" != "$line" ] && ALIASES["$key"]="$name"
+    [ -n "$key" ] && [ "$key" != "$line" ] || continue
+    case "$key" in
+    baud:*) BAUDS["${key#baud:}"]="$name" ;;
+    *) ALIASES["$key"]="$name" ;;
+    esac
   done <"$ALIAS_FILE"
 }
 
@@ -55,24 +60,35 @@ ensure_alias_file() {
   [ -f "$ALIAS_FILE" ] && return 0
   mkdir -p "$(dirname "$ALIAS_FILE")"
   cat >"$ALIAS_FILE" <<'EOF'
-# Custom names for USB serial devices, used by hypr/scripts/ttyusb.sh.
+# Custom names and baud rates for USB serial devices, used by hypr/scripts/ttyusb.sh.
 # One entry per line: <device-key>=<custom name>
+# Optional console baud, one per line: baud:<device-key>=<baud rate>
+# (e.g. 921600 for the Orange Pi i96; without it the console opens at 115200).
 # The key is the USB serial number, or "path:<usb-port-path>" for devices that
 # do not expose one. It is stable across reboots; /dev/ttyUSBX is not.
 EOF
 }
 
-save_alias() { # save_alias <key> <name>; empty name deletes the entry
-  local key="$1" name="$2" tmp
+save_line() { # save_line <prefixed key> <value>; empty value deletes the entry
+  local key="$1" value="$2" tmp
   ensure_alias_file
   tmp=$(mktemp)
   # drop any existing entry for this key, then append the new one.
   # index()==1 is an exact prefix match: keys contain '.' and ':', so a regex
   # would match too much.
   awk -v k="$key=" 'index($0, k) != 1' "$ALIAS_FILE" >"$tmp"
-  [ -n "$name" ] && printf '%s=%s\n' "$key" "$name" >>"$tmp"
+  [ -n "$value" ] && printf '%s=%s\n' "$key" "$value" >>"$tmp"
   mv "$tmp" "$ALIAS_FILE"
   load_aliases
+}
+
+save_alias() { save_line "$1" "$2"; }
+
+save_baud() { save_line "baud:$1" "$2"; }
+
+delete_key() { # delete_key <key>: remove name and baud
+  save_line "$1" ""
+  save_line "baud:$1" ""
 }
 
 prompt_name() { # prompt_name <key> -> prints the entered name
@@ -95,6 +111,31 @@ rename_key() { # rename_key <key>
   fi
   save_alias "$key" "$name"
   notify "ttyUSB name saved" "$key → $name"
+}
+
+set_baud_key() { # set_baud_key <key>; empty input clears the baud
+  local key="$1" baud
+  baud=$(printf '%s' "" | menu "Baud for $key (empty = back to 115200)" -filter "${BAUDS[$key]}")
+  # strip surrounding whitespace
+  baud="${baud#"${baud%%[![:space:]]*}"}"
+  baud="${baud%"${baud##*[![:space:]]}"}"
+  if [ -n "$baud" ] && ! [[ "$baud" =~ ^[0-9]+$ ]]; then
+    echo "Invalid baud rate: $baud"
+    notify -u critical "Invalid baud" "$baud is not a number."
+    return 1
+  fi
+  save_baud "$key" "$baud"
+  if [ -n "$baud" ]; then
+    notify "ttyUSB baud saved" "$key opens at $baud"
+  else
+    notify "ttyUSB baud cleared" "$key back to 115200"
+  fi
+}
+
+display_name() { # display_name <key> -> "Name @921600" / "@921600" / ""
+  local n="${ALIASES[$1]:-}" b="${BAUDS[$1]:-}"
+  [ -n "$b" ] && n="${n:+$n }@$b"
+  printf '%s' "$n"
 }
 
 # ---------------------------------------------------------------- devices ---
@@ -151,6 +192,7 @@ scan_devices() {
     else
       label="$desc"
     fi
+    [ -n "${BAUDS[$key]}" ] && label="$label @${BAUDS[$key]}"
 
     DEVICE_LINES="${DEVICE_LINES}$device - ${label}"$'\n'
   done
@@ -165,7 +207,7 @@ edit_alias_file() {
   command -v "$term" &>/dev/null || term=alacritty
   command -v "$editor" &>/dev/null || editor="${EDITOR:-nano}"
   ensure_alias_file
-  "$term" --title "ttyusb-aliases" -e "$editor" "$ALIAS_FILE"
+  "$term" --title="ttyusb-aliases" -e "$editor" "$ALIAS_FILE"
 }
 
 manage_aliases() {
@@ -178,13 +220,13 @@ manage_aliases() {
     while IFS= read -r key; do
       [ -n "$key" ] || continue
       keys+=("$key")
-    done < <(printf '%s\n' "${!ALIASES[@]}" | sort)
+    done < <(printf '%s\n' "${!ALIASES[@]}" "${!BAUDS[@]}" | sort -u)
 
     for key in "${keys[@]}"; do
       if [ -n "${DEV_BY_KEY[$key]}" ]; then
-        line="${ALIASES[$key]}  ·  $key  ·  ${DEV_BY_KEY[$key]}"
+        line="$(display_name "$key")  ·  $key  ·  ${DEV_BY_KEY[$key]}"
       else
-        line="${ALIASES[$key]}  ·  $key  ·  not connected"
+        line="$(display_name "$key")  ·  $key  ·  not connected"
       fi
       line_key["$line"]="$key"
       entries="${entries}${line}"$'\n'
@@ -208,12 +250,13 @@ manage_aliases() {
     key="${line_key[$selected]}"
     [ -n "$key" ] || continue
 
-    action=$(printf '%s\n' "Rename" "Delete" "$BACK_ENTRY" | menu "${ALIASES[$key]}")
+    action=$(printf '%s\n' "Rename" "Set baud" "Delete" "$BACK_ENTRY" | menu "$(display_name "$key")")
     case "$action" in
     Rename) rename_key "$key" ;;
+    "Set baud") set_baud_key "$key" ;;
     Delete)
-      save_alias "$key" ""
-      notify "ttyUSB name removed" "$key"
+      delete_key "$key"
+      notify "ttyUSB entry removed" "$key"
       ;;
     esac
     scan_devices
@@ -260,6 +303,7 @@ if [ -n "$current_name" ]; then
 else
   actions="${actions}"$'\n'"Set custom name"
 fi
+actions="${actions}"$'\n'"Set baud"
 actions="${actions}"$'\n'"$MANAGE_ENTRY"
 selected_action=$(printf '%s' "$actions" | menu "Action for $dev_path")
 
@@ -276,12 +320,13 @@ case "$selected_action" in
 
   # Get the terminal command
   terminal_cmd=$(cat "$USER_SETTINGS/terminal.sh")
-  terminal_cmd=alacritty
   # Execute the device console script in a new terminal
-  # $terminal_cmd --title "device-console-applet" -e sudo "$device_console_script_path" "$dev_path"
+  # $terminal_cmd --title="device-console-applet" -e sudo "$device_console_script_path" "$dev_path"
   window_title="device-console-applet"
   [ -n "$current_name" ] && window_title="$current_name"
-  $terminal_cmd --title "$window_title" -e "$device_console_script_path" "$dev_path"
+  console_args=("$device_console_script_path" "$dev_path")
+  [ -n "${BAUDS[$dev_key]}" ] && console_args+=("${BAUDS[$dev_key]}")
+  $terminal_cmd --title="$window_title" -e "${console_args[@]}"
   ;;
 "Copy path")
   # Copy the /dev path to the Wayland clipboard using wl-copy.
@@ -310,6 +355,9 @@ case "$selected_action" in
   ;;
 "Set custom name" | "Rename"*)
   rename_key "$dev_key"
+  ;;
+"Set baud")
+  set_baud_key "$dev_key"
   ;;
 "Remove custom name")
   save_alias "$dev_key" ""
