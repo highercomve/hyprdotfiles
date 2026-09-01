@@ -1,10 +1,14 @@
-pragma Singleton
 import Quickshell
 import Quickshell.Io
 import QtQuick
 
-Singleton {
+// AI subscription usage collector. Mounted headless by PluginHost and exposed
+// to BarWidget/Panel via PluginRegistry.services["ai-usage"].
+Item {
     id: root
+
+    property string pluginId: ""
+    property var settings: ({})
 
     // Normalized output of ai_usage.sh: [{id, name, plan, ok, stale, error,
     // limits: [{label, percent, resetsAt}]}]
@@ -24,7 +28,7 @@ Singleton {
 
     // The Anthropic endpoint dislikes probes more often than every ~3 min.
     Timer {
-        interval: 300000
+        interval: root.settings.refreshIntervalMs || 300000
         running: true
         repeat: true
         triggeredOnStart: true
@@ -33,7 +37,7 @@ Singleton {
 
     Process {
         id: proc
-        command: ["bash", Quickshell.shellDir + "/ai_usage.sh"]
+        command: ["bash", Quickshell.shellDir + "/plugins/ai-usage/ai_usage.sh"]
         stdout: StdioCollector { onStreamFinished: root._apply(text) }
         onExited: root.refreshing = false
     }
@@ -55,7 +59,7 @@ Singleton {
             root.updatedAt = json.updatedAt || ""
             root._lastFetch = Date.now()
         } catch (e) {
-            console.warn("AiUsage: collector output parse failed:", e)
+            console.warn("ai-usage: collector output parse failed:", e)
         }
     }
 }

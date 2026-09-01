@@ -1,0 +1,23 @@
+{
+    "plugins": {
+        "ai-usage": {
+            "enabled": true,
+            "kinds": [
+                "service",
+                "barWidget",
+                "panel"
+            ],
+            "settings": {
+                "refreshIntervalMs": 300000,
+                "accent": "teal"
+            }
+        }
+    },
+    "bar": {
+        "left": [],
+        "center": [],
+        "right": [
+            "ai-usage"
+        ]
+    }
+}

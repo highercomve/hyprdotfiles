@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 
-import "../Theme"
+import "../../Theme"
 
 // One limit row: label + percent, a track/fill bar, and a reset countdown.
 ColumnLayout {

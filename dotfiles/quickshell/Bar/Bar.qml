@@ -36,6 +36,7 @@ PanelWindow {
             Workspaces {}
             Taskbar {}
             ClientTitle {}
+            PluginSlot { position: "left" }
         }
 
         // Clock + media share one island with a divider, like AGS group-center
@@ -74,6 +75,8 @@ PanelWindow {
                     implicitHeight: 30
                     MediaBar { id: mediaBar; anchors.centerIn: parent }
                 }
+
+                PluginSlot { position: "center" }
             }
         }
 
@@ -87,7 +90,7 @@ PanelWindow {
             }
             spacing: 4
 
-            AiUsageWidget {}
+            PluginSlot { position: "right" }
             SystemMonitor {}
             ToolsRow {}
 

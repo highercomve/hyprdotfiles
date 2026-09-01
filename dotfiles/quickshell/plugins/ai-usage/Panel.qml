@@ -3,11 +3,17 @@ import Quickshell
 import QtQuick
 import QtQuick.Layouts
 
-import "../Services"
-import "../Theme"
+import "../../Services"
+import "../../Theme"
+import "../../Panels"
+import "."
 
 PanelPopup {
     id: aiPopup
+
+    property string pluginId: ""
+    property var settings: ({})
+    property var service: null
 
     popupWidth: 380
     popupHeight: mainCol.implicitHeight + 40
@@ -15,9 +21,9 @@ PanelPopup {
     marginRight: 5
     alignRight: true
 
-    visible: Panels.aiUsageOpen
-    onVisibleChanged: if (visible) AiUsage.refreshIfStale()
-    onCloseRequested: Panels.closeAiUsage()
+    visible: Panels.isOpen(pluginId)
+    onVisibleChanged: if (visible && service) service.refreshIfStale()
+    onCloseRequested: Panels.close(pluginId)
 
     panelContent: Rectangle {
         anchors.fill: parent
@@ -56,8 +62,8 @@ PanelPopup {
 
                 Text {
                     text: {
-                        if (!AiUsage.updatedAt) return ""
-                        const t = new Date(AiUsage.updatedAt).getTime()
+                        if (!aiPopup.service || !aiPopup.service.updatedAt) return ""
+                        const t = new Date(aiPopup.service.updatedAt).getTime()
                         if (isNaN(t)) return ""
                         const mins = Math.round((clock.date.getTime() - t) / 60000)
                         return mins <= 0 ? "just now" : mins + "m ago"
@@ -75,7 +81,7 @@ PanelPopup {
                     font.pixelSize: 13
 
                     RotationAnimation on rotation {
-                        running: AiUsage.refreshing
+                        running: aiPopup.service ? aiPopup.service.refreshing : false
                         from: 0
                         to: 360
                         duration: 800
@@ -89,13 +95,13 @@ PanelPopup {
                         anchors.margins: -4
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        onClicked: AiUsage.refresh()
+                        onClicked: if (aiPopup.service) aiPopup.service.refresh()
                     }
                 }
             }
 
             Repeater {
-                model: AiUsage.providers
+                model: aiPopup.service ? aiPopup.service.providers : []
 
                 Rectangle {
                     id: card

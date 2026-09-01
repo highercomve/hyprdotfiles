@@ -8,6 +8,7 @@ import "Osd"
 import "NotificationPopups"
 
 ShellRoot {
+    PluginHost {}
     Variants {
         model: Quickshell.screens
         delegate: Bar {}
@@ -25,5 +26,4 @@ ShellRoot {
 
     ControlPanel {}
     CenterPopup {}
-    AiUsagePopup {}
 }
