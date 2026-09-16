@@ -46,8 +46,23 @@ should do about it. Do not change any system state without asking first.
 PROMPT
 )
 
+# Hyprland autostart (and so the crash-watch listener) only carries
+# /usr/local/bin:/usr/bin; claude is a user install.
+export PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+
+if ! claude=$(command -v claude); then
+  notify-send --app-name=crash-watch --urgency=critical \
+    "Crash diagnosis failed" "claude not found on PATH ($PATH)" 2>/dev/null || true
+  echo "claude not found on PATH" >&2
+  exit 1
+fi
+
 terminal=$(cat "$HOME/.config/hypr/user_settings/terminal.sh" 2>/dev/null || echo alacritty)
 command -v "$terminal" >/dev/null || terminal=alacritty
 
+# Wrapper so a failure stays readable instead of the terminal closing on it.
+# The prompt travels as $2 to avoid re-quoting it inside the -c string.
 cd "$HOME"
-exec setsid "$terminal" --title="Crash Diagnosis: $name" --class=dotfiles-floating -e claude "$prompt"
+exec setsid "$terminal" --title="Crash Diagnosis: $name" --class=dotfiles-floating \
+  -e bash -c '"$1" "$2" || { echo; echo "claude exited with status $? — press Enter to close"; read -r; }' \
+  crash-diagnose "$claude" "$prompt"
