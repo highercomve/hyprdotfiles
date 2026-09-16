@@ -18,14 +18,15 @@ Item {
     property double _lastFetch: 0
 
     // Headline percentage for the bar module: the closest any metered plan is
-    // to its limit. Providers reporting plan "local" are skipped -- their
-    // percent is a self-imposed budget on a free resource, so letting it in
-    // would turn the bar red for something that costs nothing and hide how
-    // close a real subscription actually is. They still render in the popup.
+    // to its limit. Providers marking themselves "metered": false are skipped
+    // -- their percent is a self-imposed budget on a free resource, so letting
+    // it in would turn the bar red for something that costs nothing and hide
+    // how close a real subscription actually is. They still render in the
+    // popup. Absent field means metered, so the paid providers need no change.
     readonly property real worstPercent: {
         let worst = 0
         for (const p of providers) {
-            if (p.plan === "local")
+            if (p.metered === false)
                 continue
             for (const l of (p.limits || []))
                 if (typeof l.percent === "number" && l.percent > worst)
