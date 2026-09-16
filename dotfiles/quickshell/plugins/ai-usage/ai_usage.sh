@@ -16,6 +16,8 @@
 #                binary handles its own token refresh
 #   antigravity  GET/POST daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels
 #                with OAuth token from Secret Service / ~/.gemini/
+#   highllama    `highllama usage --json` for the local llama.cpp server: daily
+#                input/output token totals, percent always null (no quota)
 #
 # The last good payload per provider is cached in ~/.cache/ai-usage/ and served
 # with stale=true when a probe fails, so the widget never blanks.
@@ -327,10 +329,32 @@ PY
     fi
 }
 
+# Local llama.cpp server. No subscription and no quota, so every percent is
+# null: the counts ride in the labels, and a number here would be folded into
+# the bar widget's worstPercent and compete with the real limits above for its
+# colour. `highllama usage --json` emits the provider card directly -- it reads
+# llama-server's /metrics and banks the totals per day, because those counters
+# live in RAM and zero on every server restart.
+probe_highllama() {
+    local out="$TMP/highllama.json" name="Highllama" payload
+    command -v highllama >/dev/null 2>&1 ||
+        { fallback highllama "$name" "highllama not on PATH" > "$out"; return; }
+
+    # short timeout: a local server that is down should fail fast rather than
+    # stall the whole parallel probe batch
+    payload=$(timeout 8 highllama usage --json 2>/dev/null) \
+        || { fallback highllama "$name" "usage probe failed" > "$out"; return; }
+
+    jq -e '.limits' <<< "$payload" >/dev/null 2>&1 \
+        && { printf '%s\n' "$payload" > "$out"; cp "$out" "$CACHE/highllama.json"; } \
+        || fallback highllama "$name" "unexpected response shape" > "$out"
+}
+
 probe_claude &
 probe_opencode &
 probe_agy &
 probe_codex &
+probe_highllama &
 wait
 
 # Optional per-provider overrides, merged over each probe's output. For fields
@@ -342,4 +366,5 @@ jq -e . <<< "$OVERRIDES" >/dev/null 2>&1 || OVERRIDES='{}'
 
 jq -n --arg t "$(date -u +%FT%TZ)" --argjson ov "$OVERRIDES" \
     '{updatedAt: $t, providers: [inputs | . * ($ov[.id] // {})]}' \
-    "$TMP/claude.json" "$TMP/opencode.json" "$TMP/agy.json" "$TMP/codex.json"
+    "$TMP/claude.json" "$TMP/opencode.json" "$TMP/agy.json" "$TMP/codex.json" \
+    "$TMP/highllama.json"
