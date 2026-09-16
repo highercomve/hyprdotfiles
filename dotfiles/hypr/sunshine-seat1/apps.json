@@ -15,7 +15,7 @@
       "prep-cmd": [
         {
           "do": "",
-          "undo": "timeout 20 env -u LD_PRELOAD steam -shutdown"
+          "undo": "timeout 20 env -u LD_PRELOAD setpriv --ambient-caps=-all steam -shutdown"
         }
       ],
       "image-path": "steam.png"

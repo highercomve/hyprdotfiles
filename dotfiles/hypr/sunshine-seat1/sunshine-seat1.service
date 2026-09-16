@@ -31,7 +31,15 @@ Environment=XDG_SESSION_CLASS=user
 Environment=XDG_SESSION_DESKTOP=Hyprland
 UnsetEnvironment=DISPLAY WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE
 ExecStart=/home/sergiom/.config/hypr/sunshine-seat1/session.sh
+# pam_systemd moves the session tree out of this unit's cgroup, so a plain
+# stop leaves init.sh/Sunshine alive holding the ports (see stop.sh).
+ExecStopPost=/home/sergiom/.config/hypr/sunshine-seat1/stop.sh
 Restart=on-failure
+# CAP_SYS_NICE lets Mesa/amdgpu honour Sunshine's EGL_CONTEXT_PRIORITY_HIGH
+# (encoder context is scheduled ahead of the game on the iGPU) and lets the
+# compositor take realtime scheduling. session.sh keeps only this cap and
+# steam.sh drops it again before Steam (bwrap refuses unexpected caps).
+AmbientCapabilities=CAP_SYS_NICE
 RestartSec=5
 
 # No [Install] section on purpose: this unit must NOT be enabled at boot.

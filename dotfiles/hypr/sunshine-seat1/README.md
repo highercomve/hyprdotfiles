@@ -12,9 +12,9 @@ seat0 (local, untouched)              seat1 (remote stream)
 ├─ physical keyboard/mouse            ├─ virtual display HEADLESS-1
 └─ your normal workflow               ├─ Sunshine (port 48989, capture=wlr,
                                       │            encoder=vaapi on iGPU VCN)
-                                      └─ input: Sunshine's uinput devices,
-                                         named "(seat1)", moved to seat1 by
-                                         udev — invisible to seat0
+                                      └─ input: Sunshine's virtual input
+                                         devices, matched by name and moved
+                                         to seat1 by udev — invisible to seat0
 ```
 
 - `sunshine-seat1.service` (system unit): `PAMName=login` + `XDG_SEAT=seat1`
@@ -23,10 +23,51 @@ seat0 (local, untouched)              seat1 (remote stream)
 - `init.sh` (exec-once inside that Hyprland): creates the `HEADLESS-1` virtual
   display, disables the FALLBACK output, starts Sunshine with `sunshine.conf`.
 - `72-sunshine-virtual-seat.rules`: moves Sunshine's virtual input devices
-  (named `... (seat1)`, requires Sunshine ≥ v2026.516) and the AMD iGPU's DRM
-  device to seat1.
+  and the AMD iGPU's DRM device to seat1. Devices are matched by name:
+  `... (seat1)` (Sunshine v2026.516, inputtino, named from `XDG_SEAT`) and
+  `libvirtualhid ...` / `Sunshine ...` (v2026.906+, libvirtualhid). Assumes
+  this is the only Sunshine on the machine.
 - `resize.sh` (global_prep_cmd): resizes `HEADLESS-1` to the Moonlight
-  client's resolution/FPS on connect.
+  client's resolution/FPS on app launch; saves the geometry to
+  `~/.config/sunshine-seat1/display-mode`.
+- `sunshine-seat1.service` grants `CAP_SYS_NICE` ambiently; `session.sh` keeps
+  only that cap (drops pam_systemd's `CAP_WAKE_ALARM`) so Hyprland can use
+  realtime scheduling and Sunshine gets a high-priority EGL/VAAPI context on
+  amdgpu (no more "CAP_SYS_NICE capability is missing" warning). `steam.sh`
+  and the app undo command drop it before Steam, since bwrap refuses to run
+  with unexpected caps.
+  Hyprland lowers its own ambient caps at startup, so Sunshine can't be a
+  child of the compositor: `session.sh` starts `init.sh` as a sibling, and
+  `ready.sh` (the `hyprland.start` hook) writes `$XDG_RUNTIME_DIR/
+  sunshine-seat1.env` with `WAYLAND_DISPLAY`/`DISPLAY`/instance signature to
+  tell it the compositor is up. init.sh logs "CAP_SYS_NICE ambient: yes/NO".
+- **Device naming changed in v2026.906.** It replaced inputtino with
+  libvirtualhid and dropped the "... (seat1)" suffix (the upstream multiseat
+  docs still describe it — stale). The udev rule now matches the libvirtualhid
+  names too. `update-sunshine.sh` verifies after every restart that Sunshine's
+  input devices exist and carry `ID_SEAT=seat1`, and tells you to roll back
+  (`~/.local/bin/sunshine.prev`) if a release renames them again.
+- `stop.sh` (`ExecStopPost`): pam_systemd puts the whole session tree in a
+  logind scope outside the unit's cgroup, so `systemctl stop/restart` only
+  kills Hyprland. Sunshine (v2026.906+ survives losing its compositor) kept
+  the ports and the next start died with "Couldn't bind RTSP server ...
+  Address already in use". The hook kills every leftover seat1 session of
+  ours (TERM, then KILL) after any stop, including ones leaked by crashes.
+- **v2026.906 also breaks wlr capture on AMD** (upstream #5671, "Couldn't
+  import RGB Image: 00003009" on every frame, black stream). Fixed on master
+  by PR #5699 (2026-09-13) but not released yet — stay on v2026.516 until the
+  next release, then `update-sunshine.sh`.
+- `update-sunshine.sh`: Sunshine itself is the official LizardByte AppImage at
+  `~/.local/bin/sunshine` (not a pacman package). This fetches the latest
+  GitHub release (or a given tag), verifies size + sha256, sanity-runs
+  `--version`, swaps the binary keeping `sunshine.prev`, and restarts the
+  service via sudo, asking first if a client is connected (`--no-restart`
+  skips that). `--check` only compares versions.
+- `connect-watch.sh` (started by `init.sh`): Sunshine has no per-connect hook
+  and its capture rate is capped by the output refresh rate, so a resume at a
+  different FPS would stay stuck at the old rate. This tails `sunshine.log`
+  for the per-stream `[wlgrab] Requested frame rate [Nfps]` line and re-runs
+  `resize.sh` with that FPS (resolution from the saved state).
 - Games render on the RTX 4070 via its render node (render nodes are not
   seat-gated); the iGPU handles compositing + VAAPI encoding (zero-copy).
 - `bin/systemctl` + `bin/dbus-update-activation-environment`: PATH shims

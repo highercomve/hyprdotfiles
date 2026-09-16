@@ -18,6 +18,9 @@ export __GLX_VENDOR_LIBRARY_NAME=nvidia
 export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
 export DXVK_FILTER_DEVICE_NAME=NVIDIA
 
+# Performance overlay for every game (levels cycle with Shift_R+F10).
+export MANGOHUD=1
+
 log() { logger -t sunshine-seat1 "steam: $*"; }
 
 our_sig="${HYPRLAND_INSTANCE_SIGNATURE:-}"
@@ -48,4 +51,6 @@ if foreign_steam_running; then
 fi
 
 log "starting Steam Big Picture in the seat1 session"
-exec steam -bigpicture
+# The session carries an ambient CAP_SYS_NICE for Sunshine/Hyprland (see
+# session.sh); bwrap (Steam/Proton) refuses to start with unexpected caps.
+exec setpriv --ambient-caps=-all steam -bigpicture

@@ -1,11 +1,21 @@
 # Multiseat rules for the isolated Sunshine streaming session (seat1).
 # Installed to /etc/udev/rules.d/ by install.sh.
 
-# 1. Input isolation (official rule from Sunshine docs, requires Sunshine >= v2026.516):
-# Sunshine names its virtual input devices "... (seat1)" when XDG_SEAT=seat1.
-# This moves those devices to seat1 so only the headless seat1 compositor
-# receives remote input — the local seat0 session never sees it.
-SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="*(seat1)*", TAG+="seat", ENV{ID_SEAT}="seat1"
+# 1. Input isolation: move Sunshine's virtual input devices to seat1 so only
+# the headless seat1 compositor receives remote input — the local seat0
+# session never sees it.
+#
+# v2026.516 (inputtino) named them "... (seat1)" from XDG_SEAT, which is what
+# the official Sunshine multiseat docs still describe. v2026.906+ (libvirtualhid)
+# dropped that suffix (docs are stale): keyboard/mouse/touch are now named
+# "libvirtualhid Keyboard", "libvirtualhid Mouse", "libvirtualhid Mouse
+# (Absolute)", "libvirtualhid Touchscreen"; gamepads are "Sunshine <model>"
+# (uinput) or "(libvirtualhid) PS5 Controller" etc. (uhid). Match all three
+# spellings. This assumes the seat1 session is the ONLY Sunshine on this
+# machine — a main-session Sunshine's input would also land on seat1.
+SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="*(seat1)*",     TAG+="seat", ENV{ID_SEAT}="seat1"
+SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="*libvirtualhid*", TAG+="seat", ENV{ID_SEAT}="seat1"
+SUBSYSTEM=="input", KERNEL=="input*", ATTR{name}=="Sunshine *",      TAG+="seat", ENV{ID_SEAT}="seat1"
 
 # 2. GPU for the headless session:
 # The AMD Raphael iGPU (pci 0000:11:00.0) has no connected outputs — the

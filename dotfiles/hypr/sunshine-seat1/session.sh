@@ -39,4 +39,20 @@ fi
 # Steam dies with a bogus "requires user namespaces" error and 'steam
 # -shutdown' then hangs forever. Drop all ambient caps before the compositor
 # starts; the inheritable set stays, which is harmless.
-exec setpriv --ambient-caps=-all Hyprland --config "$HOME/.config/hypr/sunshine-seat1/hyprland.lua"
+#
+# Exception: CAP_SYS_NICE (granted by the unit's AmbientCapabilities=) stays.
+# Hyprland uses it for realtime scheduling and Sunshine needs it for a
+# high-priority EGL/VAAPI context on amdgpu — otherwise the log warns
+# "context priority set to HIGH but CAP_SYS_NICE capability is missing" and
+# encoding competes on equal terms with whatever else the iGPU does.
+# steam.sh drops it again before launching Steam.
+#
+# Hyprland lowers its own ambient caps right after start (NInit::
+# lowerAmbientCaps), so a Sunshine spawned BY Hyprland would never see the
+# cap. Start the Sunshine launcher here as a sibling instead; it waits for
+# the env file that hyprland.lua's start hook writes via ready.sh.
+DIR="$HOME/.config/hypr/sunshine-seat1"
+rm -f "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/sunshine-seat1.env"
+setpriv --ambient-caps=-all,+sys_nice "$DIR/init.sh" &
+
+exec setpriv --ambient-caps=-all,+sys_nice Hyprland --config "$DIR/hyprland.lua"

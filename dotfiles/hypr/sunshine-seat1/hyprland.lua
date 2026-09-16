@@ -5,7 +5,7 @@
 
 hl.monitor({
     output   = "HEADLESS-1",
-    mode     = "1920x1080@60",
+    mode     = "1920x1200@120",
     position = "0x0",
     scale    = 1,
 })
@@ -42,6 +42,11 @@ hl.window_rule({
     fullscreen = true,
 })
 
+-- Sunshine is NOT started from here: Hyprland lowers its ambient
+-- capabilities at startup, so anything it spawns can never hold the
+-- CAP_SYS_NICE that Sunshine's high-priority encoder context needs.
+-- session.sh starts init.sh as a sibling instead; this hook only publishes
+-- the compositor's env (WAYLAND_DISPLAY etc.) to tell it we are ready.
 hl.on("hyprland.start", function()
-    hl.exec_cmd("~/.config/hypr/sunshine-seat1/init.sh")
+    hl.exec_cmd("~/.config/hypr/sunshine-seat1/ready.sh")
 end)
