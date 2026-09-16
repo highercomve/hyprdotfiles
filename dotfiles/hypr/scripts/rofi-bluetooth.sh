@@ -132,14 +132,7 @@ device_menu() {
         choice=$(echo -e "$options" | rofi -config "$ROFI_CONFIG" -dmenu -p "$device_name" -i -l 5)
 
 
-        if ! pgrep -x "blueman-applet" > /dev/null; then
-            echo "Starting blueman-applet..."
-            blueman-applet &
-            APPLET_PID=$!
-            APPLET_STARTED_BY_SCRIPT=true
-            # Give it a moment to start
-            sleep 1
-        fi
+        ensure_agent
 
         case "$choice" in
         " Connect")
@@ -175,11 +168,6 @@ device_menu() {
         esac
         sleep 1
 
-        if [ "$APPLET_STARTED_BY_SCRIPT" = "true" ]; then
-            echo "Stopping blueman-applet..."
-            kill $APPLET_PID 2>/dev/null
-        fi
-
         # Refresh device info
         info=$(bluetoothctl info "$device_mac")
         connected=$(echo "$info" | grep -q "Connected: yes" && echo "true" || echo "false")
@@ -188,27 +176,25 @@ device_menu() {
     done
 }
 
-# Ensure scanning stops when we exit this function
-# Also stop blueman-applet if we started it
+# Ensure scanning stops when we exit this function.
+# blueman-applet is deliberately left running: it is the session's pairing
+# agent, and killing it here (the old `pkill -f blueman-applet`) took down the
+# autostarted applet too, leaving BlueZ with "No agent available".
 cleanup() {
     kill $BTCTL_PID 2>/dev/null
     bluetoothctl scan off > /dev/null 2>&1
-    pkill -f "blueman-applet" 2>/dev/null
+}
+
+# Pairing needs an agent; blueman-applet (a systemd user service, see
+# blueman-applet.sh) provides it. Start it if it is down, never stop it.
+ensure_agent() {
+    ~/.config/hypr/scripts/blueman-applet.sh start
 }
 
 
 # Scan menu function
 scan_menu() {
-    # Check if blueman-applet is running
-    APPLET_STARTED_BY_SCRIPT=false
-    if ! pgrep -x "blueman-applet" > /dev/null; then
-        echo "Starting blueman-applet..."
-        blueman-applet &
-        APPLET_PID=$!
-        APPLET_STARTED_BY_SCRIPT=true
-        # Give it a moment to start
-        sleep 1
-    fi
+    ensure_agent
 
     # Start scanning in background using bluetoothctl
     # We use a subshell to keep bluetoothctl running with "scan on"

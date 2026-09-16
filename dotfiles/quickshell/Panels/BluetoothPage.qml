@@ -1,5 +1,6 @@
 import Quickshell
 import Quickshell.Bluetooth
+import Quickshell.Io
 import QtQuick
 import QtQuick.Layouts
 
@@ -7,8 +8,13 @@ import "../Services"
 import "../Theme"
 
 Rectangle {
+    id: root
     color: "transparent"
     anchors.fill: parent
+
+    // Pairing needs a BlueZ agent to answer confirmation requests; this page
+    // has none of its own and relies on blueman-applet.service.
+    property bool agentRunning: true
 
     ColumnLayout {
         anchors.fill: parent
@@ -132,6 +138,63 @@ Rectangle {
 
         Rectangle {
             Layout.fillWidth: true
+            Layout.preferredHeight: 40
+            visible: !root.agentRunning
+            color: Qt.alpha(Theme.red, 0.15)
+            radius: 12
+
+            RowLayout {
+                anchors {
+                    fill: parent
+                    leftMargin: 12
+                    rightMargin: 8
+                }
+                spacing: 8
+
+                Text {
+                    text: "\uf071"
+                    color: Theme.red
+                    font.family: "Font Awesome 7 Free Solid"
+                    font.pixelSize: 14
+                }
+
+                Text {
+                    text: "No pairing agent running"
+                    color: Theme.text
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 13
+                    Layout.fillWidth: true
+                    elide: Text.ElideRight
+                }
+
+                Rectangle {
+                    Layout.preferredWidth: startLabel.implicitWidth + 16
+                    Layout.preferredHeight: 26
+                    radius: Theme.moduleRadius
+                    color: startHover.hovered ? Theme.surface1 : Theme.surface0
+
+                    Text {
+                        id: startLabel
+                        anchors.centerIn: parent
+                        text: "Start"
+                        color: Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 13
+                    }
+
+                    HoverHandler { id: startHover }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: root.startAgent()
+                    }
+                }
+            }
+        }
+
+        Rectangle {
+            Layout.fillWidth: true
             Layout.fillHeight: true
             color: Theme.mantle
             radius: 12
@@ -144,10 +207,36 @@ Rectangle {
                 model: sortedDevices()
 
                 delegate: Rectangle {
+                    id: row
+
+                    required property var modelData
+                    readonly property var device: modelData
+
+                    // Set when this page started a pair/connect, so a device
+                    // that settles unpaired/disconnected is reported as failed.
+                    property bool pairRequested: false
+                    property bool connectRequested: false
+                    property string errorText: ""
+
+                    readonly property string statusText: {
+                        if (errorText) return errorText
+                        if (device.pairing) return "Pairing\u2026"
+                        if (device.state === BluetoothDeviceState.Connecting) return "Connecting\u2026"
+                        if (device.state === BluetoothDeviceState.Disconnecting) return "Disconnecting\u2026"
+                        return ""
+                    }
+
                     width: ListView.view.width
-                    height: 40
+                    height: statusText ? 52 : 40
                     radius: Theme.moduleRadius
-                    color: modelData.connected ? Theme.surface1 : "transparent"
+                    color: device.connected ? Theme.surface1 : "transparent"
+
+                    // Declared before the row so the forget button stays clickable.
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: row.activate()
+                    }
 
                     RowLayout {
                         anchors {
@@ -157,50 +246,152 @@ Rectangle {
                         spacing: 8
 
                         Text {
-                            text: bluetoothIcon(modelData.icon)
+                            text: bluetoothIcon(row.device.icon)
                             color: Theme.subtext0
                             font.family: "Font Awesome 7 Free Solid"
                             font.pixelSize: 16
                         }
 
-                        Text {
-                            text: modelData.name || modelData.deviceName || "Unknown"
-                            color: Theme.text
-                            font.family: Theme.fontFamily
-                            font.pixelSize: 14
+                        ColumnLayout {
                             Layout.fillWidth: true
-                            elide: Text.ElideRight
+                            spacing: 0
+
+                            Text {
+                                text: row.device.name || row.device.deviceName || "Unknown"
+                                color: Theme.text
+                                font.family: Theme.fontFamily
+                                font.pixelSize: 14
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
+
+                            Text {
+                                text: row.statusText
+                                visible: text !== ""
+                                color: row.errorText ? Theme.red : Theme.subtext0
+                                font.family: Theme.fontFamily
+                                font.pixelSize: 11
+                                Layout.fillWidth: true
+                                elide: Text.ElideRight
+                            }
                         }
 
                         Text {
-                            text: Math.round(modelData.battery * 100) + "%"
+                            text: Math.round(row.device.battery * 100) + "%"
                             color: Theme.subtext0
                             font.family: Theme.fontFamily
                             font.pixelSize: 13
-                            visible: modelData.batteryAvailable
+                            visible: row.device.batteryAvailable
                         }
 
                         Text {
-                            text: ""
+                            text: "\uf00c"
                             color: Theme.blue
                             font.family: "Font Awesome 7 Free Solid"
                             font.pixelSize: 14
-                            visible: modelData.connected
+                            visible: row.device.connected
+                        }
+
+                        Rectangle {
+                            Layout.preferredWidth: 22
+                            Layout.preferredHeight: 22
+                            radius: 4
+                            color: "transparent"
+                            visible: row.device.paired || row.device.trusted
+
+                            Text {
+                                anchors.centerIn: parent
+                                text: "\uf2ed"
+                                color: forgetHover.hovered ? Theme.red : Theme.surface2
+                                font.family: "Font Awesome 7 Free Solid"
+                                font.pixelSize: 12
+                            }
+
+                            HoverHandler { id: forgetHover }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                // Forget removes the device and its cached
+                                // GATT/HID data; re-pairing starts clean.
+                                onClicked: {
+                                    row.pairRequested = false
+                                    row.connectRequested = false
+                                    row.errorText = ""
+                                    row.device.forget()
+                                }
+                            }
                         }
                     }
 
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: {
-                            if (modelData.connected) {
-                                modelData.disconnect()
-                            } else {
-                                if (!modelData.paired) {
-                                    modelData.pair()
-                                } else {
-                                    modelData.connect()
-                                }
+                    function activate() {
+                        errorText = ""
+                        if (device.pairing) {
+                            pairRequested = false
+                            device.cancelPair()
+                        } else if (device.connected) {
+                            connectRequested = false
+                            device.disconnect()
+                        } else if (!device.paired) {
+                            root.checkAgent()
+                            pairRequested = true
+                            device.pair()
+                        } else {
+                            connectRequested = true
+                            device.connect()
+                        }
+                    }
+
+                    // The Paired property can land just after the pair call
+                    // returns, so give BlueZ a moment before calling it failed.
+                    Timer {
+                        id: pairSettle
+                        interval: 1500
+                        onTriggered: {
+                            if (!row.pairRequested || row.device.pairing) return
+                            row.pairRequested = false
+                            if (!row.device.paired) {
+                                root.checkAgent()
+                                row.errorText = root.agentRunning
+                                    ? "Pairing failed \u2014 put the device in pairing mode"
+                                    : "Pairing failed \u2014 no pairing agent"
+                            }
+                        }
+                    }
+
+                    Timer {
+                        id: connectSettle
+                        interval: 1500
+                        onTriggered: {
+                            if (!row.connectRequested) return
+                            if (row.device.state !== BluetoothDeviceState.Disconnected) return
+                            row.connectRequested = false
+                            row.errorText = "Connection failed"
+                        }
+                    }
+
+                    Connections {
+                        target: row.device
+
+                        function onPairingChanged() {
+                            if (!row.device.pairing && row.pairRequested) pairSettle.restart()
+                        }
+
+                        function onPairedChanged() {
+                            if (!row.device.paired || !row.pairRequested) return
+                            // Trust so it reconnects on its own, then connect.
+                            row.pairRequested = false
+                            row.device.trusted = true
+                            row.connectRequested = true
+                            row.device.connect()
+                        }
+
+                        function onStateChanged() {
+                            if (row.device.state === BluetoothDeviceState.Connected) {
+                                row.connectRequested = false
+                                row.errorText = ""
+                            } else if (row.device.state === BluetoothDeviceState.Disconnected && row.connectRequested) {
+                                connectSettle.restart()
                             }
                         }
                     }
@@ -232,6 +423,37 @@ Rectangle {
         if (iconName.includes("input-mouse")) return ""
         if (iconName.includes("phone")) return ""
         return ""
+    }
+
+    function checkAgent() {
+        agentCheck.running = true
+    }
+
+    function startAgent() {
+        Quickshell.execDetached(["sh", "-c", "~/.config/hypr/scripts/blueman-applet.sh start"])
+        agentRecheck.restart()
+    }
+
+    Process {
+        id: agentCheck
+        command: ["systemctl", "--user", "is-active", "blueman-applet.service"]
+        stdout: StdioCollector {
+            onStreamFinished: root.agentRunning = text.trim() === "active"
+        }
+    }
+
+    Timer {
+        id: agentRecheck
+        interval: 1500
+        onTriggered: root.checkAgent()
+    }
+
+    Timer {
+        interval: 5000
+        running: true
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: root.checkAgent()
     }
 
     Timer {
