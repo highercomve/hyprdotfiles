@@ -52,6 +52,7 @@ hl.on("hyprland.start", function()
     -- Clipboard history (text + images)
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
+    hl.exec_cmd("wl-clip-persist --clipboard regular")
 
     -- Another Polkit agent, often used for compatibility with GNOME apps
     hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1")
