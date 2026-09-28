@@ -8,6 +8,7 @@
 // from the command palette or from `Zed` application menu.
 {
 	// "show_completions_on_input": false,
+ "diff_view_style": "split",
  "cli_default_open_behavior": "existing_window",
  "bottom_dock_layout": "contained",
  "project_panel": {
