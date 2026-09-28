@@ -23,9 +23,10 @@ hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd(HYPRSCRIPTS .. "/ttyusb.sh"),
 hl.bind(mainMod .. " + " .. secondMod .. " + D", hl.dsp.exec_cmd(HYPRSCRIPTS .. "/flash-usb.sh"), { description = "Flash image into USB device" })
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd(HYPRSCRIPTS .. "/rofi-network-manager.sh"), { description = "Open network manager" })
 hl.bind(mainMod .. " + " .. thirdMod .. " + N", hl.dsp.exec_cmd(HYPRSCRIPTS .. "/rofi-bluetooth.sh"), { description = "Open Bluetooth configuration" })
-hl.bind(secondMod .. " + SHIFT + A", hl.dsp.exec_cmd("~/.local/bin/ghostpen --trigger"), { description = "GhostPen — AI text editing overlay" })
-hl.bind(secondMod .. " + SHIFT + D", hl.dsp.exec_cmd("~/.local/bin/ghostpen --voice-input"), { description = "GhostPen — voice dictation" })
-hl.bind(secondMod .. " + SHIFT + L", hl.dsp.exec_cmd("~/.local/bin/ghostpen --captions"), { description = "GhostPen — live captions toggle" })
+-- GhostPen: shortcuts it registers through the GlobalShortcuts portal (app id dev.ghostpen.Oriel)
+hl.bind(secondMod .. " + SHIFT + A", hl.dsp.global("dev.ghostpen.Oriel:menu"), { description = "GhostPen — AI text editing overlay" })
+hl.bind(secondMod .. " + SHIFT + D", hl.dsp.global("dev.ghostpen.Oriel:dictation"), { description = "GhostPen — voice dictation" })
+hl.bind(secondMod .. " + SHIFT + L", hl.dsp.global("dev.ghostpen.Oriel:captions"), { description = "GhostPen — live captions toggle" })
 
 -- Display zoom
 hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd([[hyprctl keyword cursor:zoom_factor $(awk "BEGIN {print $(hyprctl getoption cursor:zoom_factor | grep 'float:' | awk '{print $2}') + 0.5}")]]), { description = "Increase display zoom" })
