@@ -14,7 +14,7 @@
 #   opencode     GET opencode.ai/zen/go/v1/usage with the opencode-go API key
 #   codex        `codex app-server` JSON-RPC account/rateLimits/read, so the codex
 #                binary handles its own token refresh
-#   antigravity  GET/POST daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels
+#   antigravity  GET/POST daily-cloudcode-pa.googleapis.com/v1internal:retrieveUserQuotaSummary
 #                with OAuth token from Secret Service / ~/.gemini/
 #   highllama    `highllama usage --json` for the local llama.cpp server: daily
 #                input/output token totals, percent always null (no quota)
@@ -109,15 +109,16 @@ probe_opencode() {
         https://opencode.ai/zen/go/v1/usage) \
         || { fallback opencode "$name" "usage request failed" > "$out"; return; }
 
-    # Windows: rolling (5h) / weekly / monthly; a non-"ok" status means the
-    # percent is unreliable, so report the window with percent null.
+    # Windows: rolling (5h) / weekly / monthly; use .w.percent if present and numeric.
+    # Status values like "ok", "exhausted", "over_limit", "at_limit", "exceeded" all
+    # have reliable percent values; if percent is present it's the truth.
     jq '.usage
         | {id: "opencode", name: "OpenCode Go", plan: "Go", ok: true, stale: false, error: null,
            limits: ([{label: "5h", w: .rolling}, {label: "Weekly", w: .weekly},
                      {label: "Monthly", w: .monthly}]
              | map(select(.w != null)
                | {label: .label,
-                  percent: (if (.w.status // "ok") == "ok" then .w.percent else null end),
+                  percent: (if (.w.percent != null and (.w.percent | type) == "number") then .w.percent else null end),
                   resetsAt: (.w.resetsAt // null)}))}' <<< "$resp" > "$out" 2>/dev/null \
         && cp "$out" "$CACHE/opencode.json" \
         || fallback opencode "$name" "unexpected response shape" > "$out"
@@ -246,65 +247,125 @@ if not token and not refresh_token:
     print(json.dumps({"error": "no credentials found"}))
     exit(0)
 
+quota_data = None
 models_data = None
 try:
-    models_data = fetch_api('fetchAvailableModels', token)
+    quota_data = fetch_api('retrieveUserQuotaSummary', token)
 except Exception as e:
     if refresh_token:
         try:
             token = refresh_access_token(refresh_token)
             if token:
-                models_data = fetch_api('fetchAvailableModels', token)
+                quota_data = fetch_api('retrieveUserQuotaSummary', token)
         except Exception as e2:
-            print(json.dumps({"error": f"token refresh failed: {e2}"}))
-            exit(0)
-    if not models_data:
-        print(json.dumps({"error": f"fetch models failed: {e}"}))
+            pass
+
+if not quota_data:
+    try:
+        models_data = fetch_api('fetchAvailableModels', token)
+    except Exception as e:
+        print(json.dumps({"error": f"fetch quota failed: {e}"}))
         exit(0)
 
 plan = "Free"
 try:
     ca = fetch_api('loadCodeAssist', token)
     tier_id = ca.get('currentTier', {}).get('id', '')
-    if 'pro' in tier_id.lower():
+    paid_tier_id = ca.get('paidTier', {}).get('id', '')
+    paid_name = ca.get('paidTier', {}).get('name', '')
+    if 'pro' in tier_id.lower() or 'pro' in paid_tier_id.lower() or 'pro' in paid_name.lower():
         plan = "Pro"
-    elif tier_id == 'free-tier':
+    elif tier_id == 'free-tier' and not paid_name:
         plan = "Free"
     elif ca.get('currentTier', {}).get('name'):
         plan = ca['currentTier']['name']
 except Exception:
     pass
 
-models = models_data.get('models', {})
-buckets = {}
-for name, m in models.items():
-    if not m.get('displayName'):
-        continue
-    qi = m.get('quotaInfo')
-    if not qi:
-        continue
-    provider = m.get('modelProvider')
-    if provider == 'MODEL_PROVIDER_GOOGLE':
-        group = 'Gemini'
-    elif provider in ('MODEL_PROVIDER_ANTHROPIC', 'MODEL_PROVIDER_OPENAI'):
-        group = 'Claude & GPT'
-    else:
-        group = provider.replace('MODEL_PROVIDER_', '').title()
-    if group not in buckets:
-        buckets[group] = qi
-
 limits = []
-order = ['Gemini', 'Claude & GPT']
-for grp in order + [k for k in buckets if k not in order]:
-    if grp in buckets:
-        qi = buckets[grp]
-        rem = qi.get('remainingFraction')
-        pct = max(0, min(100, round((1.0 - rem) * 100, 1))) if rem is not None else None
-        limits.append({
-            "label": grp,
-            "percent": pct,
-            "resetsAt": qi.get('resetTime')
-        })
+if quota_data and 'groups' in quota_data:
+    def group_order(g):
+        name = g.get('displayName', '').lower()
+        if 'gemini' in name:
+            return 0
+        if 'claude' in name or 'gpt' in name or '3p' in name:
+            return 1
+        return 2
+
+    def bucket_order(b):
+        w = (b.get('window', '') + ' ' + b.get('bucketId', '')).lower()
+        if '5h' in w:
+            return 0
+        if 'week' in w:
+            return 1
+        return 2
+
+    sorted_groups = sorted(quota_data.get('groups', []), key=group_order)
+    for g in sorted_groups:
+        gname = g.get('displayName', '')
+        if 'gemini' in gname.lower():
+            prefix = 'Gemini'
+        elif 'claude' in gname.lower() or 'gpt' in gname.lower() or '3p' in gname.lower():
+            prefix = 'Claude & GPT'
+        else:
+            prefix = gname.replace(' Models', '').replace(' models', '').strip()
+
+        sorted_buckets = sorted(g.get('buckets', []), key=bucket_order)
+        for b in sorted_buckets:
+            if b.get('disabled') is True:
+                continue
+            w = (b.get('window', '') + ' ' + b.get('bucketId', '')).lower()
+            if '5h' in w:
+                wlabel = '5h'
+            elif 'week' in w:
+                wlabel = 'Weekly'
+            else:
+                wlabel = b.get('window', '').title()
+
+            label = f"{prefix} {wlabel}"
+            rem = b.get('remainingFraction')
+            pct = max(0, min(100, round((1.0 - rem) * 100, 1))) if rem is not None else None
+            limits.append({
+                "label": label,
+                "percent": pct,
+                "resetsAt": b.get('resetTime')
+            })
+elif models_data:
+    models = models_data.get('models', {})
+    buckets = {}
+    for name, m in models.items():
+        if not m.get('displayName'):
+            continue
+        qi = m.get('quotaInfo')
+        if not qi:
+            continue
+        provider = m.get('modelProvider')
+        if provider == 'MODEL_PROVIDER_GOOGLE':
+            group = 'Gemini'
+        elif provider in ('MODEL_PROVIDER_ANTHROPIC', 'MODEL_PROVIDER_OPENAI'):
+            group = 'Claude & GPT'
+        else:
+            group = provider.replace('MODEL_PROVIDER_', '').title()
+        if group not in buckets:
+            buckets[group] = qi
+
+    order = ['Gemini', 'Claude & GPT']
+    for grp in order + [k for k in buckets if k not in order]:
+        if grp in buckets:
+            qi = buckets[grp]
+            rem = qi.get('remainingFraction')
+            if rem is None:
+                used_frac = qi.get('usedFraction')
+                if used_frac is not None:
+                    rem = 1.0 - used_frac
+                else:
+                    rem = 0.0
+            pct = max(0, min(100, round((1.0 - rem) * 100, 1))) if rem is not None else None
+            limits.append({
+                "label": grp,
+                "percent": pct,
+                "resetsAt": qi.get('resetTime')
+            })
 
 print(json.dumps({
     "id": "agy",
