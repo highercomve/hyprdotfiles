@@ -25,7 +25,10 @@ sleep 0.5
 
 # Check if waybar-disabled file exists
 if [ ! -f "$HOME"/.config/hypr/user_settings/waybar-disabled ]; then
-    HYPRLAND_SIGNATURE=$(hyprctl instances -j | jq -r '.[0].instance')
+    HYPRLAND_SIGNATURE=$(hyprctl instances -j | jq -r --arg sig "${HYPRLAND_INSTANCE_SIGNATURE:-}" --arg wl "${WAYLAND_DISPLAY:-}" '
+        # Sunshine runs a second (headless seat1) Hyprland, so .[0] may be the wrong
+        # one: keep our inherited instance, else the one owning our wayland socket.
+        (map(select(.instance == $sig)) + map(select(.wl_socket == $wl)) + .)[0].instance')
     # Launch waybar and redirect all output to a log file
     HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_SIGNATURE" waybar -c ~/.config/waybar/current/config -s ~/.config/waybar/current/style.css &>~/.cache/waybar.log &
     # env GTK_DEBUG=interactive waybar -c ~/.config/waybar/themes/current/config -s ~/.config/waybar/themes/current/style.css &
