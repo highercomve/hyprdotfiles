@@ -13,6 +13,16 @@ if [ -d "$HOME"/.config/hypr/shaders ]; then
     rm -rf "$HOME"/.config/hypr/shaders
 fi
 
+if [[ "$1" == "status" ]]; then
+    current="$(hyprshade current)"
+    if [ -n "$current" ]; then
+        echo "{\"alt\": \"active\", \"tooltip\": \"Hyprshade: $current\\nLeft: toggle  Right: choose filter\", \"class\": \"active\"}"
+    else
+        echo '{"alt": "deactivated", "tooltip": "Hyprshade is off\nLeft: toggle  Right: choose filter", "class": "notactive"}'
+    fi
+    exit 0
+fi
+
 if [[ "$1" == "rofi" ]]; then
 
     # Open rofi to select the Hyprshade filter for toggle

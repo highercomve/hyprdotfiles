@@ -4,7 +4,7 @@ if [ "$1" == "toggle" ]; then
     if pgrep -x "hyprsunset" > /dev/null; then
         pkill hyprsunset
     else
-        hyprsunset -t 4500 &
+        setsid -f hyprsunset -t 4500 >/dev/null 2>&1
     fi
     exit 0
 fi
