@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../Theme"
@@ -28,14 +27,17 @@ Rectangle {
             }
 
             Rectangle {
+                id: taskItem
                 Layout.preferredWidth: 24
                 Layout.preferredHeight: 24
                 radius: Theme.moduleRadius
                 color: "transparent"
 
-                ToolTip.text: modelData.title
-                ToolTip.visible: mouseArea.containsMouse
-                ToolTip.delay: 500
+                BarTooltip {
+                    target: taskItem
+                    text: modelData?.title ?? ""
+                    shown: mouseArea.containsMouse
+                }
 
                 Image {
                     anchors.centerIn: parent

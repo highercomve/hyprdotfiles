@@ -1,9 +1,9 @@
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../../Services"
 import "../../Theme"
+import "../../Bar"
 
 // Bar module: AI icon + the worst utilization across all subscriptions.
 // Click opens the plugin's panel.
@@ -57,7 +57,9 @@ Rectangle {
         onClicked: Panels.toggle(widget.pluginId)
     }
 
-    ToolTip.text: "AI subscription usage"
-    ToolTip.visible: aiMouse.containsMouse
-    ToolTip.delay: 500
+    BarTooltip {
+        target: widget
+        text: "AI subscription usage"
+        shown: aiMouse.containsMouse
+    }
 }

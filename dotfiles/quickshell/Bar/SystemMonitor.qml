@@ -1,6 +1,5 @@
 import Quickshell
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../Services"
@@ -20,14 +19,17 @@ Rectangle {
         spacing: 8
 
         Text {
+            id: cpuText
             text: "<span style=\"font-family: 'Font Awesome 7 Free Solid'; color:" + Theme.cpuColor + "\"></span> " + SystemStats.cpu + "%"
             color: Theme.cpuColor
             font.family: Theme.fontFamily
             font.pixelSize: 12
             textFormat: Text.RichText
-            ToolTip.text: "CPU Usage"
-            ToolTip.visible: cpuMouse.containsMouse
-            ToolTip.delay: 500
+            BarTooltip {
+                target: cpuText
+                text: "CPU Usage"
+                shown: cpuMouse.containsMouse
+            }
 
             MouseArea {
                 id: cpuMouse
@@ -37,14 +39,17 @@ Rectangle {
         }
 
         Text {
+            id: memText
             text: "<span style=\"font-family: 'Font Awesome 7 Free Solid'; color:" + Theme.memoryColor + "\"></span> " + SystemStats.memory + "G"
             color: Theme.memoryColor
             font.family: Theme.fontFamily
             font.pixelSize: 12
             textFormat: Text.RichText
-            ToolTip.text: "Memory Usage"
-            ToolTip.visible: memMouse.containsMouse
-            ToolTip.delay: 500
+            BarTooltip {
+                target: memText
+                text: "Memory Usage"
+                shown: memMouse.containsMouse
+            }
 
             MouseArea {
                 id: memMouse
@@ -54,14 +59,17 @@ Rectangle {
         }
 
         Text {
+            id: tempText
             text: "<span style=\"font-family: 'Font Awesome 7 Free Solid'; color:" + Theme.tempColor + "\"></span> " + SystemStats.temp + "°C"
             color: Theme.tempColor
             font.family: Theme.fontFamily
             font.pixelSize: 12
             textFormat: Text.RichText
-            ToolTip.text: "CPU Temperature"
-            ToolTip.visible: tempMouse.containsMouse
-            ToolTip.delay: 500
+            BarTooltip {
+                target: tempText
+                text: "CPU Temperature"
+                shown: tempMouse.containsMouse
+            }
 
             MouseArea {
                 id: tempMouse

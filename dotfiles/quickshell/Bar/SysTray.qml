@@ -1,7 +1,6 @@
 import Quickshell
 import Quickshell.Services.SystemTray
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 
 import "../Theme"
@@ -30,9 +29,11 @@ Rectangle {
                 radius: Theme.moduleRadius
                 color: "transparent"
 
-                ToolTip.text: modelData.tooltipTitle || ""
-                ToolTip.visible: trayMouse.containsMouse && !!modelData.tooltipTitle
-                ToolTip.delay: 500
+                BarTooltip {
+                    target: trayItem
+                    text: modelData?.tooltipTitle ?? ""
+                    shown: trayMouse.containsMouse
+                }
 
                 Image {
                     anchors.centerIn: parent

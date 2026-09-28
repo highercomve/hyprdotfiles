@@ -9,6 +9,7 @@ Singleton {
     property bool reveal: false
     property string idle: ""
     property string sunset: ""
+    property string shade: ""
     property string record: ""
     property string powerProfile: ""
 
@@ -39,6 +40,12 @@ Singleton {
     }
 
     Process {
+        id: shadeProc
+        command: ["bash", "-c", "~/.config/hypr/scripts/hyprshade.sh status"]
+        stdout: StdioCollector { onStreamFinished: root._applyStatus(text, "shade") }
+    }
+
+    Process {
         id: recordProc
         command: ["bash", "-c", "~/.config/hypr/scripts/record.sh status"]
         stdout: StdioCollector { onStreamFinished: root._applyStatus(text, "record") }
@@ -52,6 +59,12 @@ Singleton {
 
     Process {
         id: powerGetProc
+        command: ["powerprofilesctl", "get"]
+        stdout: StdioCollector { onStreamFinished: root.powerProfile = text.trim() }
+    }
+
+    Process {
+        id: powerCycleProc
         command: ["powerprofilesctl", "get"]
         stdout: StdioCollector { onStreamFinished: root.handlePowerGet(text) }
     }
@@ -70,6 +83,7 @@ Singleton {
     function poll() {
         idleProc.running = true
         sunsetProc.running = true
+        shadeProc.running = true
         recordProc.running = true
         powerGetProc.running = true
     }
@@ -89,8 +103,13 @@ Singleton {
         toggleProc.running = true
     }
 
+    function run(cmd) {
+        toggleProc.command = ["bash", "-c", cmd]
+        toggleProc.running = true
+    }
+
     function cyclePowerProfile() {
-        powerGetProc.running = true
+        powerCycleProc.running = true
     }
 
     function handlePowerGet(output) {
