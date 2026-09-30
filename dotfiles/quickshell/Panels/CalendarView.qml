@@ -11,6 +11,10 @@ Rectangle {
     property int displayMonth: new Date().getMonth()
     property int displayYear: new Date().getFullYear()
 
+    // Workaround for QTBUG-79906: MonthGrid's model.today is computed with
+    // UTC-based date math and marks the wrong day in UTC-negative timezones.
+    readonly property date today: new Date()
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 12
@@ -94,18 +98,24 @@ Rectangle {
             locale: Qt.locale()
 
             delegate: Rectangle {
+                id: dayCell
+
+                readonly property bool isToday: model.year === root.today.getFullYear()
+                                                && model.month === root.today.getMonth()
+                                                && model.day === root.today.getDate()
+
                 width: 40
                 height: 32
                 radius: 6
-                color: model.today ? Theme.blue : (model.month === calendarMonth.month ? "transparent" : Theme.surface0)
+                color: dayCell.isToday ? Theme.blue : (model.month === calendarMonth.month ? "transparent" : Theme.surface0)
 
                 Text {
                     anchors.centerIn: parent
                     text: model.day
-                    color: model.today ? Theme.base : Theme.text
+                    color: dayCell.isToday ? Theme.base : Theme.text
                     font.family: Theme.fontFamily
                     font.pixelSize: 14
-                    font.bold: model.today
+                    font.bold: dayCell.isToday
                 }
             }
         }
